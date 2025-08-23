@@ -1,0 +1,68 @@
+﻿@page
+@model Abig2025.Pages.Index1Model
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Abig - Iniciar Sesión</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MATERIAL DESIGN ICONIC FONT -->
+    <link rel="stylesheet" href="fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+
+    <!-- STYLE CSS -->
+    <link rel="stylesheet" href="css/styleRegister.css">
+</head>
+
+<body>
+    <div class="wrapper" style="background-image: url('images/Register/bg-registration-form-2.jpg');">
+        <div class="inner">
+
+            <a href="/Index" class="back-arrow">
+                <i class="zmdi zmdi-arrow-left"></i>
+                Atrás
+            </a>
+
+            <form action="">
+                <h3>Iniciar Sesión</h3>
+
+                <div class="form-wrapper">
+                    <label for="">Email</label>
+                    <input type="text" class="form-control">
+                </div>
+
+                <div class="form-wrapper">
+                    <label for="">Contraseña</label>
+                    <input type="password" class="form-control">
+                </div>
+
+                <div class="form-group" style="justify-content: space-between; margin-bottom: 20px;">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> Recordarme
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                     
+                </div>
+                <a asp-page="ForgotPassword" style="color: #007bff; text-decoration: underline;">¿Olvidaste tu contraseña?</a>
+                <button>Ingresar</button>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <p>¿No tienes una cuenta? <a asp-page="/Register" style="color: #007bff; text-decoration: underline;">Regístrate aquí</a></p>
+                </div>
+            </form>
+
+            <div class="logo-container">
+                <a asp-page="/Index">
+                    <img src="images/Logos/Logo2.png" alt="Logo" class="logo">
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

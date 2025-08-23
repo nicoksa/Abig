@@ -1,0 +1,222 @@
+﻿@page
+@{
+    ViewData["Title"] = "Publicar Inmueble - Paso 2";
+}
+
+<link rel="stylesheet" href="~/css/stylePost.css" />
+
+<div class="container mt-4 pt-5">
+    <!-- Barra de progreso -->
+    <div class="progress-container mb-5">
+        <div class="progress-steps-wrapper">
+            <div class="progress-steps step-2">
+                <div class="step completed">
+                    <div class="step-circle bg-primary text-white">1</div>
+                    <div class="step-label fw-bold">Principales</div>
+                </div>
+                <div class="step-connector active"></div>
+                <div class="step active">
+                    <div class="step-circle bg-primary text-white">2</div>
+                    <div class="step-label fw-bold">Multimedia</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Extras</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Publicar</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Encabezado -->
+
+    <div class="row justify-content-center" style="padding-top:35px">
+        <div class="col-lg-10">
+            <!-- Encabezado mejorado -->
+            <div class="d-flex align-items-center mb-5 p-4 bg-white rounded-3 shadow-sm border-start border-4 border-primary">
+                <div class="flex-shrink-0 me-4">
+                    <i class="bi bi-camera-video fs-1 text-primary"></i>
+                </div>
+                <div>
+                    <h1 class="fw-bold mb-2 text-primary">¡Agregá fotos y videos de tu propiedad!</h1>
+                    <p class="lead text-muted mb-0">Las propiedades con mejores fotos reciben hasta 5 veces más consultas</p>
+                </div>
+            </div>
+
+            <!-- Formulario de multimedia -->
+            <form method="post" enctype="multipart/form-data" style="padding-top:15px">
+                <!-- Sección para subir imágenes mejorada -->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-images me-2"></i>Imágenes de la propiedad
+                        </h5>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="mb-4">
+                            <div class="file-upload-wrapper">
+                                <label for="Imagenes" class="form-label fw-bold">Subí hasta 20 fotos (mínimo 5 recomendadas)</label>
+                                <div class="file-upload-input">
+                                    <input type="file" class="form-control visually-hidden" id="Imagenes" name="Imagenes" multiple accept="image/*">
+                                    <label for="Imagenes" class="file-upload-label">
+                                        <div class="file-upload-content">
+                                            <i class="bi bi-cloud-arrow-up fs-1 text-primary"></i>
+                                            <p class="mt-2 mb-1 fw-bold">Arrastrá tus fotos aquí o haz clic para seleccionar</p>
+                                            <p class="small text-muted">Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB por imagen</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista previa de imágenes mejorada -->
+                        <div id="preview-container" class="row g-3 mt-3" style="min-height: 150px;">
+                            <div class="col-12 text-center py-5 text-muted" id="empty-message">
+                                <i class="bi bi-images fs-1 opacity-50"></i>
+                                <p class="mt-2">Todavía no subiste ninguna foto</p>
+                            </div>
+                        </div>
+
+                        <!-- Consejos para fotos -->
+                        <div class="alert alert-info mt-4">
+                            <h5 class="alert-heading"><i class="bi bi-lightbulb me-2"></i>Consejos para mejores fotos:</h5>
+                            <ul class="mb-0">
+                                <li>Usa buena iluminación natural</li>
+                                <li>Muestra todos los ambientes importantes</li>
+                                <li>Evita fotos oscuras o borrosas</li>
+                                <li>Comienza con la foto más atractiva</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección para video mejorada -->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-camera-reels me-2"></i>Video (opcional)
+                        </h5>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="mb-3">
+                            <label for="VideoUrl" class="form-label fw-bold">Enlace de YouTube o Vimeo</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-link-45deg"></i></span>
+                                <input type="url" class="form-control" id="VideoUrl" name="VideoUrl" placeholder="https://youtube.com/tu-video">
+                            </div>
+                            <small class="text-muted">Pegá el enlace completo de tu video. Los videos aumentan un 30% las consultas.</small>
+                        </div>
+
+                        <!-- Vista previa del video (aparece cuando se ingresa URL) -->
+                        <div id="video-preview" class="ratio ratio-16x9 mt-3 d-none">
+                            <iframe src="" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de navegación mejorados -->
+                <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                    <a asp-page="Post" class="btn btn-outline-secondary px-4 py-2">
+                        <i class="bi bi-arrow-left me-2"></i>Anterior
+                    </a>
+                    <a asp-page="/PostStep3" class="btn btn-primary px-4 py-2">
+                        Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Vista previa de imágenes mejorada
+    document.getElementById('Imagenes').addEventListener('change', function(event) {
+        const previewContainer = document.getElementById('preview-container');
+        const emptyMessage = document.getElementById('empty-message');
+
+        // Limpiar contenedor
+        previewContainer.innerHTML = '';
+
+        if (this.files.length > 0) {
+            emptyMessage.style.display = 'none';
+
+            for (let i = 0; i < Math.min(this.files.length, 20); i++) {
+                const file = this.files[i];
+                if (file.type.match('image.*')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-6 col-md-4 col-lg-3';
+
+                        const card = document.createElement('div');
+                        card.className = 'card h-100 border-0 shadow-sm';
+
+                        const imgContainer = document.createElement('div');
+                        imgContainer.className = 'ratio ratio-1x1';
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'card-img-top object-fit-cover';
+                        img.alt = 'Preview ' + (i + 1);
+
+                        const cardFooter = document.createElement('div');
+                        cardFooter.className = 'card-footer bg-white border-0 py-2';
+                        cardFooter.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-truncate">${file.name}</small>
+                                <button class="btn btn-sm btn-outline-danger" type="button">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        `;
+
+                        imgContainer.appendChild(img);
+                        card.appendChild(imgContainer);
+                        card.appendChild(cardFooter);
+                        col.appendChild(card);
+                        previewContainer.appendChild(col);
+                    }
+
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            // Mostrar contador de imágenes
+            const counter = document.createElement('div');
+            counter.className = 'col-12 mt-2';
+            counter.innerHTML = `<div class="badge bg-primary">${this.files.length} imágenes seleccionadas</div>`;
+            previewContainer.appendChild(counter);
+        } else {
+            emptyMessage.style.display = 'block';
+        }
+    });
+
+    // Vista previa del video
+    document.getElementById('VideoUrl').addEventListener('input', function() {
+        const videoPreview = document.getElementById('video-preview');
+        const iframe = videoPreview.querySelector('iframe');
+
+        if (this.value.includes('youtube.com') || this.value.includes('vimeo.com')) {
+            let videoUrl = this.value;
+
+            if (videoUrl.includes('youtube.com')) {
+                const videoId = videoUrl.split('v=')[1];
+                videoUrl = `https://www.youtube.com/embed/${videoId}`;
+            } else if (videoUrl.includes('vimeo.com')) {
+                const videoId = videoUrl.split('vimeo.com/')[1];
+                videoUrl = `https://player.vimeo.com/video/${videoId}`;
+            }
+
+            iframe.src = videoUrl;
+            videoPreview.classList.remove('d-none');
+        } else {
+            videoPreview.classList.add('d-none');
+        }
+    });
+</script>
+

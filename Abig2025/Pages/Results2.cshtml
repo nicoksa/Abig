@@ -1,0 +1,298 @@
+﻿@page
+@model Abig2025.Pages.Results2Model
+@{
+    ViewData["Title"] = "Propiedades";
+}
+
+<link rel="stylesheet" href="~/css/styleResults.css" />
+
+<div class="resultados-wrapper" >
+	<!-- FILTROS SELECCIONADOS -->
+    
+    <div class="busqueda-contenedor">
+    <!-- FILTROS -->
+        <div class="filtros-columna">
+            <div id="filtros-aplicados" class="filtros-aplicados"></div>
+
+            <!-- FILTROS DISPONIBLES -->
+            <div class="filtros">
+                <div class="grupo-filtro" data-tipo="tipo">
+                    <button class="acordeon-titulo">Tipo de Propiedad</button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="Casa" /> Casa</label><br />
+                        <label><input type="checkbox" value="Departamento" /> Departamento</label><br />
+                        <label><input type="checkbox" value="Terreno" /> Terreno</label><br />
+                        <label><input type="checkbox" value="Local" /> Local</label><br />
+                        <label><input type="checkbox" value="PH" /> PH</label><br />
+                        <label><input type="checkbox" value="Cochera" /> Cochera</label><br />
+                        <label><input type="checkbox" value="Oficina" /> Oficina</label><br />
+                        <label><input type="checkbox" value="Quinta" /> Quinta</label><br />
+                    </div>
+                </div>
+
+                <div class="grupo-filtro" data-tipo="operacion">
+                    <button class="acordeon-titulo">Tipo de Operación</button>
+                    <div class="acordeon-contenido">                   
+                        <label><input type="checkbox" value="Alquiler" /> Alquiler</label><br />
+                        <label><input type="checkbox" value="Temporario" /> Temporario</label>
+                    </div>
+                </div>
+
+
+
+                <div class="grupo-filtro" data-tipo="precio">
+                    <button class="acordeon-titulo">Precio </button>
+
+                    <div class="acordeon-contenido">
+
+                        <div class="mb-3">
+                            <label for="selector-moneda" class="form-label">Moneda</label>
+                            <select id="selector-moneda" class="form-select">
+                                <option value="ARS">$ Pesos</option>
+                                <option value="USD">USD Dólares</option>
+                            </select>
+                        </div>
+
+                    
+                        <label class="precio-opcion" data-ars="Menos de $250000" data-usd="Menos de USD$500">
+                            <input type="checkbox" value="Menos de $250000" /> <span>Menos de $250000</span>
+                        </label><br />
+
+                        <label class="precio-opcion" data-ars="$250000 - $750000" data-usd="USD$500 - USD$1500">
+                            <input type="checkbox" value="Entre $250000 - $750000" /> <span>$250000 - $750000</span>
+                        </label><br />
+
+                        <label class="precio-opcion" data-ars="Más de $750000" data-usd="Más de USD$1500">
+                            <input type="checkbox" value="Más de $750000" /> <span>Más de $750000</span>
+                        </label><br />
+
+                        <div class="precio-rango">
+                            <input type="number" id="precio-min" class="form-control" placeholder="Mínimo">
+                            <input type="number" id="precio-max" class="form-control" placeholder="Máximo">
+                            <button id="btn-aplicar-precio" class="btn btn-primary">Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="grupo-filtro" data-tipo="ubicacion">
+                    <button class="acordeon-titulo">Ubicación</button>
+                    <div class="acordeon-contenido">
+                        <div class="ubicacion-buscador">
+                            <input type="text" id="input-ubicacion" class="form-control" placeholder="Buscar ciudad, barrio o dirección...">
+                            <div id="sugerencias-ubicacion" class="sugerencias-ubicacion"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="grupo-filtro" data-tipo="ambientes">
+                    <button class="acordeon-titulo">Ambientes</button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="1 ambiente" /> 1 ambiente</label><br />
+                        <label><input type="checkbox" value="2 ambientes" /> 2 ambientes</label><br />
+                        <label><input type="checkbox" value="3 ambientes" /> 3 ambientes</label><br />
+                        <label><input type="checkbox" value="4+ ambientes" /> 4+ ambientes</label>
+                    </div>
+                </div>
+
+
+                <div class="grupo-filtro" data-tipo="dormitorios">
+                    <button class="acordeon-titulo">Dormitorios</button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="1 dromitorio" /> 1 dormitorio</label><br />
+                        <label><input type="checkbox" value="2 dormitorios" /> 2 dormitorios</label><br />
+                        <label><input type="checkbox" value="3 dormitorios" /> 3 dormitorios</label><br />
+                        <label><input type="checkbox" value="4 dormitorios" /> 4 dormitorios</label><br />
+                        <label><input type="checkbox" value="5+ dormitorios" /> 5+ dormitorios</label>
+                    </div>
+                </div>
+
+
+                <div class="grupo-filtro" data-tipo="banos">
+                    <button class="acordeon-titulo">Baños</button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="1 baño" /> 1 baño</label><br />
+                        <label><input type="checkbox" value="2 baños" /> 2 baños</label><br />
+                        <label><input type="checkbox" value="3 baños" /> 3 baños</label><br />
+                        <label><input type="checkbox" value="4 baños" /> 4 baños</label><br />
+                        <label><input type="checkbox" value="5+ baños" /> 5+ baños</label>
+                    </div>
+                </div>
+
+
+                <div class="grupo-filtro" data-tipo="superficie-total">
+                    <button class="acordeon-titulo">Superficie Total </button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="Menos de 50 m² totales" /> Menos de 50 m² </label><br />
+                        <label><input type="checkbox" value="50 - 100 m² totales" /> 50 - 100 m² </label><br />
+                        <label><input type="checkbox" value="100 - 200 m² totales" /> 100 - 200 m² </label><br />
+                        <label><input type="checkbox" value="Más de 200 m² totales" /> Más de 200 m² </label><br />
+
+                        <div class="precio-rango">
+                            <input type="number" id="superficie-total-min" class="form-control" placeholder="Mín m²">
+                            <input type="number" id="superficie-total-max" class="form-control" placeholder="Máx m²">
+                            <button id="btn-aplicar-superficie-total" class="btn btn-primary">Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grupo-filtro" data-tipo="superficie-cubierta">
+                    <button class="acordeon-titulo">Superficie Cubierta </button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="Menos de 30 m² cubiertos" /> Menos de 30 m²</label><br />
+                        <label><input type="checkbox" value="30 - 60 m² cubiertos" /> 30 - 60 m²</label><br />
+                        <label><input type="checkbox" value="60 - 100 m² cubiertos" /> 60 - 100 m²</label><br />
+                        <label><input type="checkbox" value="Más de 100 m² cubiertos" /> Más de 100 m²</label><br />
+
+                        <div class="precio-rango">
+                            <input type="number" id="superficie-cubierta-min" class="form-control" placeholder="Mín m²">
+                            <input type="number" id="superficie-cubierta-max" class="form-control" placeholder="Máx m²">
+                            <button id="btn-aplicar-superficie-cubierta" class="btn btn-primary">Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="grupo-filtro" data-tipo="antiguedad">
+                    <button class="acordeon-titulo">Antiguedad</button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="A estrenar" /> A estrenar</label><br />
+                        <label><input type="checkbox" value="1 a 10 años" /> 1 a 10 años</label><br />
+                        <label><input type="checkbox" value="10 a 25 años" /> 10 a 25 años</label><br />
+                        <label><input type="checkbox" value="25 a 50 años" /> 25 a 50 años</label><br />
+                        <label><input type="checkbox" value="50 años o más" /> 50 años o más</label>
+                    </div>
+                </div>
+
+
+
+                <div class="grupo-filtro" data-tipo="caracteristicas" data-multiples="true">
+                    <button class="acordeon-titulo">Otras Características</button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="Parrilla" /> Parrilla</label><br />
+                        <label><input type="checkbox" value="Jardín" /> Jardín</label><br />
+                        <label><input type="checkbox" value="Pileta" /> Pileta</label><br />
+                        <label><input type="checkbox" value="Cochera" /> Cochera</label><br />
+                        <label><input type="checkbox" value="Seguridad" /> Seguridad</label><br />
+                        <label><input type="checkbox" value="Amueblado" /> Amueblado</label><br />
+                        <label><input type="checkbox" value="Aire acondicionado" /> Aire acondicionado</label><br />
+                        <label><input type="checkbox" value="Calefacción" /> Calefacción</label>
+                        <label><input type="checkbox" value="Mascotas" /> Permite Mascotas</label>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+        <!-- RESULTADOS -->
+        <div class="resultados">
+            @* Simulación de 3 propiedades *@
+            @for (int i = 0; i < 4; i++)
+            {
+                <div class="property-item">
+                    <a asp-page="/Detail" class="img">
+                        <img src="images/prop2.jpg" alt="Image" class="img-fluid" />
+                    </a>
+
+                    <div class="property-content">
+                        <div class="price mb-2"><span>$1.500.000</span></div>
+                        <div>
+                            <span class="d-block mb-2 text-black-50">Avenida San Martín 1143 </span>
+                            <span class="city d-block mb-3">Buenos Aires - Tigre</span>
+
+                            <div class="specs d-flex mb-4">
+                                <span class="d-block d-flex align-items-center me-3">
+                                    <span class="icon-bed me-2"></span>
+                                    <span class="caption">3 habitaciones</span>
+                                </span>
+                                <span class="d-block d-flex align-items-center">
+                                    <span class="icon-bath me-2"></span>
+                                    <span class="caption">2 baños</span>
+                                </span>
+                            </div>
+
+                            <a asp-page="/Detail"
+                               class="btn btn-primary py-2 px-3">Ver detalles</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- .item -->
+                 <div class="property-item">
+                            <a asp-page="/Detail" class="img">
+                                <img src="images/prop9.jpg" alt="Image" class="img-fluid" />
+                            </a>
+
+                            <div class="property-content">
+                                <div class="price mb-2"><span>$400.000</span></div>
+                                <div>
+                                    <span class="d-block mb-2 text-black-50">Calle Congreso 151</span>
+                                    <span class="city d-block mb-3">Buenos Aires - Cañuelas </span>
+
+                                    <div class="specs d-flex mb-4">
+                                        <span class="d-block d-flex align-items-center me-3">
+                                            <span class="icon-bed me-2"></span>
+                                            <span class="caption">3 habitaciones</span>
+                                        </span>
+                                        <span class="d-block d-flex align-items-center">
+                                            <span class="icon-bath me-2"></span>
+                                            <span class="caption">1 baño</span>
+                                        </span>
+                                    </div>
+
+                                    <a asp-page="/Detail"
+                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                </div>
+                            </div>
+                        </div>
+
+                          <!-- .item -->
+
+                        <div class="property-item">
+                            <a asp-page="/Detail" class="img">
+                                <img src="images/prop3.jpg" alt="Image" class="img-fluid" />
+                            </a>
+
+                            <div class="property-content">
+                                <div class="price mb-2"><span>$350.000</span></div>
+                                <div>
+                                    <span class="d-block mb-2 text-black-50">Avenida de Mayo 575 </span>
+                                    <span class="city d-block mb-3">CABA - San isidro</span>
+
+                                    <div class="specs d-flex mb-4">
+                                        <span class="d-block d-flex align-items-center me-3">
+                                            <span class="icon-bed me-2"></span>
+                                            <span class="caption">3 habitaciones</span>
+                                        </span>
+                                        <span class="d-block d-flex align-items-center">
+                                            <span class="icon-bath me-2"></span>
+                                            <span class="caption">2 baños</span>
+                                        </span>
+                                    </div>
+
+                                    <a asp-page="/Detail"
+                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                </div>
+                            </div>
+                        </div>
+
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.acordeon-titulo').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('acordeon-activo');
+            });
+        });
+    </script>
+
+    <script src="~/js/results.js"></script>
+}

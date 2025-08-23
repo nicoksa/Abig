@@ -1,0 +1,241 @@
+﻿@page
+@model DetailModel
+@{
+    ViewData["Title"] = "Detalles";
+    Layout = "_Layout";
+    var p = Model.Propiedad;
+}
+
+<link rel="stylesheet" href="~/css/styleDetail.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<div class="container py-5" >
+    <div class="row g-4 align-items-start">
+        <!-- Columna izquierda (70%) -->
+        <div class="col-lg-7">
+            <!-- Galería con carrusel -->
+            <div id="carouselGaleria" class="carousel slide" data-bs-ride="carousel" >
+                <div class="carousel-inner" >
+                    @for (int i = 0; i < p.Galeria.Count; i++)
+                    {
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <img src="@p.Galeria[i]" class="d-block w-100 img-fluid rounded" alt="Imagen @(i + 1)" data-bs-toggle="modal" onclick="expandirImagen(this)">
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselGaleria" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselGaleria" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <!-- Descripción -->
+            <div class="card mt-5 shadow-sm border-0">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="bi bi-file-text text-primary me-2"></i>Descripción</h4>
+                    <p class="card-text">@p.Descripcion</p>
+                </div>
+            </div>
+
+            <!-- Mapa -->
+            <div class="card mt-4 shadow-sm border-0">
+                <div class="card-body">
+                    <h4><i class="bi bi-geo-alt-fill text-danger me-2"></i>Ubicación</h4>
+                    <iframe class="rounded shadow" src="@p.UrlMapa" width="100%" height="300" style="border:0;" allowfullscreen loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <!-- Acordeón de detalles -->
+            <div class="accordion mt-4" id="accordionDetalles" >
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingCaracteristicas">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaracteristicas" aria-expanded="true" aria-controls="collapseCaracteristicas">
+                            <i class="bi bi-info-circle-fill me-2"></i> Características
+                        </button>
+                    </h2>
+                    <div id="collapseCaracteristicas" class="accordion-collapse collapse show" aria-labelledby="headingCaracteristicas" data-bs-parent="#accordionDetalles">
+                        <div class="accordion-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><i class="bi bi-bucket text-primary me-2"></i>1 baño</li>
+                                <li class="list-group-item"><i class="bi bi-house text-info me-2"></i>2 dormitorios</li>
+                                <li class="list-group-item"><i class="bi bi-door-open text-secondary me-2"></i>4 ambientes</li>
+                                <li class="list-group-item"><i class="bi bi-car-front-fill text-dark me-2"></i>Cochera</li>
+                                <li class="list-group-item"><i class="bi bi-calendar-check text-muted me-2"></i>5 años de Antiguedad</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingAmbientes">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAmbientes" aria-expanded="true" aria-controls="collapseAmbientes">
+                            <i class="bi bi-grid-1x2-fill text-success me-2"></i>Ambientes
+                        </button>
+                    </h2>
+                    <div id="collapseAmbientes" class="accordion-collapse collapse show" aria-labelledby="headingAmbientes" data-bs-parent="#accordionDetalles">
+                        <div class="accordion-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><i class="bi bi-house-heart me-2 text-secondary"></i>Living-comedor</li>
+                                <li class="list-group-item"><i class="bi bi-cup-hot me-2 text-danger"></i>Cocina</li>
+                                <li class="list-group-item"><i class="bi bi-house-door me-2 text-success"></i>Terraza</li>
+                                <li class="list-group-item"><i class="bi bi-droplet me-2 text-info"></i>Lavadero</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingInstalaciones">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInstalaciones" aria-expanded="false" aria-controls="collapseInstalaciones">
+                            <i class="bi bi-tools text-warning me-2"></i> Instalaciones
+                        </button>
+                    </h2>
+                    <div id="collapseInstalaciones" class="accordion-collapse collapse" aria-labelledby="headingInstalaciones" data-bs-parent="#accordionDetalles">
+                        <div class="accordion-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><i class="bi bi-arrow-up-square me-2 text-primary"></i>Ascensor</li>
+                                <li class="list-group-item"><i class="bi bi-person-fill-gear me-2 text-warning"></i>Encargado con vivienda</li>
+                                <li class="list-group-item"><i class="bi bi-camera-video-fill me-2 text-danger"></i>Cámaras de seguridad</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingServicios">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseServicios" aria-expanded="false" aria-controls="collapseServicios">
+                            <i class="bi bi-wrench-adjustable-circle text-info me-2"></i> Servicios
+                        </button>
+                    </h2>
+                    <div id="collapseServicios" class="accordion-collapse collapse" aria-labelledby="headingServicios" data-bs-parent="#accordionDetalles">
+                        <div class="accordion-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><i class="bi bi-lightning-charge me-2 text-warning"></i>Electricidad </li>
+                                <li class="list-group-item"><i class="bi bi-water me-2 text-primary"></i>Agua corriente</li>
+                                <li class="list-group-item"><i class="bi bi-thermometer-half me-2 text-danger"></i>Calefaccion</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha (30%) - Formulario de contacto -->
+        <div class="col-lg-5" >
+            <h2 class="display-6 fw-bold">@p.Titulo</h2>
+            <p class="text-muted"><i class="bi bi-geo-alt-fill text-danger me-2"></i>@p.Ubicacion</p>
+            <h3 class="text-success fw-bold"><i class="bi bi-tag-fill me-2"></i>USD @p.Precio.ToString("N0")</h3>
+
+            <ul class="list-group list-group-flush mt-3" style="background-color: floralwhite">
+                <li class="list-group-item"><i class="bi bi-door-open text-secondary me-2"></i><strong>Ambientes:</strong> @p.Ambientes</li>
+                <li class="list-group-item"><i class="bi bi-house text-info me-2"></i><strong>Dormitorios:</strong> @p.Dormitorios</li>
+                <li class="list-group-item"><i class="bi bi-bucket text-primary me-2"></i><strong>Baños:</strong> @p.Banios</li>
+                <li class="list-group-item"><i class="bi bi-arrows-angle-expand text-warning me-2"></i><strong>Superficie total:</strong> @p.SuperficieTotal m²</li>
+                <li class="list-group-item"><i class="bi bi-building text-success me-2"></i><strong>Tipo:</strong> @p.Tipo</li>
+                <li class="list-group-item"><i class="bi bi-calendar-check text-muted me-2"></i><strong>Antigüedad:</strong> @p.Antiguedad años</li>
+            </ul>
+
+            <!-- Contacto en forma de tarjeta -->
+            <div class="card shadow-sm p-4 mt-4 contact-form-container">
+                <h5 class="fw-bold mb-3">Contactá con el Dueño</h5>
+
+                <div class="mb-3">
+                    <p class="mb-1 fw-semibold">Jorge Almiron</p>
+                   
+                    <a href="tel:000000000" class="d-block mb-3 text-decoration-none text-primary">📞 Ver teléfono</a>
+                </div>
+
+                <!-- Formulario de contacto -->
+                <form>
+                    <div class="mb-3">
+                        <label for="emailContacto" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="emailContacto" placeholder="Tu email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefonoContacto" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="telefonoContacto" placeholder="Tu número">
+                    </div>
+                    <div class="mb-3">
+                        <label for="mensajeContacto" class="form-label">Mensaje</label>
+                        <textarea class="form-control" id="mensajeContacto" rows="4" placeholder="Escribí tu consulta..."></textarea>
+                    </div>
+                    <!-- Botón Contactar - Azul personalizado -->
+                    <button type="submit" class="btn w-100 mt-3 mb-2" style="background-color: #2a5caa; color: white;">
+                        <i class="bi bi-envelope-fill me-2"></i>Contactar
+                    </button>
+
+                    <!-- Botón WhatsApp - -->
+                    <a href="https://wa.me/549XXXXXXXXXX" target="_blank" class="btn w-100 mb-3" style="background-color: #25D366; color: white;">
+                        <i class="bi bi-whatsapp me-2"></i>Contactar por WhatsApp
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para imagen ampliada -->
+<!-- Modal para imagen ampliada con carrusel -->
+<div class="modal fade" id="imagenModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-transparent border-0">
+            <div id="modalCarousel" class="carousel slide">
+                <div class="carousel-inner" id="modalCarouselInner">
+                    @for (int i = 0; i < p.Galeria.Count; i++)
+                    {
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <img src="@p.Galeria[i]" class="d-block w-100 img-fluid rounded shadow" alt="Imagen @(i + 1)">
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para abrir el modal en la imagen correcta
+    function expandirImagen(imgElement) {
+        // Obtener el índice de la imagen clickeada
+        const carouselItems = document.querySelectorAll('#carouselGaleria .carousel-item');
+        let index = 0;
+
+        for (let i = 0; i < carouselItems.length; i++) {
+            if (carouselItems[i].contains(imgElement)) {
+                index = i;
+                break;
+            }
+        }
+
+        // Activar el item correspondiente en el modal
+        const modalCarousel = new bootstrap.Carousel(document.getElementById('modalCarousel'));
+        modalCarousel.to(index);
+
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(document.getElementById('imagenModal'));
+        modal.show();
+    }
+
+    // Modificar los eventos de clic en las imágenes del carrusel principal
+    document.addEventListener('DOMContentLoaded', function() {
+        const carouselImages = document.querySelectorAll('#carouselGaleria .carousel-item img');
+
+        carouselImages.forEach(img => {
+            img.onclick = function() {
+                expandirImagen(this);
+            };
+        });
+    });
+</script>

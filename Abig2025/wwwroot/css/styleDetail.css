@@ -1,0 +1,109 @@
+﻿body {
+    padding-top: 110px;
+}
+
+
+#imagenAmpliada {
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+
+
+.accordion-body .list-group-item {
+    border: none;
+    padding-left: 20px;
+    font-size: 0.95rem;
+}
+
+.accordion-button {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+
+
+/* Estilo para el contenedor del formulario de contacto */
+.contact-form-container {
+    position: sticky;
+    top: 20px;
+}
+
+/* Mejora el espaciado en las tarjetas */
+.card {
+    margin-bottom: 1.5rem;
+}
+
+/* Ajustes para el acordeón */
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+}
+
+.accordion-body {
+    padding: 0;
+}
+
+/* Mejora la visualización de los elementos de lista */
+.list-group-item {
+    padding: 0.75rem 1.25rem;
+    border-left: 0;
+    border-right: 0;
+}
+
+    .list-group-item:first-child {
+        border-top: 0;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: 0;
+    }
+
+
+
+
+
+/* Estilo mejorado para los controles del carrusel */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.carousel-control-prev {
+    left: 20px;
+}
+
+.carousel-control-next {
+    right: 20px;
+}
+
+    .carousel-control-prev:hover,
+    .carousel-control-next:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 2rem;
+    height: 2rem;
+    filter: brightness(0) invert(1);
+}
+
+/* Para el carrusel dentro del modal (flechas más grandes) */
+.modal .carousel-control-prev,
+.modal .carousel-control-next {
+    width: 60px;
+    height: 60px;
+}
+
+.modal .carousel-control-prev-icon,
+.modal .carousel-control-next-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+}

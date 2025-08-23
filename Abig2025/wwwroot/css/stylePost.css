@@ -1,0 +1,175 @@
+﻿.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding-top: 80px;
+}
+
+    .progress-steps::before {
+        content: '';
+        position: absolute;
+        top: 105px;
+        left: 13px;
+        right: 0;
+        height: 6px;
+        background-color: #e9ecef;
+        z-index: 0;
+    }
+
+    .progress-steps::after {
+        content: '';
+        position: absolute;
+        top: 105px;
+        left: 13px;
+        height: 6px;
+        background-color: darkgreen;
+        z-index: 1;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    .progress-steps.step-1::after {
+        width: 0%;
+    }
+
+    .progress-steps.step-2::after {
+        width: 33%;
+    }
+
+    .progress-steps.step-3::after {
+        width: 66%;
+    }
+
+    .progress-steps.step-4::after {
+        width: 99%;
+    }
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-circle {
+    width: 62px;
+    height: 62px;
+    line-height: 62px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #6c757d;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+
+.step.completed .step-circle {
+    background-color: #002e0e !important;   
+    color: white;
+}
+
+
+
+.step.active .step-label {
+    color: #090e3b;
+    font-weight: bold;
+}
+
+.step.completed .step-label {
+    color: #0a3319;
+    font-weight: bold;
+}
+
+/* Responsive para moviles */
+
+@media (max-width: 768px) {
+    .step-label {
+        font-size: 0.75rem;
+        top: 80px;
+    }
+
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+    }
+}
+
+
+
+
+.progress-container {
+    position: relative;
+    padding: 0 2rem;
+}
+
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    }
+
+.input-group-text {
+    min-width: 45px;
+    justify-content: center;
+}
+
+
+
+
+
+
+/* Step 2 multimedia */
+
+.file-upload-wrapper {
+    position: relative;
+}
+
+.file-upload-input {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+    .file-upload-input:hover {
+        border-color: #0d6efd;
+        background-color: #f8f9fa;
+    }
+
+.file-upload-label {
+    display: block;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.file-upload-content {
+    padding: 1rem;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+
+/* Mejoras para la vista previa de imágenes */
+.preview-image-container {
+    position: relative;
+}
+
+.preview-image-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.preview-image-container:hover .preview-image-remove {
+    opacity: 1;
+}

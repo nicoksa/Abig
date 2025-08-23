@@ -1,0 +1,355 @@
+﻿@page
+@model Abig2025.Pages.FaqModel
+@{
+    ViewData["Title"] = "Preguntas Frecuentes";
+}
+
+<div class="hero page-inner overlay" style="background-image: url('images/hero_bg_2.jpg')">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-9 text-center mt-5">
+                <h1 class="heading display-4 fw-bold" data-aos="fade-up">Preguntas Frecuentes</h1>
+
+                <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="200">
+                    <ol class="breadcrumb text-center justify-content-center">
+                        <li class="breadcrumb-item"><a asp-page="/Index" class="text-decoration-none">Inicio</a></li>
+                        <li class="breadcrumb-item active text-white-50" aria-current="page">
+                            Preguntas Frecuentes
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10" data-aos="fade-up">
+                <div class="card shadow-sm border-0 rounded-lg">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-5">
+                            <img src="/images/Logos/Logo2.png" alt="ABIG Logo" height="60" class="mb-4">
+                            <h2 class="fw-bold text-primary">¿Cómo podemos ayudarte?</h2>
+                            <p class="lead text-muted">Encuentra respuestas a las preguntas más comunes sobre nuestros servicios</p>
+
+                            <div class="row justify-content-center mt-4">
+                                <div class="col-lg-8">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control form-control-lg" placeholder="Buscar en preguntas frecuentes..." aria-label="Buscar">
+                                        <button class="btn btn-primary" type="button">
+                                            <i class="bi bi-search"></i> Buscar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="card h-100 border-0 shadow-sm text-center">
+                                    <div class="card-body">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-house-door-fill text-primary fs-3"></i>
+                                        </div>
+                                        <h5 class="card-title">Propiedades</h5>
+                                        <p class="card-text text-muted">Preguntas sobre alquiler y publicación de inmuebles</p>
+                                        <a href="#propiedades" class="btn btn-sm btn-outline-primary">Ver preguntas</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card h-100 border-0 shadow-sm text-center">
+                                    <div class="card-body">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-credit-card-fill text-primary fs-3"></i>
+                                        </div>
+                                        <h5 class="card-title">Pagos</h5>
+                                        <p class="card-text text-muted">Información sobre métodos de pago y facturación</p>
+                                        <a href="#pagos" class="btn btn-sm btn-outline-primary">Ver preguntas</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card h-100 border-0 shadow-sm text-center">
+                                    <div class="card-body">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle mx-auto mb-4" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-shield-lock-fill text-primary fs-3"></i>
+                                        </div>
+                                        <h5 class="card-title">Seguridad</h5>
+                                        <p class="card-text text-muted">Protección de datos y privacidad</p>
+                                        <a href="#seguridad" class="btn btn-sm btn-outline-primary">Ver preguntas</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 pt-4">
+                            <h3 id="propiedades" class="fw-bold border-bottom pb-3 mb-4 text-primary">
+                                <i class="bi bi-house-door-fill me-2"></i>Propiedades
+                            </h3>
+
+                            <div class="accordion" id="accordionPropiedades">
+                                <div class="accordion-item mb-3 border-0 shadow-sm rounded overflow-hidden">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            ¿Cómo puedo publicar mi propiedad en ABIG?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionPropiedades">
+                                        <div class="accordion-body">
+                                            <p>Para publicar tu propiedad:</p>
+                                            <ol>
+                                                <li>Regístrate como propietario en nuestra plataforma</li>
+                                                <li>Completa el formulario de publicación con los detalles de tu propiedad</li>
+                                                <li>Establece el precio y condiciones de alquiler</li>
+                                                <li>Sube fotos de calidad de los espacios</li>
+                                                <li>Añade caracteristicas extras</li>
+                                                <li>Envía la publicación</li>
+                                            </ol>
+                                            <p class="mb-0">Una vez aprobada, tu propiedad será visible para los inquilinos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item mb-3 border-0 shadow-sm rounded overflow-hidden">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            ¿Qué requisitos debe cumplir mi propiedad para ser publicada?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionPropiedades">
+                                        <div class="accordion-body">
+                                            <p>Todas las propiedades deben cumplir con:</p>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item bg-transparent"><i class="bi bi-check-circle-fill text-success me-2"></i> Documentación en regla (título de propiedad o autorización para alquilar)</li>
+                                                <li class="list-group-item bg-transparent"><i class="bi bi-check-circle-fill text-success me-2"></i> Servicios básicos funcionando (agua, luz, gas)</li>
+                                                <li class="list-group-item bg-transparent"><i class="bi bi-check-circle-fill text-success me-2"></i> Condiciones habitables según normativas locales</li>
+                                                <li class="list-group-item bg-transparent"><i class="bi bi-check-circle-fill text-success me-2"></i> Fotos reales y recientes del inmueble</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item mb-3 border-0 shadow-sm rounded overflow-hidden">
+                                    <h2 class="accordion-header" id="headingThree">
+                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                            ¿Puedo editar los detalles de mi propiedad después de publicarla?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionPropiedades">
+                                        <div class="accordion-body">
+                                            <p>Sí, puedes editar los detalles de tu propiedad en cualquier momento:</p>
+                                            <ol>
+                                                <li>Inicia sesión en tu cuenta</li>
+                                                <li>Ve a "Mis propiedades"</li>
+                                                <li>Selecciona la propiedad que deseas editar</li>
+                                                <li>Haz clic en "Editar" y guarda los cambios</li>
+                                            </ol>
+                                            <div class="alert alert-info mt-3">
+                                                <i class="bi bi-info-circle-fill me-2"></i>
+                                                Los cambios en precio o condiciones importantes pueden requerir una nueva revisión por parte de nuestro equipo.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3 id="pagos" class="fw-bold border-bottom pb-3 mb-4 mt-5 pt-4 text-primary">
+                                <i class="bi bi-credit-card-fill me-2"></i>Pagos y Facturación
+                            </h3>
+
+                            <div class="accordion" id="accordionPagos">
+                                <div class="accordion-item mb-3 border-0 shadow-sm rounded overflow-hidden">
+                                    <h2 class="accordion-header" id="headingFour">
+                                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+                                            ¿Qué métodos de pago aceptan?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour" data-bs-parent="#accordionPagos">
+                                        <div class="accordion-body">
+                                            <p>Aceptamos los siguientes métodos de pago:</p>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-0 bg-light">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-credit-card-2-front-fill fs-3 text-primary me-3"></i>
+                                                                <h5 class="mb-0">Tarjetas de crédito/débito</h5>
+                                                            </div>
+                                                            <p class="mt-2 mb-0 small">Visa, Mastercard, American Express</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-0 bg-light">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-bank fs-3 text-primary me-3"></i>
+                                                                <h5 class="mb-0">Transferencia bancaria</h5>
+                                                            </div>
+                                                            <p class="mt-2 mb-0 small">Desde cualquier banco local</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-0 bg-light">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-wallet-fill fs-3 text-primary me-3"></i>
+                                                                <h5 class="mb-0">Billeteras virtuales</h5>
+                                                            </div>
+                                                            <p class="mt-2 mb-0 small">Mercado Pago, Ualá, etc.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-0 bg-light">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-cash-coin fs-3 text-primary me-3"></i>
+                                                                <h5 class="mb-0">Efectivo</h5>
+                                                            </div>
+                                                            <p class="mt-2 mb-0 small">En sitios habilitados por Abig</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item mb-3 border-0 shadow-sm rounded overflow-hidden">
+                                    <h2 class="accordion-header" id="headingFive">
+                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                            ¿Cómo efectuo los pagos ?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionPagos">
+                                        <div class="accordion-body">
+                                            <p>Los pagos se debitan directamente en tu cuenta bancaria:</p>
+                                            <ol>
+                                                <li>Configura tu cuenta bancaria en la sección "Métodos de pago"</li>
+                                                <li>Los pagos se procesan automáticamente cada mes</li>
+                                                <li>Recibirás un comprobante por email</li>
+                                            </ol>
+                                            <div class="alert alert-warning mt-3">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                Los depósitos pueden tardar de 1 a 3 días hábiles según tu banco.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3 id="seguridad" class="fw-bold border-bottom pb-3 mb-4 mt-5 pt-4 text-primary">
+                                <i class="bi bi-shield-lock-fill me-2"></i>Seguridad y Privacidad
+                            </h3>
+
+                            <div class="accordion" id="accordionSeguridad">
+                                <div class="accordion-item mb-3 border-0 shadow-sm rounded overflow-hidden">
+                                    <h2 class="accordion-header" id="headingSix">
+                                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="true" aria-controls="collapseSix">
+                                            ¿Cómo protegen mis datos personales?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSix" class="accordion-collapse collapse show" aria-labelledby="headingSix" data-bs-parent="#accordionSeguridad">
+                                        <div class="accordion-body">
+                                            <p>En ABIG implementamos múltiples medidas de seguridad:</p>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-success border-opacity-25">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-lock-fill fs-3 text-success me-3"></i>
+                                                                <h5 class="mb-0">Cifrado SSL</h5>
+                                                            </div>
+                                                            <p class="mt-2 mb-0">Todos los datos se transmiten cifrados mediante protocolos seguros.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-success border-opacity-25">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-database-fill fs-3 text-success me-3"></i>
+                                                                <h5 class="mb-0">Protección de datos</h5>
+                                                            </div>
+                                                            <p class="mt-2 mb-0">Información almacenada en servidores seguros con acceso restringido.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-success border-opacity-25">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-shield-fill-check fs-3 text-success me-3"></i>
+                                                                <h5 class="mb-0">Autenticación</h5>
+                                                            </div>
+                                                            <p class="mt-2 mb-0">Verificación en dos pasos disponible para mayor seguridad.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-success border-opacity-25">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-eye-slash-fill fs-3 text-success me-3"></i>
+                                                                <h5 class="mb-0">Privacidad</h5>
+                                                            </div>
+                                                            <p class="mt-2 mb-0">No compartimos tus datos con terceros sin tu consentimiento.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3">Puedes consultar nuestra <a asp-page="/Privacy" class="text-decoration-none">Política de Privacidad</a> para más detalles.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item mb-3 border-0 shadow-sm rounded overflow-hidden">
+                                    <h2 class="accordion-header" id="headingSeven">
+                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                                            ¿Cómo verifican la identidad de los usuarios?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#accordionSeguridad">
+                                        <div class="accordion-body">
+                                            <p>Realizamos un proceso de verificación en varios pasos:</p>
+                                            <ul class="list-group list-group-flush mb-3">
+                                                <li class="list-group-item bg-transparent"><i class="bi bi-person-badge-fill text-primary me-2"></i> Documento de identidad válido</li>
+                                                <li class="list-group-item bg-transparent"><i class="bi bi-telephone-fill text-primary me-2"></i> Número de teléfono verificado</li>
+                                                <li class="list-group-item bg-transparent"><i class="bi bi-envelope-fill text-primary me-2"></i> Correo electrónico confirmado</li>
+                                                <li class="list-group-item bg-transparent"><i class="bi bi-bank2 text-primary me-2"></i> Validación de datos bancarios </li>
+                                            </ul>
+                                            <p class="mb-0">Este proceso nos ayuda a mantener una comunidad confiable y segura para todos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card bg-primary text-white mt-5 border-0 shadow">
+                            <div class="card-body p-5">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h3 class="fw-bold mb-3">¿No encontraste tu respuesta?</h3>
+                                        <p class="mb-md-0">Nuestro equipo de soporte está listo para ayudarte con cualquier consulta adicional que puedas tener.</p>
+                                    </div>
+                                    <div class="col-md-4 text-md-end">
+                                        <a asp-page="/Contact" class="btn btn-light btn-lg px-4">
+                                            <i class="bi bi-headset me-2"></i> Contactar Soporte
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
