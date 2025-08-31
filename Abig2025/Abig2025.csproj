@@ -13,4 +13,8 @@
     <None Include="wwwroot\js\.DS_Store" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\bootstrap\dist\js\" />
+  </ItemGroup>
+
 </Project>
