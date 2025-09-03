@@ -36,9 +36,6 @@ obj/
 # Node modules (if using frontend tooling)
 node_modules/
 
-# EF Core Migrations history
-Migrations/
-
 # Environment files
 .env
 
