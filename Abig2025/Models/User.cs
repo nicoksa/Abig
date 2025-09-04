@@ -50,5 +50,6 @@ namespace Abig2025.Models
         // Relaciones
         public virtual ICollection<UserRole> UserRoles { get; set; }
         public virtual ICollection<LoginAttempt> LoginAttempts { get; set; }
+        public virtual ICollection<Property> Properties { get; set; }
     }
 }
