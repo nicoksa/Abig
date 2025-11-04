@@ -1,5 +1,7 @@
 ﻿// Data/AppDbContext.cs
-using Abig2025.Models;
+using Abig2025.Models.Properties;
+using Abig2025.Models.Subscriptions;
+using Abig2025.Models.Users;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;

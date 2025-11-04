@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Abig2025.Models
+namespace Abig2025.Models.Users
 {
     public class Role
     {

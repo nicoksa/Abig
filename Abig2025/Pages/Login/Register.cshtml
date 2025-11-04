@@ -1,5 +1,5 @@
 ﻿@page
-@model Abig2025.Pages.RegisterModel
+@model Abig2025.Pages.Login.RegisterModel
 @{
 	Layout= null;	
 }
@@ -14,23 +14,23 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<!-- MATERIAL DESIGN ICONIC FONT -->
-	<link rel="stylesheet" href="fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
 
 	<!-- STYLE CSS -->
-	<link rel="stylesheet" href="css/styleRegister.css">
+	<link rel="stylesheet" href="~/css/styleRegister.css">
 </head>
 
 <body>
 
 
-<div class="wrapper" style="background-image: url('images/Register/bg-registration-form-2.jpg');">
+	<div class="wrapper" style="background-image: url('~/images/Register/bg-registration-form-2.jpg');">
 
 		
 
 		<div class="inner">
 
 
-			<a href="/Login" class="back-arrow">
+			<a href="Login" class="back-arrow">
 				<i class="zmdi zmdi-arrow-left"></i>
 				Atrás
 			</a>
@@ -79,7 +79,7 @@
 
 			<div class="logo-container">
 				<a asp-page="/Index">
-					<img src="images/Logos/Logo2.png" alt="Logo" class="logo">
+					<img src="~/images/Logos/Logo2.png" alt="Logo" class="logo">
 				</a>
 			</div>
 

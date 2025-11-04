@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Abig2025.Models
+namespace Abig2025.Models.Users
 {
     public class UserReview
     {
