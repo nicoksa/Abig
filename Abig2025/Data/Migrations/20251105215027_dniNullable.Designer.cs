@@ -4,6 +4,7 @@ using Abig2025.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Abig2025.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251105215027_dniNullable")]
+    partial class dniNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -377,7 +380,9 @@ namespace Abig2025.Data.Migrations
 
                     b.HasKey("UserProfileId");
 
-                    b.HasIndex("Dni");
+                    b.HasIndex("Dni")
+                        .IsUnique()
+                        .HasFilter("[Dni] IS NOT NULL");
 
                     b.HasIndex("UserId");
 

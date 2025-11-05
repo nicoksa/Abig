@@ -1,91 +1,219 @@
 ﻿@page
 @model Abig2025.Pages.Login.RegisterModel
 @{
-	Layout= null;	
+    Layout = null;
 }
 
+<style>
+    /* Estilos para mensajes de validación */
+    .text-danger {
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+    }
+
+    .alert {
+        padding: 0.75rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .honeypot {
+        display: none !important;
+    }
+
+    .form-text {
+        font-size: 0.875em;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-register {
+        width: 100%;
+        margin-top: 1rem;
+    }
+    /* Estilos para checkboxes */
+    .checkbox-group {
+        margin: 1rem 0;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+        .checkbox-item input[type="checkbox"] {
+            margin: 0.2rem 0.5rem 0 0;
+            width: auto;
+        }
+
+    .checkbox-label {
+        font-weight: normal;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .text-danger {
+        display: block;
+        margin-top: 0.25rem;
+    }
+</style>
 
 
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>Abig - Registro</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Abig - Registro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<!-- MATERIAL DESIGN ICONIC FONT -->
-	<link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+    <!-- MATERIAL DESIGN ICONIC FONT -->
+    <link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
 
-	<!-- STYLE CSS -->
-	<link rel="stylesheet" href="~/css/styleRegister.css">
+    <!-- STYLE CSS -->
+    <link rel="stylesheet" href="~/css/styleRegister.css">
 </head>
 
 <body>
+    <div class="wrapper">
+        <div class="inner">
+            <a href="Login" class="back-arrow">
+                <i class="zmdi zmdi-arrow-left"></i>
+                Atrás
+            </a>
 
+            <form method="post">
+                <h3>Registro</h3>
 
-	<div class="wrapper" style="background-image: url('~/images/Register/bg-registration-form-2.jpg');">
+                <!-- Mensajes de éxito/error -->
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success">
+                        @Model.SuccessMessage
+                    </div>
+                }
 
-		
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @Model.ErrorMessage
+                    </div>
+                }
 
-		<div class="inner">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                <!-- Honeypot field (hidden) -->
+                <input type="text" asp-for="Input.Honeypot" class="honeypot" autocomplete="off" tabindex="-1">
 
-			<a href="Login" class="back-arrow">
-				<i class="zmdi zmdi-arrow-left"></i>
-				Atrás
-			</a>
+                <div class="form-group">
+                    <div class="form-wrapper">
+                        <label asp-for="Input.FirstName">Nombre</label>
+                        <input type="text" asp-for="Input.FirstName" class="form-control">
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-wrapper">
+                        <label asp-for="Input.LastName">Apellido</label>
+                        <input type="text" asp-for="Input.LastName" class="form-control">
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                    </div>
+                </div>
 
-			<form action="">
-				<h3>Registro</h3>
-				<div class="form-group">
-					<div class="form-wrapper">
-						<label for="">Nombre</label>
-						<input type="text" class="form-control">
-					</div>
-					<div class="form-wrapper">
-						<label for="">Apellido</label>
-						<input type="text" class="form-control">
-					</div>
-				</div>
-				<div class="form-wrapper">
-					<label for="">Email</label>
-					<input type="text" class="form-control">
-				</div>
-				<div class="form-wrapper">
-					<label for="">Contraseña</label>
-					<input type="password" class="form-control">
-				</div>
-				<div class="form-wrapper">
-					<label for="">Confirmar Contraseña</label>
-					<input type="password" class="form-control">
-				</div>
-				<div class="checkbox">
-					<label>
-						<input type="checkbox"> Acepto los <a asp-page="/TermsAndConditions" style="color: #007bff; text-decoration: underline;">Términos y Condiciones</a>.
-						<span class="checkmark"></span>
-					</label>
-				</div>
-				<br />
+                <div class="form-wrapper">
+                    <label asp-for="Input.Email">Email</label>
+                    <input type="email" asp-for="Input.Email" class="form-control">
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
 
-				<div class="checkbox">
-					<label>
-						<input type="checkbox"> Acepto la <a asp-page="/Privacy" style="color: #007bff; text-decoration: underline;">Política de Privacidad</a>.
-						<span class="checkmark"></span>
-					</label>
-				</div>
+                <div class="form-wrapper">
+                    <label asp-for="Input.Password">Contraseña</label>
+                    <input type="password" asp-for="Input.Password" class="form-control">
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <small class="form-text text-muted">
+                        La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales.
+                    </small>
+                </div>
 
-				<button>Crear cuenta </button>
-			</form>
+                <div class="form-wrapper">
+                    <label asp-for="Input.ConfirmPassword">Confirmar Contraseña</label>
+                    <input type="password" asp-for="Input.ConfirmPassword" class="form-control">
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
 
-			<div class="logo-container">
-				<a asp-page="/Index">
-					<img src="~/images/Logos/Logo2.png" alt="Logo" class="logo">
-				</a>
-			</div>
+                <div class="form-wrapper">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" asp-for="Input.AcceptTerms" id="AcceptTerms" />
+                            <label for="AcceptTerms" class="checkbox-label">
+                                Acepto los <a asp-page="/TermsAndConditions" target="_blank">Términos y Condiciones</a>.
+                            </label>
+                        </div>
+                        <span asp-validation-for="Input.AcceptTerms" class="text-danger"></span>
+                    </div>
+                </div>
 
-		</div>
+                <div class="form-wrapper">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" asp-for="Input.AcceptPrivacy" id="AcceptPrivacy" />
+                            <label for="AcceptPrivacy" class="checkbox-label">
+                                Acepto la <a asp-page="/Privacy" target="_blank">Política de Privacidad</a>.
+                            </label>
+                        </div>
+                        <span asp-validation-for="Input.AcceptPrivacy" class="text-danger"></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-register">Crear cuenta</button>
 
-	</div>
+                <div class="login-link">
+                    ¿Ya tienes una cuenta? <a href="/Login">Inicia sesión aquí</a>
+                </div>
+            </form>
 
+            <div class="logo-container">
+                <a asp-page="/Index">
+                    <img src="~/images/Logos/Logo2.png" alt="Logo" class="logo">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de validación -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Script para debugging -->
+    <script>
+        $(document).ready(function() {
+            console.log('jQuery cargado:', !!window.jQuery);
+            console.log('jQuery Validation cargado:', !!window.jQuery.validator);
+
+            $('form').on('submit', function(e) {
+                console.log('Formulario enviado');
+                console.log('Validación:', $(this).valid());
+            });
+        });
+    </script>
 </body>
 </html>

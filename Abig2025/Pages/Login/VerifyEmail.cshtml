@@ -1,0 +1,40 @@
+﻿@* Pages/Login/VerifyEmail.cshtml *@
+@page
+@model Abig2025.Pages.Login.VerifyEmailModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Verificar Email - Abig</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/styleRegister.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="inner">
+            <div class="text-center">
+                @if (Model.IsSuccess)
+                {
+                    <div class="alert alert-success">
+                        <h3>¡Verificación Exitosa!</h3>
+                        <p>@Model.Message</p>
+                    </div>
+                    <a asp-page="/Login/login" class="btn btn-primary">Iniciar Sesión</a>
+                }
+                else
+                {
+                    <div class="alert alert-danger">
+                        <h3>Error de Verificación</h3>
+                        <p>@Model.Message</p>
+                    </div>
+                    <a asp-page="/Login/login"" class="btn btn-primary">Volver al Login</a>
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>

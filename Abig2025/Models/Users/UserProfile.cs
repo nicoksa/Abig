@@ -11,19 +11,28 @@ namespace Abig2025.Models.Users
         [Required]
         public int UserId { get; set; }
 
-        [Required]
         [MaxLength(20)]
-        public string Dni { get; set; }
+        public string? Dni { get; set; } 
 
         [MaxLength(20)]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }  
 
         [MaxLength(255)]
-        public string Address { get; set; }
+        public string? Address { get; set; }  
 
-        // Relación
+        [MaxLength(100)]
+        public string? City { get; set; }  
+
+        [MaxLength(100)]
+        public string? Province { get; set; }  
+
+        [MaxLength(100)]
+        public string? Country { get; set; }  
+
+        [DataType(DataType.Date)]
+        public DateTime? BirthDate { get; set; }
+
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public virtual User User { get; set; } = null!; 
     }
-
 }

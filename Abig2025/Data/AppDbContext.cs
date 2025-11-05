@@ -41,8 +41,8 @@ namespace Abig2025.Data
 
             // Dni único en UserProfile
             modelBuilder.Entity<UserProfile>()
-                .HasIndex(p => p.Dni)
-                .IsUnique();
+                .HasIndex(p => p.Dni);
+                
 
             // Relación User ↔ Property (dueño de propiedad)
             modelBuilder.Entity<Property>()

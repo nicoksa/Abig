@@ -1,5 +1,7 @@
 using Abig2025.Data;
 using Abig2025.Services;
+using Abig2025.Services.Abig2025.Services;
+using Abig2025.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +13,20 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-// Services
+
+
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// O temporalmente registrar una implementación vacía:
+builder.Services.AddScoped<IEmailService>(provider =>
+{
+    // Implementación temporal vacía
+    return new EmailService(
+        provider.GetRequiredService<IConfiguration>(),
+        provider.GetRequiredService<ILogger<EmailService>>()
+    );
+});
 
 // Session 
 builder.Services.AddSession(options =>

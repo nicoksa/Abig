@@ -16,10 +16,10 @@ namespace Abig2025.Models.Users
         [MaxLength(255)]
         public string Email { get; set; }
 
-        [Required]
+       // [Required]
         public string PasswordHash { get; set; }
 
-        [Required]
+        //[Required]
         public string PasswordSalt { get; set; }
 
         [Required]
@@ -49,8 +49,8 @@ namespace Abig2025.Models.Users
         public bool IsActive { get; set; } = true;
 
         // Relaciones
-        public virtual ICollection<UserRole> UserRoles { get; set; }
-        public virtual ICollection<LoginAttempt> LoginAttempts { get; set; }
-        public virtual ICollection<Property> Properties { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<LoginAttempt> LoginAttempts { get; set; } = new List<LoginAttempt>();
+        public virtual ICollection<Property> Properties { get; set; } = new List<Property>();
     }
 }

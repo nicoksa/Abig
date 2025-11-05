@@ -1,9 +1,10 @@
-// Pages/Login/Register.cshtml.cs
+Ôªø// Pages/Login/Register.cshtml.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Abig2025.Services;
 using Abig2025.Models.ViewModels;
 using Abig2025.Models.Users;
+using Abig2025.Services.Interfaces;
 
 namespace Abig2025.Pages.Login
 {
@@ -21,55 +22,77 @@ namespace Abig2025.Pages.Login
         [BindProperty]
         public RegisterViewModel Input { get; set; }
 
+        [TempData]
+        public string SuccessMessage { get; set; }
+
+        [TempData]
+        public string ErrorMessage { get; set; }
+
         public void OnGet()
         {
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // TEMPORAL: Comentar la validaci√≥n honeypot para testing
+            // if (!string.IsNullOrEmpty(Input.Honeypot))
+            // {
+            //     _logger.LogWarning("Posible bot detectado en registro");
+            //     return RedirectToPage("/Login");
+            // }
+
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            // Verificar si el email ya existe
-            if (await _authService.EmailExistsAsync(Input.Email))
-            {
-                ModelState.AddModelError("Input.Email", "Este email ya est· registrado");
-                return Page();
-            }
-
             try
             {
-                // Convertir el ViewModel a la entidad User
+                // Verificar si el email ya existe
+                if (await _authService.EmailExistsAsync(Input.Email))
+                {
+                    ModelState.AddModelError("Input.Email", "Este email ya est√° registrado");
+                    return Page();
+                }
+
+                // Convertir ViewModel a entidad User
                 var user = new User
                 {
-                    FirstName = Input.FirstName,
-                    LastName = Input.LastName,
-                    Email = Input.Email
-                    // PasswordHash y Salt los genera el AuthService
+                    FirstName = Input.FirstName.Trim(),
+                    LastName = Input.LastName.Trim(),
+                    Email = Input.Email.ToLower().Trim()
                 };
 
-                var result = await _authService.RegisterAsync(user, Input.Password);
+                // Crear UserProfile con los datos proporcionados
+                var userProfile = new UserProfile
+                {
+                    Dni = Input.Dni ?? string.Empty,
+                    Phone = Input.Phone,
+                    Address = Input.Address,
+                    City = Input.City,
+                    Province = Input.Province,
+                    Country = Input.Country,
+                    BirthDate = Input.BirthDate
+                };
 
-                if (result)
+                var (success, message) = await _authService.RegisterAsync(user, Input.Password, userProfile);
+
+                if (success)
                 {
                     _logger.LogInformation("Usuario {Email} registrado correctamente", Input.Email);
-
-                    // Redirigir a p·gina de Èxito o login
-                    TempData["SuccessMessage"] = "Registro exitoso. Por favor verifica tu email.";
-                    return RedirectToPage("/Login");
+                    SuccessMessage = message;
+                    return RedirectToPage("/Login/RegisterSuccess");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Error al crear la cuenta");
+                    ModelState.AddModelError(string.Empty, message);
                     return Page();
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error durante el registro para {Email}", Input.Email);
-                ModelState.AddModelError(string.Empty, "Ha ocurrido un error durante el registro");
+                ModelState.AddModelError(string.Empty, $"Ha ocurrido un error durante el registro: {ex.Message}");
                 return Page();
             }
         }

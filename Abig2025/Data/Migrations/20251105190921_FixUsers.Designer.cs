@@ -4,6 +4,7 @@ using Abig2025.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Abig2025.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251105190921_FixUsers")]
+    partial class FixUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -361,6 +364,7 @@ namespace Abig2025.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Dni")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -377,7 +381,8 @@ namespace Abig2025.Data.Migrations
 
                     b.HasKey("UserProfileId");
 
-                    b.HasIndex("Dni");
+                    b.HasIndex("Dni")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
