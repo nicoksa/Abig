@@ -1,12 +1,14 @@
 ﻿using Abig2025.Data;
 using Abig2025.Models.Users;
-
+using Abig2025.Models.ViewModels;
 using Abig2025.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Abig2025.Models.ViewModels;
 
 namespace Abig2025.Services
 {
@@ -199,7 +201,7 @@ namespace Abig2025.Services
             }
         }
 
-        // Mantener los métodos existentes...
+
         public async Task<(bool success, User user)> LoginAsync(string email, string password, string ipAddress, string userAgent)
         {
             var user = await _context.Users
@@ -225,12 +227,64 @@ namespace Abig2025.Services
                 return (false, null);
             }
 
+            // ACTUALIZAR ÚLTIMO LOGIN
             user.LastLogin = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+
+            // CREAR COOKIE DE AUTENTICACIÓN
+            await CreateAuthenticationCookie(user);
 
             await LogLoginAttemptAsync(email, true, ipAddress, userAgent, user.UserId);
             return (true, user);
         }
+
+
+        private async Task CreateAuthenticationCookie(User user)
+        {
+            try
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                    new Claim("FullName", $"{user.FirstName} {user.LastName}")
+                };
+
+                // Agregar roles a los claims
+                foreach (var userRole in user.UserRoles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, userRole.Role.RoleName));
+                }
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true, // Esto hará que la cookie persista entre sesiones del navegador
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
+                    AllowRefresh = true
+                };
+
+                await _httpContextAccessor.HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
+                _logger.LogInformation("Cookie de autenticación creada para el usuario: {Email}", user.Email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creando cookie de autenticación para: {Email}", user.Email);
+                throw;
+            }
+        }
+
+
+
+
+
+
 
         public async Task<bool> EmailExistsAsync(string email)
         {
@@ -252,5 +306,22 @@ namespace Abig2025.Services
             _context.LoginAttempts.Add(attempt);
             await _context.SaveChangesAsync();
         }
+
+        public async Task LogoutAsync()
+        {
+            try
+            {
+                await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                _logger.LogInformation("Usuario cerró sesión exitosamente");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error durante el logout");
+                throw;
+            }
+        }
+
+
+
     }
 }

@@ -48,9 +48,9 @@
                         </a>
 
                         <ul class="js-clone-nav d-none d-lg-inline-block text-start site-menu float-end">
-                            <li class="active"><a asp-page="/Index">Inicio </a></li>
+                            <li class="active"><a asp-page="/Index">Inicio</a></li>
                             <li class="has-children">
-                                <a <a asp-page="/Results2">Categorias</a>
+                                <a asp-page="/Results2">Categorias</a>
                                 <ul class="dropdown">
                                     <li><a asp-page="/Results2">Casas</a></li>
                                     <li><a asp-page="/Results2">Departamentos</a></li>
@@ -69,10 +69,34 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li><a asp-page ="/Post">Publicar</a></li>
+                            <li><a asp-page="/Post">Publicar</a></li>
                             <li><a asp-page="/About">Sobre nosotros</a></li>
-                            <li><a asp-page="Login/Login" class="btn-login">Iniciar sesión</a></li>
-                           
+
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li class="has-children">
+                                    <a href="#">
+                                        <i class="bi bi-person-circle"></i> Mi Perfil
+                                    </a>
+                                    <ul class="dropdown">
+                                        <li><a asp-page="/Profile">Ver Perfil</a></li>
+                                        <li><a asp-page="/MyProperties">Mis Propiedades</a></li>
+                                        <li><a asp-page="/Favorites">Favoritos</a></li>
+                                        <li><a asp-page="/Settings">Configuración</a></li>
+                                        <li>
+                                            <form asp-page="/Login/Logout" method="post" id="logoutForm">
+                                                <button type="submit" class="btn btn-link text-dark p-0" style="text-decoration: none;">
+                                                    Cerrar Sesión
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li><a asp-page="/Login/login" class="btn-login">Iniciar sesión</a></li>
+                            }
                         </ul>
 
                         <a href="#"
@@ -85,8 +109,6 @@
                 </div>
             </div>
         </nav>
-
-
     </header>
 
 
@@ -176,13 +198,6 @@
 
             <div class="row mt-5">
                 <div class="col-12 text-center">
-                    <!--
-                      **==========
-                      NOTE:
-                      Please don't remove this copyright link unless you buy the license here https://untree.co/license/
-                      **==========
-                    -->
-
                     <p>
                         Copyright &copy;
                         <script>
