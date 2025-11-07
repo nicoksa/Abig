@@ -43,13 +43,14 @@
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
 
-                <div class="form-group" style="justify-content: space-between; margin-bottom: 20px;">
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="Input.RememberMe" /> Recordarme
-                            <span class="checkmark"></span>
+                <div class="form-wrapper">
+                    <div class="form-checkbox-wrapper">
+                        <input type="checkbox" asp-for="Input.RememberMe" id="RememberMe" />
+                        <label for="RememberMe" class="checkbox-label">
+                            Recordarme
                         </label>
                     </div>
+                    <span asp-validation-for="Input.RememberMe" class="text-danger"></span>
                 </div>
 
                 <a asp-page="ForgotPassword" style="color: #007bff; text-decoration: underline;">

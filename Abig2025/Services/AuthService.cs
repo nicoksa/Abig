@@ -1,4 +1,5 @@
 ﻿using Abig2025.Data;
+using Abig2025.Helpers;
 using Abig2025.Models.Users;
 using Abig2025.Models.ViewModels;
 using Abig2025.Services.Interfaces;
@@ -202,7 +203,7 @@ namespace Abig2025.Services
         }
 
 
-        public async Task<(bool success, User user)> LoginAsync(string email, string password, string ipAddress, string userAgent)
+        public async Task<(bool success, User user)> LoginAsync(string email, string password, string ipAddress, string userAgent, bool rememberMe = false)
         {
             var user = await _context.Users
                 .Include(u => u.UserRoles)
@@ -228,18 +229,18 @@ namespace Abig2025.Services
             }
 
             // ACTUALIZAR ÚLTIMO LOGIN
-            user.LastLogin = DateTime.UtcNow;
+            user.LastLogin = HoraArgentina.Now;
             await _context.SaveChangesAsync();
 
             // CREAR COOKIE DE AUTENTICACIÓN
-            await CreateAuthenticationCookie(user);
+            await CreateAuthenticationCookie(user, rememberMe);
 
             await LogLoginAttemptAsync(email, true, ipAddress, userAgent, user.UserId);
             return (true, user);
         }
 
 
-        private async Task CreateAuthenticationCookie(User user)
+        private async Task CreateAuthenticationCookie(User user, bool rememberMe)
         {
             try
             {
@@ -261,7 +262,7 @@ namespace Abig2025.Services
 
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true, // Esto hará que la cookie persista entre sesiones del navegador
+                    IsPersistent = rememberMe, // Esto hará que la cookie persista entre sesiones del navegador
                     ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
                     AllowRefresh = true
                 };
@@ -271,7 +272,7 @@ namespace Abig2025.Services
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties);
 
-                _logger.LogInformation("Cookie de autenticación creada para el usuario: {Email}", user.Email);
+                _logger.LogInformation("Cookie de autenticación creada para el usuario: {Email} - RememberMe: {RememberMe}", user.Email, rememberMe);
             }
             catch (Exception ex)
             {

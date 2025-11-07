@@ -49,7 +49,8 @@ namespace Abig2025.Pages
                     Input.Email,
                     Input.Password,
                     ipAddress,
-                    userAgent
+                    userAgent,
+                    Input.RememberMe
                 );
 
                 if (success)
