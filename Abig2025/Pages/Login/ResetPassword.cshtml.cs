@@ -1,31 +1,34 @@
-// ForgotPassword.cshtml.cs
+// ResetPassword.cshtml.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Abig2025.Models.ViewModels;
 using Abig2025.Services.Interfaces;
 
-
 namespace Abig2025.Pages.Login
 {
-    public class ForgotPasswordModel : PageModel
+    public class ResetPasswordModel : PageModel
     {
         private readonly IPasswordService _passwordService;
-        private readonly ILogger<ForgotPasswordModel> _logger;
+        private readonly ILogger<ResetPasswordModel> _logger;
 
-        public ForgotPasswordModel(IPasswordService passwordService, ILogger<ForgotPasswordModel> logger)
+        public ResetPasswordModel(IPasswordService passwordService, ILogger<ResetPasswordModel> logger)
         {
-            _passwordService  =passwordService;
+            _passwordService = passwordService;
             _logger = logger;
         }
 
         [BindProperty]
-        public ForgotPasswordViewModel Input { get; set; }
+        public ResetPasswordViewModel Input { get; set; }
 
-        [TempData]
-        public string StatusMessage { get; set; }
-
-        public void OnGet()
+        public IActionResult OnGet(string token, string email)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToPage("./Login");
+            }
+
+            Input = new ResetPasswordViewModel { Token = token, Email = email };
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -37,12 +40,11 @@ namespace Abig2025.Pages.Login
 
             try
             {
-                var (success, message) = await _passwordService.ForgotPasswordAsync(Input.Email);
+                var (success, message) = await _passwordService.ResetPasswordAsync(Input.Token, Input.Email, Input.NewPassword);
 
                 if (success)
                 {
-                    StatusMessage = message;
-                    return RedirectToPage("./ForgotPasswordConfirmation");
+                    return RedirectToPage("./ResetPasswordConfirmation");
                 }
                 else
                 {
@@ -52,7 +54,7 @@ namespace Abig2025.Pages.Login
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error durante la solicitud de recuperación para {Email}", Input.Email);
+                _logger.LogError(ex, "Error durante el reseteo de contraseña para {Email}", Input.Email);
                 ModelState.AddModelError(string.Empty, "Ha ocurrido un error. Por favor, inténtelo de nuevo.");
                 return Page();
             }
