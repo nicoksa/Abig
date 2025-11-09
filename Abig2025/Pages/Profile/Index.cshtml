@@ -1,16 +1,40 @@
 ﻿@page
-@model Abig2025.Pages.ProfileModel
+@model Abig2025.Pages.Profile.IndexModel
 @{
     ViewData["Title"] = "Mi Perfil";
     Layout = "_Layout";
 }
+
+<!-- Agregar esta sección del hero al inicio -->
+<div class="hero page-inner overlay"
+     style="background-image: url('images/hero_bg_3.jpg')">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-9 text-center mt-5">
+                <h1 class="heading" data-aos="fade-up">Mi Perfil</h1>
+
+                <nav aria-label="breadcrumb"
+                     data-aos="fade-up"
+                     data-aos-delay="200">
+                    <ol class="breadcrumb text-center justify-content-center">
+                        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                        <li class="breadcrumb-item active text-white-50"
+                            aria-current="page">
+                            Mi Perfil
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     .profile-container {
         background: linear-gradient(135deg, #f8f9fa, #e9ecef);
         min-height: 100vh;
         padding: 40px 0;
-        padding-top: 140px;
+        padding-top: 100px;
     }
 
     .profile-card {
@@ -19,10 +43,13 @@
         box-shadow: 0 8px 30px rgba(0,0,0,0.08);
         overflow: hidden;
         border: 1px solid rgba(0,0,0,0.05);
+        margin-top: -50px; 
+        position: relative;
+        z-index: 1;
     }
 
     .profile-header {
-        background: linear-gradient(135deg, #198754;, #2a5caa);
+        background: linear-gradient(135deg, #198754, #2a5caa);
         color: white;
         padding: 40px 30px;
         text-align: center;
@@ -165,8 +192,8 @@
 
     /* Responsive */
     @@media (max-width: 768px) {
-        .profile-container {
-            padding-top: 120px;
+        .profile-card {
+            margin-top: -30px;
         }
 
         .info-item {
@@ -260,16 +287,12 @@
                             </div>
                             <div class="stat-card">
                                 <div class="stat-number">@Model.MemberFor</div>
-                                <div class="stat-label">Días como Miembro</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-number">@Model.LastLoginDays</div>
-                                <div class="stat-label">Días desde último acceso</div>
+                                <div class="stat-label">Días registrado</div>
                             </div>
                         </div>
 
                         <div class="action-buttons">
-                            <a asp-page="/EditProfile" class="btn-edit">
+                            <a asp-page="/Profile/Edit" class="btn-edit">
                                 <i class="bi bi-pencil-square"></i> Editar Perfil
                             </a>
                             <a asp-page="/MyProperties" class="btn-secondary">

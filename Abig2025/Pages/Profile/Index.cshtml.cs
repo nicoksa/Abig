@@ -4,15 +4,16 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Abig2025.Data;
 using Microsoft.EntityFrameworkCore;
+using Abig2025.Helpers;
 
-namespace Abig2025.Pages
+namespace Abig2025.Pages.Profile
 {
     [Authorize]
-    public class ProfileModel : PageModel
+    public class IndexModel : PageModel
     {
         private readonly AppDbContext _context;
 
-        public ProfileModel(AppDbContext context)
+        public IndexModel(AppDbContext context)
         {
             _context = context;
         }
@@ -29,7 +30,7 @@ namespace Abig2025.Pages
         public int PropertiesCount { get; set; }
         public int FavoritesCount { get; set; }
         public int MemberFor { get; set; }
-        public int LastLoginDays { get; set; }
+
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -55,9 +56,8 @@ namespace Abig2025.Pages
                 UserFullName = $"{user.FirstName} {user.LastName}";
                 Email = user.Email;
                 MemberSince = user.CreatedAt.ToString("dd/MM/yyyy");
-                MemberFor = (int)(DateTime.UtcNow - user.CreatedAt).TotalDays;
-                LastLoginDays = user.LastLogin.HasValue ?
-                    (int)(DateTime.UtcNow - user.LastLogin.Value).TotalDays : 0;
+                MemberFor = (int)(HoraArgentina.Now - user.CreatedAt).TotalDays;
+               
 
                 // Cargar información del perfil si existe
                 var userProfile = await _context.UserProfiles
@@ -73,7 +73,7 @@ namespace Abig2025.Pages
                     Country = userProfile.Country ?? string.Empty;
                 }
 
-                // Contar propiedades - si tienes el modelo Property
+                // Contar propiedades -
                 try
                 {
                     PropertiesCount = await _context.Properties

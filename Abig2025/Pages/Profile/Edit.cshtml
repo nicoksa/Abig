@@ -1,0 +1,273 @@
+﻿@page
+@model Abig2025.Pages.Profile.EditModel
+@{
+    ViewData["Title"] = "Editar Perfil";
+    Layout = "_Layout";
+}
+
+<!-- Hero Section -->
+<div class="hero page-inner overlay"
+     style="background-image: url('images/hero_bg_3.jpg')">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-9 text-center mt-5">
+                <h1 class="heading" data-aos="fade-up">Editar Perfil</h1>
+
+                <nav aria-label="breadcrumb"
+                     data-aos="fade-up"
+                     data-aos-delay="200">
+                    <ol class="breadcrumb text-center justify-content-center">
+                        <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                        <li class="breadcrumb-item"><a asp-page="/Profile/Index">Mi Perfil</a></li>
+                        <li class="breadcrumb-item active text-white-50" aria-current="page">
+                            Editar Perfil
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .edit-profile-container {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        min-height: 100vh;
+        padding: 40px 0;
+        padding-top: 100px;
+    }
+
+    .edit-profile-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        margin-top: -50px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .edit-profile-header {
+        background: linear-gradient(135deg, #198754, #2a5caa);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .edit-profile-body {
+        padding: 40px 30px;
+    }
+
+    .form-section {
+        margin-bottom: 40px;
+    }
+
+        .form-section h4 {
+            color: #2a5caa;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #2a5caa;
+            box-shadow: 0 0 0 0.2rem rgba(42, 92, 170, 0.25);
+        }
+
+    .text-danger {
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 40px;
+        flex-wrap: wrap;
+    }
+
+    .btn-save, .btn-cancel {
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-save {
+        background: #198754;
+        color: white;
+    }
+
+        .btn-save:hover {
+            background: #157347;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+        }
+
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+    }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+
+    .alert-success {
+        border-radius: 8px;
+        border: 1px solid #d1e7dd;
+        background: #d1e7dd;
+        color: #0f5132;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .edit-profile-card {
+            margin-top: -30px;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-save, .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="edit-profile-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="edit-profile-card">
+                    <div class="edit-profile-header">
+                        <h2 class="mb-2">Editar Perfil</h2>
+                        <p class="mb-0 opacity-75">Actualiza tu información personal</p>
+                    </div>
+
+                    <div class="edit-profile-body">
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert-success">
+                                <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+                            </div>
+                        }
+
+                        <form method="post">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-section">
+                                        <h4><i class="bi bi-person-badge"></i>Información Personal</h4>
+
+                                        <div class="form-group">
+                                            <label class="form-label" asp-for="Input.FirstName">Nombre</label>
+                                            <input asp-for="Input.FirstName" class="form-control" />
+                                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" asp-for="Input.LastName">Apellido</label>
+                                            <input asp-for="Input.LastName" class="form-control" />
+                                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" asp-for="Input.Phone">Teléfono</label>
+                                            <input asp-for="Input.Phone" class="form-control" />
+                                            <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" asp-for="Input.Dni">DNI</label>
+                                            <input asp-for="Input.Dni" class="form-control" />
+                                            <span asp-validation-for="Input.Dni" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-section">
+                                        <h4><i class="bi bi-geo-alt"></i>Información de Contacto</h4>
+
+                                        <div class="form-group">
+                                            <label class="form-label" asp-for="Input.Address">Dirección</label>
+                                            <input asp-for="Input.Address" class="form-control" />
+                                            <span asp-validation-for="Input.Address" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" asp-for="Input.City">Ciudad</label>
+                                            <input asp-for="Input.City" class="form-control" />
+                                            <span asp-validation-for="Input.City" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" asp-for="Input.Province">Provincia</label>
+                                            <input asp-for="Input.Province" class="form-control" />
+                                            <span asp-validation-for="Input.Province" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label" asp-for="Input.Country">País</label>
+                                            <input asp-for="Input.Country" class="form-control" />
+                                            <span asp-validation-for="Input.Country" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons">
+                                <button type="submit" class="btn-save">
+                                    <i class="bi bi-check-lg"></i> Guardar Cambios
+                                </button>
+                                <a asp-page="/Profile/Index" class="btn-cancel">
+                                    <i class="bi bi-x-lg"></i> Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
