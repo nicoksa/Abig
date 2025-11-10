@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace Abig2025.Pages.Profile
@@ -26,14 +27,21 @@ namespace Abig2025.Pages.Profile
 
         public class EditProfileInputModel
         {
+            [Required(ErrorMessage = "El nombre es obligatorio")]
+            [Display(Name = "Nombre")]
             public string FirstName { get; set; } = string.Empty;
+
+            [Required(ErrorMessage = "El apellido es obligatorio")]
+            [Display(Name = "Apellido")]
             public string LastName { get; set; } = string.Empty;
-            public string Phone { get; set; } = string.Empty;
-            public string Dni { get; set; } = string.Empty;
-            public string Address { get; set; } = string.Empty;
-            public string City { get; set; } = string.Empty;
-            public string Province { get; set; } = string.Empty;
-            public string Country { get; set; } = string.Empty;
+
+            // Estos campos NO son requeridos
+            public string? Phone { get; set; }
+            public string? Dni { get; set; }
+            public string? Address { get; set; }
+            public string? City { get; set; }
+            public string? Province { get; set; }
+            public string? Country { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -85,16 +93,34 @@ namespace Abig2025.Pages.Profile
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
+            // Obtener userId una sola vez al inicio
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
             {
                 return RedirectToPage("/Login");
+            }
+
+            // Validar solo los campos requeridos manualmente
+            if (string.IsNullOrWhiteSpace(Input.FirstName))
+            {
+                ModelState.AddModelError("Input.FirstName", "El nombre es obligatorio");
+            }
+
+            if (string.IsNullOrWhiteSpace(Input.LastName))
+            {
+                ModelState.AddModelError("Input.LastName", "El apellido es obligatorio");
+            }
+
+            // Solo verificar si hay errores en los campos requeridos
+            if (!ModelState.IsValid)
+            {
+                // Recargar datos necesarios para la vista
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userIdInt);
+                if (user != null)
+                {
+                    UserFullName = $"{user.FirstName} {user.LastName}";
+                }
+                return Page();
             }
 
             try
@@ -108,8 +134,8 @@ namespace Abig2025.Pages.Profile
                     return RedirectToPage("/Login");
                 }
 
-                user.FirstName = Input.FirstName;
-                user.LastName = Input.LastName;
+                user.FirstName = Input.FirstName.Trim();
+                user.LastName = Input.LastName.Trim();
                 user.UpdatedAt = HoraArgentina.Now;
 
                 // Actualizar o crear perfil de usuario
@@ -121,25 +147,23 @@ namespace Abig2025.Pages.Profile
                     userProfile = new UserProfile
                     {
                         UserId = userIdInt,
-                        Phone = Input.Phone,
-                        Dni = Input.Dni,
-                        Address = Input.Address,
-                        City = Input.City,
-                        Province = Input.Province,
-                        Country = Input.Country,
-                       
+                        Phone = string.IsNullOrWhiteSpace(Input.Phone) ? null : Input.Phone.Trim(),
+                        Dni = string.IsNullOrWhiteSpace(Input.Dni) ? null : Input.Dni.Trim(),
+                        Address = string.IsNullOrWhiteSpace(Input.Address) ? null : Input.Address.Trim(),
+                        City = string.IsNullOrWhiteSpace(Input.City) ? null : Input.City.Trim(),
+                        Province = string.IsNullOrWhiteSpace(Input.Province) ? null : Input.Province.Trim(),
+                        Country = string.IsNullOrWhiteSpace(Input.Country) ? null : Input.Country.Trim(),
                     };
                     _context.UserProfiles.Add(userProfile);
                 }
                 else
                 {
-                    userProfile.Phone = Input.Phone;
-                    userProfile.Dni = Input.Dni;
-                    userProfile.Address = Input.Address;
-                    userProfile.City = Input.City;
-                    userProfile.Province = Input.Province;
-                    userProfile.Country = Input.Country;
-                   
+                    userProfile.Phone = string.IsNullOrWhiteSpace(Input.Phone) ? null : Input.Phone.Trim();
+                    userProfile.Dni = string.IsNullOrWhiteSpace(Input.Dni) ? null : Input.Dni.Trim();
+                    userProfile.Address = string.IsNullOrWhiteSpace(Input.Address) ? null : Input.Address.Trim();
+                    userProfile.City = string.IsNullOrWhiteSpace(Input.City) ? null : Input.City.Trim();
+                    userProfile.Province = string.IsNullOrWhiteSpace(Input.Province) ? null : Input.Province.Trim();
+                    userProfile.Country = string.IsNullOrWhiteSpace(Input.Country) ? null : Input.Country.Trim();
                 }
 
                 await _context.SaveChangesAsync();
@@ -150,6 +174,13 @@ namespace Abig2025.Pages.Profile
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error al actualizar el perfil. Por favor, intente nuevamente.");
+
+                // Recargar datos necesarios para la vista
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userIdInt);
+                if (user != null)
+                {
+                    UserFullName = $"{user.FirstName} {user.LastName}";
+                }
                 return Page();
             }
         }

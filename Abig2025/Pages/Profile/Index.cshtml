@@ -5,9 +5,9 @@
     Layout = "_Layout";
 }
 
-<!-- Agregar esta sección del hero al inicio -->
+
 <div class="hero page-inner overlay"
-     style="background-image: url('images/hero_bg_3.jpg')">
+     style="background-image: url('images/img33.jpg')">
     <div class="container">
         <div class="row justify-content-center align-items-center">
             <div class="col-lg-9 text-center mt-5">
@@ -29,192 +29,7 @@
     </div>
 </div>
 
-<style>
-    .profile-container {
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        min-height: 100vh;
-        padding: 40px 0;
-        padding-top: 100px;
-    }
 
-    .profile-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-        overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.05);
-        margin-top: -50px; 
-        position: relative;
-        z-index: 1;
-    }
-
-    .profile-header {
-        background: linear-gradient(135deg, #198754, #2a5caa);
-        color: white;
-        padding: 40px 30px;
-        text-align: center;
-        position: relative;
-    }
-
-    .profile-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        border: 4px solid rgba(255,255,255,0.3);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-        .profile-avatar i {
-            font-size: 40px;
-            color: #1b6ec2;
-        }
-
-    .profile-body {
-        padding: 40px 30px;
-    }
-
-    .info-section {
-        margin-bottom: 35px;
-    }
-
-        .info-section h4 {
-            color: #2a5caa;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            font-weight: 600;
-            font-size: 1.25rem;
-        }
-
-    .info-item {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
-        padding: 12px 0;
-        border-bottom: 1px solid #f8f9fa;
-    }
-
-    .info-label {
-        font-weight: 600;
-        color: #495057;
-        min-width: 150px;
-    }
-
-    .info-value {
-        color: #6c757d;
-        text-align: right;
-        flex: 1;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 20px;
-        margin: 40px 0;
-    }
-
-    .stat-card {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 25px 20px;
-        text-align: center;
-        border-left: 4px solid #2a5caa;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #2a5caa;
-        margin-bottom: 5px;
-    }
-
-    .stat-label {
-        color: #6c757d;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 12px;
-        margin-top: 40px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .btn-edit, .btn-secondary {
-        padding: 12px 24px;
-        border-radius: 8px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-edit {
-        background: #2a5caa;
-        color: white;
-    }
-
-        .btn-edit:hover {
-            background: #1b6ec2;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(43, 92, 170, 0.3);
-        }
-
-    .btn-secondary {
-        background: #6c757d;
-        color: white;
-    }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-        }
-
-    /* Responsive */
-    @@media (max-width: 768px) {
-        .profile-card {
-            margin-top: -30px;
-        }
-
-        .info-item {
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .info-value {
-            text-align: left;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-        }
-
-        .btn-edit, .btn-secondary {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-</style>
 
 <div class="profile-container">
     <div class="container">
@@ -226,10 +41,16 @@
                             <i class="bi bi-person-fill"></i>
                         </div>
                         <h2 class="mb-2">@Model.UserFullName</h2>
-                        <p class="mb-0 opacity-75">Miembro desde @Model.MemberSince</p>
+                        <p class="mb-0 opacity-75">Registrado el @Model.MemberSince</p>
                     </div>
 
                     <div class="profile-body">
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert-success">
+                                <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+                            </div>
+                        }
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="info-section">
@@ -301,9 +122,7 @@
                             <a asp-page="/Favorites" class="btn-secondary">
                                 <i class="bi bi-heart"></i> Mis Favoritos
                             </a>
-                            <a asp-page="/Settings" class="btn-secondary">
-                                <i class="bi bi-gear"></i> Configuración
-                            </a>
+                          
                         </div>
                     </div>
                 </div>
