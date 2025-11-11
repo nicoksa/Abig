@@ -229,6 +229,14 @@ namespace Abig2025.Services
                 return (false, null);
             }
 
+            if (!string.IsNullOrEmpty(user.GoogleId))
+            {
+                // Usuario registrado con Google, no puede hacer login con contraseña
+                await LogLoginAttemptAsync(email, false, ipAddress, userAgent, user.UserId);
+                return (false, null);
+            }
+
+
             if (!VerifyPassword(password, user.PasswordHash, user.PasswordSalt))
             {
                 await LogLoginAttemptAsync(email, false, ipAddress, userAgent, user.UserId);

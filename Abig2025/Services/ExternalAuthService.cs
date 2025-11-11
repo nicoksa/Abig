@@ -4,6 +4,8 @@ using Abig2025.Models.Users;
 using Abig2025.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Abig2025.Services
 {
@@ -85,12 +87,21 @@ namespace Abig2025.Services
                     lastName = nameParts.Length > 1 ? string.Join(" ", nameParts.Skip(1)) : "";
                 }
 
+
+                // Generar hash y salt dummy para usuarios de Google
+                // Uso valores que indiquen que es una cuenta de Google
+                string dummyPassword = Guid.NewGuid().ToString() + "GoogleAuth123!";
+                CreatePasswordHash(dummyPassword, out string passwordHash, out string passwordSalt);
+
+
                 var user = new User
                 {
                     GoogleId = googleId,
                     Email = email,
                     FirstName = firstName ?? "Usuario",
                     LastName = lastName ?? "Google",
+                    PasswordHash = passwordHash, 
+                    PasswordSalt = passwordSalt,
                     IsEmailVerified = true, // Google ya verificó el email
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
@@ -143,6 +154,15 @@ namespace Abig2025.Services
                 AssignedAt = DateTime.UtcNow
             };
             _context.UserRoles.Add(userRole);
+        }
+
+
+
+        private void CreatePasswordHash(string password, out string passwordHash, out string passwordSalt)
+        {
+            using var hmac = new HMACSHA512();
+            passwordSalt = Convert.ToBase64String(hmac.Key);
+            passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(password)));
         }
     }
 }
