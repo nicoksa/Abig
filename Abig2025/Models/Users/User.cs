@@ -52,5 +52,8 @@ namespace Abig2025.Models.Users
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<LoginAttempt> LoginAttempts { get; set; } = new List<LoginAttempt>();
         public virtual ICollection<Property> Properties { get; set; } = new List<Property>();
+
+
+        public string? GoogleId { get; set; }
     }
 }

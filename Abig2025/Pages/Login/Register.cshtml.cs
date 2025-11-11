@@ -1,10 +1,11 @@
 ﻿// Pages/Login/Register.cshtml.cs
+using Abig2025.Models.Users;
+using Abig2025.Models.ViewModels;
+using Abig2025.Services;
+using Abig2025.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Abig2025.Services;
-using Abig2025.Models.ViewModels;
-using Abig2025.Models.Users;
-using Abig2025.Services.Interfaces;
 
 namespace Abig2025.Pages.Login
 {
@@ -95,6 +96,14 @@ namespace Abig2025.Pages.Login
                 ModelState.AddModelError(string.Empty, $"Ha ocurrido un error durante el registro: {ex.Message}");
                 return Page();
             }
+        }
+
+
+        public IActionResult OnPostGoogleLogin(string returnUrl = null)
+        {
+            var redirectUrl = Url.Page("/Login/Login", pageHandler: "GoogleCallback", values: new { returnUrl });
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, "Google");
         }
     }
 }

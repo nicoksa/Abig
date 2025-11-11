@@ -42,7 +42,18 @@ namespace Abig2025.Services
                 await _context.SaveChangesAsync();
 
                 var resetLink = GeneratePasswordResetLink(user.PasswordResetToken.Value, email);
+
+                /*
                 _logger.LogInformation("LINK DE RESETEO DE CONTRASEÑA (SIMULADO): {ResetLink}", resetLink);
+                */
+                // EMAIL REAL DE RECUPERACIÓN
+                var emailSent = await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
+
+                if (emailSent)
+                {
+                    _logger.LogInformation("Email de recuperación enviado exitosamente a {Email}", user.Email);
+                    return (true, "Se han enviado las instrucciones para resetear tu contraseña a tu email");
+                }
 
                 return (true, "Si el email existe, se enviarán instrucciones para resetear la contraseña");
             }

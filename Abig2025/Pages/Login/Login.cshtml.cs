@@ -1,25 +1,29 @@
-﻿// Pages/Login.cshtml.cs
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Abig2025.Services;
-using Abig2025.Models.ViewModels;  
-using Abig2025.Models.Users;  
-using Abig2025.Services.Interfaces; 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Abig2025.Services.Interfaces;
+using Abig2025.Models.ViewModels;
+using Abig2025.Models.Users;
+using System.Security.Claims;
 
 namespace Abig2025.Pages
 {
     public class LoginModel : PageModel
     {
         private readonly IAuthService _authService;
+        private readonly IExternalAuthService _externalAuthService;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(IAuthService authService, ILogger<LoginModel> logger)
+        public LoginModel(IAuthService authService,
+                         IExternalAuthService externalAuthService,
+                         ILogger<LoginModel> logger)
         {
             _authService = authService;
+            _externalAuthService = externalAuthService;
             _logger = logger;
         }
 
-        //  ViewModel - se usa para el formulario
         [BindProperty]
         public LoginViewModel Input { get; set; }
 
@@ -36,7 +40,7 @@ namespace Abig2025.Pages
 
             if (!ModelState.IsValid)
             {
-                return Page();  // Si hay errores de validación, muestra la página otra vez
+                return Page();
             }
 
             try
@@ -44,7 +48,6 @@ namespace Abig2025.Pages
                 var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
                 var userAgent = Request.Headers["User-Agent"].ToString();
 
-                // Usamos el ViewModel para obtener los datos
                 var (success, user) = await _authService.LoginAsync(
                     Input.Email,
                     Input.Password,
@@ -56,8 +59,6 @@ namespace Abig2025.Pages
                 if (success)
                 {
                     _logger.LogInformation("Usuario {Email} ha iniciado sesión correctamente", Input.Email);
-
-                    // Redirigir al usuario
                     return LocalRedirect(returnUrl ?? "/");
                 }
                 else
@@ -72,6 +73,67 @@ namespace Abig2025.Pages
                 ModelState.AddModelError(string.Empty, "Ha ocurrido un error durante el inicio de sesión");
                 return Page();
             }
+        }
+
+        public async Task<IActionResult> OnGetGoogleCallback()
+        {
+            var result = await HttpContext.AuthenticateAsync("Google");
+
+            if (!result.Succeeded)
+            {
+                _logger.LogWarning("Falló la autenticación con Google");
+                TempData["ErrorMessage"] = "Error al autenticar con Google";
+                return RedirectToPage("./Login");
+            }
+
+            var (success, message, user) = await _externalAuthService.HandleGoogleLoginAsync(result.Principal);
+
+            if (success && user != null)
+            {
+                // Crear cookie de autenticación - USAR EL MÉTODO LOCAL
+                await CreateAuthenticationCookie(user, false);
+
+                _logger.LogInformation("Login con Google exitoso para: {Email}", user.Email);
+                return LocalRedirect(ReturnUrl ?? "/");
+            }
+
+            TempData["ErrorMessage"] = message;
+            return RedirectToPage("./Login");
+        }
+
+        // Acción para iniciar desafío de Google
+        public IActionResult OnPostGoogleLogin(string returnUrl = null)
+        {
+            var redirectUrl = Url.Page("/Login/Login", pageHandler: "GoogleCallback", values: new { returnUrl });
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, "Google");
+        }
+
+        // MÉTODO LOCAL PARA CREAR LA COOKIE
+        private async Task CreateAuthenticationCookie(User user, bool rememberMe)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                new Claim("FullName", $"{user.FirstName} {user.LastName}")
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = rememberMe,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
+                AllowRefresh = true
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
         }
     }
 }

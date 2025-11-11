@@ -74,10 +74,23 @@ namespace Abig2025.Services
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
+                /*
                 // Enviar email de verificación (simulado)
                 var verificationLink = GenerateVerificationLink(user.EmailVerificationToken.Value);
                 _logger.LogInformation("EMAIL DE VERIFICACIÓN (SIMULADO): {VerificationLink}", verificationLink);
                 var emailSent = true; // Simular que se envió
+                */
+
+                // EMAIL DE VERIFICACIÓN REAL
+                var verificationLink = GenerateVerificationLink(user.EmailVerificationToken.Value);
+                var emailSent = await _emailService.SendVerificationEmailAsync(user.Email, user.FirstName, verificationLink);
+
+
+                if (!emailSent)
+                {
+                    _logger.LogWarning("No se pudo enviar el email de verificación a {Email}, pero el usuario fue registrado", user.Email);
+                }
+
 
                 _logger.LogInformation("Usuario registrado exitosamente: {Email}", user.Email);
                 return (true, "Registro exitoso. Por favor verifica tu email para activar tu cuenta.");

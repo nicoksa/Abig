@@ -71,9 +71,9 @@
                     <style>
                         body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
                         .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-                        .header {{ background: #007bff; color: white; padding: 20px; text-align: center; }}
+                        .header {{ background: #005555; color: white; padding: 20px; text-align: center; }}
                         .content {{ padding: 20px; background: #f9f9f9; }}
-                        .button {{ display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }}
+                        .button {{ display: inline-block; padding: 12px 24px; background: #005555; color: #ffffff !important; text-decoration: none; border-radius: 5px; }}
                         .footer {{ text-align: center; padding: 20px; font-size: 12px; color: #666; }}
                     </style>
                 </head>
@@ -116,7 +116,7 @@
                         .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
                         .header {{ background: #dc3545; color: white; padding: 20px; text-align: center; }}
                         .content {{ padding: 20px; background: #f9f9f9; }}
-                        .button {{ display: inline-block; padding: 12px 24px; background: #dc3545; color: white; text-decoration: none; border-radius: 5px; }}
+                        .button {{ display: inline-block; padding: 12px 24px; background: #dc3545; color: #ffffff !important; text-decoration: none; border-radius: 5px; }}
                         .footer {{ text-align: center; padding: 20px; font-size: 12px; color: #666; }}
                     </style>
                 </head>

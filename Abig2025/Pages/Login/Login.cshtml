@@ -16,6 +16,62 @@
 
     <!-- STYLE CSS -->
     <link rel="stylesheet" href="~/css/styleRegister.css">
+
+    <style>
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #757575;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 15px 0;
+            text-decoration: none;
+        }
+
+            .google-btn:hover {
+                background: #f8f9fa;
+                border-color: #ccc;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .google-btn img {
+                width: 20px;
+                height: 20px;
+                margin-right: 12px;
+            }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+            .divider::before,
+            .divider::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .divider::before {
+                margin-right: 10px;
+            }
+
+            .divider::after {
+                margin-left: 10px;
+            }
+    </style>
 </head>
 
 <body>
@@ -58,6 +114,16 @@
                 </a>
 
                 <button type="submit">Ingresar</button>
+
+                <div class="divider">O</div>
+
+                <form method="post" asp-page-handler="GoogleLogin">
+                    <button type="submit" class="google-btn">
+                        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+                        Continuar con Google
+                    </button>
+                </form>
+
 
                 <div style="text-align: center; margin-top: 20px;">
                     <p>

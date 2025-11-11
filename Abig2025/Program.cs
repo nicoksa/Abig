@@ -4,6 +4,8 @@ using Abig2025.Services.Abig2025.Services;
 using Abig2025.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Google;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IExternalAuthService, ExternalAuthService>();
 
 // O temporalmente registrar una implementación vacía:
 builder.Services.AddScoped<IEmailService>(provider =>
@@ -41,16 +44,31 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpContextAccessor();
 
 
-// Configurar autenticación
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Login";
-        options.LogoutPath = "/Logout";
-        options.AccessDeniedPath = "/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromDays(30);
-        options.SlidingExpiration = true;
-    });
+// CONFIGURACIÓN DE AUTENTICACIÓN ACTUALIZADA
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme; // ? NUEVO
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Login";
+    options.LogoutPath = "/Logout";
+    options.AccessDeniedPath = "/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+})
+.AddGoogle(options => // ? AGREGAR Google Authentication
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.CallbackPath = "/signin-google";
+    options.SaveTokens = true;
+
+    // Opcional: solicitar permisos adicionales
+    options.Scope.Add("profile");
+    options.Scope.Add("email");
+});
 
 builder.Services.AddAuthorization();
 

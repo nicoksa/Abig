@@ -82,11 +82,10 @@
                                         <li><a asp-page="/Profile/Index">Ver Perfil</a></li>
                                         <li><a asp-page="/MyProperties">Mis Propiedades</a></li>
                                         <li><a asp-page="/Favorites">Favoritos</a></li>
-                                        <li><a asp-page="/Settings">Configuración</a></li>
                                         <li>
-                                            <form asp-page="/Login/Logout" method="post" id="logoutForm">
-                                                <button type="submit" class="btn btn-link text-dark p-0" style="text-decoration: none;">
-                                                    Cerrar Sesión
+                                            <form asp-page="/Login/Logout" method="post" id="logoutForm" class="d-inline w-100">
+                                                <button type="submit" class="logout-btn w-100 text-start">
+                                                   Cerrar Sesión
                                                 </button>
                                             </form>
                                         </li>
