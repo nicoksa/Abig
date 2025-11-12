@@ -1,9 +1,9 @@
 ﻿/* Profile Shared Styles */
 .profile-container {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    
     min-height: 100vh;
     padding: 40px 0;
-    padding-top: 10px;
+    padding-top: 45px;
 }
 
 .profile-card, .edit-profile-card {

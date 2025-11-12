@@ -2,16 +2,66 @@
 @model Abig2025.Pages.Login.RegisterSuccessModel
 @{
     Layout = null;
+    ViewData["Title"] = "Registro exitoso";
 }
 
-<!DOCTYPE html>
-<html>
+<style>
+    /* LOGO AL COSTADO */
+    .logo-container {
+        position: absolute !important;
+        top: 10px !important;
+        right: 15px !important;
+        width: auto !important;
+        max-width: 70px !important;
+        margin: 0 !important;
+    }
+
+    .logo {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+
 <head>
-    <title>Registro Exitoso</title>
+    <meta charset="utf-8">
+    <title>Abig - Registro Exitoso</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet" href="~/css/styleRegister.css">
 </head>
+
 <body>
-    <h1>¡Registro Exitoso!</h1>
-    <p>Por favor verifica tu email para activar tu cuenta.</p>
-    <a asp-page="/Login/login">Ir al Login</a>
+    <div class="wrapper" style="background-image: url('~/images/Register/bg-registration-form-2.jpg');">
+        <div class="inner">
+            <a href="Login" class="back-arrow">
+                <i class="zmdi zmdi-arrow-left"></i>
+                Atrás
+            </a>
+
+            <div style="text-align: center;">
+                <h3>¡Registro Exitoso!</h3>
+                <div style="color: #28a745; font-size: 48px; margin: 20px 0;">
+                    <i class="zmdi zmdi-check-circle"></i>
+                </div>
+                <p style="text-align: center; margin-bottom: 25px; color: #666;">
+                    Tu cuenta ha sido creada exitosamente.
+                </p>
+                <p style="text-align: center; color: #666;">
+                    Por favor, verifica tu correo electrónico para activar tu cuenta y poder iniciar sesión.
+                </p>
+
+                <div style="margin-top: 30px;">
+                    <a asp-page="Login" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
+                        Ir al Inicio de Sesión
+                    </a>
+                </div>
+            </div>
+
+            <div class="logo-container">
+                <a asp-page="/Index">
+                    <img src="~/images/Logos/Logo2.png" alt="Logo" class="logo">
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
-</html>

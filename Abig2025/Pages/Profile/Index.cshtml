@@ -33,15 +33,32 @@
 
 <div class="profile-container">
     <div class="container">
+        <!-- Título principal con mejor espaciado -->
         <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-8">
-                <div class="profile-card">
-                    <div class="profile-header">
+                <div class="text-center mb-4 pt-5" data-aos="fade-up">
+                    <!-- Added pt-5 for top padding -->
+                    <h2 class="display-10 fw-bold text-primary mb-3">
+                        <i class="bi bi-person-badge me-3"></i>Gestión de Mi Cuenta
+                    </h2>
+                    <p class="lead text-muted mb-4">
+                        Consulta y administra toda tu información personal, propiedades y actividad en la plataforma
+                    </p>
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="profile-card mt-4">
+                    <!-- Added mt-4 for spacing from title -->
+                    <div class="profile-header text-center">
                         <div class="profile-avatar">
                             <i class="bi bi-person-fill"></i>
                         </div>
-                        <h2 class="mb-2">@Model.UserFullName</h2>
-                        <p class="mb-0 opacity-75">Registrado el @Model.MemberSince</p>
+                        <h3 class="mb-2 fw-bold">@Model.UserFullName</h3>
+                        <p class="mb-0 opacity-75">Miembro desde @Model.MemberSince</p>
                     </div>
 
                     <div class="profile-body">

@@ -32,6 +32,7 @@ input, textarea, select, button {
     font-family: "Muli-Regular";
     color: #333;
     font-size: 13px;
+    max-width: 250px
 }
 
 p, h1, h2, h3, h4, h5, h6, ul {
@@ -69,7 +70,8 @@ a:hover {
 }
 
 .inner {
-    min-width: 250px;
+    
+    width: 650px;
     margin: auto;
     margin-top: 20px;
     margin-bottom: 10px;
@@ -79,6 +81,10 @@ a:hover {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
 }
 
     .inner h3 {
@@ -265,32 +271,6 @@ button {
 
 
 
-
-
-
-
-
-
-
-
-
-/* Estructura del contenedor principal */
-.inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 40px;
-}
-
-
-
-.logo-container {
-    width: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .logo {
     max-width: 100%;
     height: auto;
@@ -440,10 +420,332 @@ button {
     text-align: center;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #dee2e6;
+    
 }
 
 .btn-register {
     width: 100%;
     margin-top: 1rem;
 }
+
+
+
+
+
+
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) {
+    .inner {
+        width: 90%;
+        max-width: 600px;
+        min-width: auto;
+        margin: 20px auto;
+        padding: 30px 25px;
+    }
+
+    form {
+        width: 100%;
+        padding-left: 0;
+    }
+
+    .logo-container {
+        position: relative !important;
+        top: 0 !important;
+        right: 0 !important;
+        margin: 25px auto 10px !important;
+        max-width: 200px !important;
+    }
+
+    .google-btn {
+        margin: 10px 0 !important;
+    }
+}
+
+/* Mobile Landscape (576px - 767px) */
+@media (max-width: 767px) {
+    .inner {
+        width: 95%;
+        margin: 15px auto;
+        padding: 25px 20px;
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .wrapper {
+        padding: 15px;
+        background-attachment: scroll;
+    }
+
+    .inner h3 {
+        font-size: 20px;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        flex-direction: column;
+    }
+
+        .form-group .form-wrapper {
+            width: 100%;
+        }
+
+            .form-group .form-wrapper:first-child {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+    .form-wrapper {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        height: 42px;
+        font-size: 14px;
+    }
+
+    button:not(.google-btn) {
+        width: 100%;
+        height: 45px;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    .back-arrow {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-bottom: 20px;
+        align-self: flex-start;
+    }
+
+    .logo-container {
+        max-width: 180px !important;
+        margin: 20px auto 5px !important;
+    }
+}
+
+/* Mobile Portrait (480px y menos) */
+@media (max-width: 480px) {
+    .inner {
+        padding: 20px 15px;
+        margin: 10px auto;
+        border-radius: 8px;
+    }
+
+        .inner h3 {
+            font-size: 18px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+    .form-control {
+        height: 44px;
+        padding: 0 15px;
+        font-size: 15px;
+    }
+
+    .form-wrapper label {
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    button:not(.google-btn) {
+        height: 46px;
+        margin-top: 15px;
+        font-size: 15px;
+    }
+
+    .google-btn {
+        padding: 13px;
+        font-size: 14px;
+    }
+
+    .checkbox-label,
+    .login-link,
+    .form-text {
+        font-size: 13px;
+    }
+
+    .password-help-text .form-text {
+        font-size: 12px;
+    }
+
+    .divider {
+        margin: 20px 0;
+        font-size: 13px;
+    }
+
+    .logo-container {
+        max-width: 150px !important;
+    }
+}
+
+/* Pantallas muy pequeñas (360px y menos) */
+@media (max-width: 360px) {
+    .inner {
+        padding: 15px 12px;
+        margin: 5px auto;
+    }
+
+        .inner h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+    .form-control {
+        height: 42px;
+        padding: 0 12px;
+    }
+
+    button:not(.google-btn) {
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .google-btn {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+        .google-btn img {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+        }
+
+    .logo-container {
+        max-width: 130px !important;
+    }
+}
+
+/* Pantallas grandes (1200px+) */
+@media (min-width: 1200px) {
+    .inner {
+        width: 650px;
+    }
+}
+
+/* Ajustes específicos para mejorar la experiencia táctil */
+@media (max-width: 767px) {
+    button,
+    .google-btn,
+    input[type="checkbox"],
+    a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        min-width: 20px;
+        min-height: 20px;
+        margin-top: 0.3rem;
+    }
+
+    .form-checkbox-wrapper input[type="checkbox"] {
+        min-width: 20px;
+        min-height: 20px;
+    }
+}
+
+/* Prevenir zoom en iOS al enfocar inputs */
+@media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/* Ajustes para modo landscape en móviles */
+@media (max-height: 500px) and (max-width: 767px) {
+    .wrapper {
+        align-items: flex-start;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .inner {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+
+
+
+/* ===== GOOGLE BUTTON HOVER STYLES ===== */
+
+.google-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+    .google-btn:hover {
+        background: #f8f9fa;
+        border-color: #4285f4;
+        box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Efecto de onda al hacer hover */
+    .google-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(66, 133, 244, 0.1);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s ease, height 0.3s ease;
+    }
+
+    .google-btn:hover::before {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Cambio sutil de color del texto e ícono al hover */
+    .google-btn:hover {
+        color: #4285f4;
+    }
+
+        /* Efecto específico para el ícono de Google */
+        .google-btn:hover img {
+            filter: brightness(0.9) saturate(1.2);
+        }
+
+    /* Versión alternativa con gradiente más aesthetic */
+    .google-btn.alternative-hover:hover {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-color: #34a853;
+        box-shadow: 0 4px 15px rgba(52, 168, 83, 0.15);
+    }
+
+    .google-btn.alternative-hover:hover {
+        color: #34a853;
+    }
+
+    /* Otra variante con efecto más suave */
+    .google-btn.soft-hover:hover {
+        background: #fafbfc;
+        border-color: #ea4335;
+        box-shadow: 0 3px 10px rgba(234, 67, 53, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .google-btn.soft-hover:hover {
+        color: #ea4335;
+    }
+
+    /* Minimal hover effect */
+    .google-btn.minimal-hover:hover {
+        background: #ffffff;
+        border-color: #5f6368;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transform: none;
+        color: #3c4043;
+    }

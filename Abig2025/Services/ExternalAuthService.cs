@@ -43,6 +43,12 @@ namespace Abig2025.Services
 
                 if (existingUser != null)
                 {
+
+                    if (string.IsNullOrEmpty(existingUser.GoogleId) && !string.IsNullOrEmpty(existingUser.PasswordHash))
+                    {
+                        return (false, "Esta cuenta fue creada con email y contraseña. Por favor, inicia sesión utilizando tu contraseña.", null);
+                    }
+
                     // Si el usuario existe pero no tiene GoogleId, actualizarlo
                     if (string.IsNullOrEmpty(existingUser.GoogleId))
                     {
