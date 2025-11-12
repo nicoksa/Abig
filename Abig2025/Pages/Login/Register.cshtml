@@ -126,6 +126,7 @@
             </a>
 
             <form method="post">
+                @Html.AntiForgeryToken()
                 <h3>Registro</h3>
 
                 <!-- Mensajes de éxito/error -->
@@ -216,6 +217,7 @@
 
             <div class="divider">O </div>
             <form method="post" asp-page-handler="GoogleLogin">
+                @Html.AntiForgeryToken()
                 <button type="submit" class="google-btn soft-hover">
                     <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
                     Registrarse con Google

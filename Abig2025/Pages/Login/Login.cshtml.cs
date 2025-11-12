@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Abig2025.Models.Users;
+using Abig2025.Models.ViewModels;
+using Abig2025.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Abig2025.Services.Interfaces;
-using Abig2025.Models.ViewModels;
-using Abig2025.Models.Users;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
 namespace Abig2025.Pages
 {
+    [EnableRateLimiting("Login")]
     public class LoginModel : PageModel
     {
         private readonly IAuthService _authService;

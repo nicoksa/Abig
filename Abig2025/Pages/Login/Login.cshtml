@@ -116,6 +116,7 @@
             </a>
 
             <form method="post">
+                @Html.AntiForgeryToken()
                 <h3>Iniciar Sesión</h3>
 
                 @if (TempData["ErrorMessage"] != null)
@@ -172,6 +173,7 @@
                 <div class="divider">O </div>
 
                 <form method="post" asp-page-handler="GoogleLogin">
+                    @Html.AntiForgeryToken()
                     <button type="submit" class="google-btn soft-hover">
                         <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
                         Continuar con Google
