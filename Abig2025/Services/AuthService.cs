@@ -126,7 +126,7 @@ namespace Abig2025.Services
 
                 var user = await _context.Users
                     .FirstOrDefaultAsync(u => u.EmailVerificationToken == verificationToken &&
-                                             u.EmailVerificationTokenExpiry > DateTime.UtcNow);
+                                             u.EmailVerificationTokenExpiry > HoraArgentina.Now);
 
                 if (user == null)
                     return false;
@@ -134,7 +134,7 @@ namespace Abig2025.Services
                 user.IsEmailVerified = true;
                 user.EmailVerificationToken = null;
                 user.EmailVerificationTokenExpiry = null;
-                user.UpdatedAt = DateTime.UtcNow;
+                user.UpdatedAt = HoraArgentina.Now;
 
                 await _context.SaveChangesAsync();
 

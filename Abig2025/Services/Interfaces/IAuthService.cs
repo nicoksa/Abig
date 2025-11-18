@@ -8,6 +8,7 @@ namespace Abig2025.Services.Interfaces
         Task<bool> VerifyEmailAsync(string token);
         Task<(bool success, User user)> LoginAsync(string email, string password, string ipAddress, string userAgent, bool rememberMe);
         Task<bool> EmailExistsAsync(string email);
+
         Task LogLoginAttemptAsync(string email, bool isSuccessful, string ipAddress, string userAgent, int? userId = null);
         Task LogoutAsync();
     }

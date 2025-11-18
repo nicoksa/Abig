@@ -4,64 +4,133 @@
     Layout = null;
     ViewData["Title"] = "Registro exitoso";
 }
-
-<style>
-    /* LOGO AL COSTADO */
-    .logo-container {
-        position: absolute !important;
-        top: 10px !important;
-        right: 15px !important;
-        width: auto !important;
-        max-width: 70px !important;
-        margin: 0 !important;
-    }
-
-    .logo {
-        max-width: 100%;
-        height: auto;
-    }
-</style>
-
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <title>Abig - Registro Exitoso</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="~/css/styleRegister.css">
+    <style>
+        /* LOGO */
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            max-width: 70px;
+        }
+
+        .logo {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ESTILOS PRINCIPALES */
+        body {
+            font-family: "Muli-Regular", sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .success-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 2rem;
+        }
+
+        .success-icon {
+            color: #28a745;
+            font-size: 6rem;
+            margin: 2rem 0;
+        }
+
+        .success-message {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: #444;
+        }
+
+        /* VERIFICACIÓN DE CORREO */
+        .verification-container {
+            background: #f8f9fa;
+            border-left: 5px solid #007bff;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .verification-title {
+            font-size: 1.8rem;
+            color: #007bff;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .verification-message {
+            font-size: 1.4rem;
+            color: #555;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .verification-icon {
+            color: #007bff;
+            font-size: 2rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        /* CONTENEDORES */
+        .success-container {
+            text-align: center;
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .inner {
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+    </style>
 </head>
 
 <body>
     <div class="wrapper" style="background-image: url('~/images/Register/bg-registration-form-2.jpg');">
         <div class="inner">
-            <a href="Login" class="back-arrow">
-                <i class="zmdi zmdi-arrow-left"></i>
-                Atrás
-            </a>
-
-            <div style="text-align: center;">
-                <h3>¡Registro Exitoso!</h3>
-                <div style="color: #28a745; font-size: 48px; margin: 20px 0;">
-                    <i class="zmdi zmdi-check-circle"></i>
-                </div>
-                <p style="text-align: center; margin-bottom: 25px; color: #666;">
-                    Tu cuenta ha sido creada exitosamente.
-                </p>
-                <p style="text-align: center; color: #666;">
-                    Por favor, verifica tu correo electrónico para activar tu cuenta y poder iniciar sesión.
-                </p>
-
-                <div style="margin-top: 30px;">
-                    <a asp-page="Login" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
-                        Ir al Inicio de Sesión
-                    </a>
-                </div>
-            </div>
-
+            <!-- Logo -->
             <div class="logo-container">
                 <a asp-page="/Index">
                     <img src="~/images/Logos/Logo2.png" alt="Logo" class="logo">
                 </a>
             </div>
+
+            <!-- Contenido principal -->
+            <div class="success-container">
+               
+
+                <p class="success-message">
+                    Tu cuenta ha sido creada exitosamente
+                </p>
+
+                <!-- Contenedor especial para verificación de correo -->
+                <div class="verification-container">
+                    <h2 class="verification-title">
+                        <i class="zmdi zmdi-email verification-icon"></i>
+                        Verificación Requerida
+                    </h2>
+                    <p class="verification-message">
+                        <strong>Por favor, verifica tu correo electrónico para activar tu cuenta y poder iniciar sesión.</strong><br>
+                        Hemos enviado un enlace de verificación a tu dirección de correo electrónico.
+                    </p>      
+                </div>
+            </div>
         </div>
     </div>
 </body>
+</html>
