@@ -718,7 +718,7 @@ button {
             filter: brightness(0.9) saturate(1.2);
         }
 
-    /* Versión alternativa con gradiente más aesthetic */
+
     .google-btn.alternative-hover:hover {
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-color: #34a853;

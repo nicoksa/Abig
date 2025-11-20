@@ -1,4 +1,4 @@
-﻿@* Pages/Login/VerifyEmail.cshtml *@
+﻿﻿@* Pages/Login/VerifyEmail.cshtml *@
 @page
 @model Abig2025.Pages.Login.VerifyEmailModel
 @{
@@ -6,32 +6,206 @@
 }
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <title>Verificar Email - Abig</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="~/css/styleRegister.css">
+    <style>
+        /* LOGO */
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            max-width: 70px;
+        }
+
+        .logo {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ESTILOS PRINCIPALES */
+        body {
+            font-family: "Muli-Regular", sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .verification-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .success-title {
+            color: #28a745;
+        }
+
+        .error-title {
+            color: #dc3545;
+        }
+
+
+
+        .verification-message {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: #444;
+        }
+
+        /* CONTENEDORES DE ESTADO */
+        .status-container {
+            background: #f8f9fa;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .success-container {
+            border-left: 5px solid #28a745;
+        }
+
+        .error-container {
+            border-left: 5px solid #dc3545;
+        }
+
+
+        .status-detail {
+            font-size: 1.4rem;
+            color: #555;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .status-action-icon {
+            font-size: 2rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .success-action-icon {
+            color: #28a745;
+        }
+
+        .error-action-icon {
+            color: #dc3545;
+        }
+
+        /* CONTENEDORES */
+        .verification-content {
+            text-align: center;
+            padding: 3rem 2rem;
+            width: 100%;
+        }
+
+        .inner {
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* BOTONES */
+        .btn-verification {
+            display: inline-block;
+            padding: 14px 35px;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 1.6rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin-top: 2rem;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-error {
+            background: #dc3545;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+
+        .btn-error:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+    </style>
 </head>
+
 <body>
-    <div class="wrapper">
+    <div class="wrapper" style="background-image: url('~/images/Register/bg-registration-form-2.jpg');">
         <div class="inner">
-            <div class="text-center">
+            <!-- Logo -->
+            <div class="logo-container">
+                <a asp-page="/Index">
+                    <img src="~/images/Logos/Logo2.png" alt="Logo" class="logo">
+                </a>
+            </div>
+
+            <!-- Contenido principal -->
+            <div class="verification-content">
                 @if (Model.IsSuccess)
                 {
-                    <div class="alert alert-success">
-                        <h3>¡Verificación Exitosa!</h3>
-                        <p>@Model.Message</p>
+                    <h1 class="verification-title success-title">¡Verificación Exitosa!</h1>
+
+
+                    <!-- Contenedor de éxito -->
+                    <div class="status-container success-container">
+
+                        <p class="status-detail">
+                            <strong>@Model.Message</strong><br>
+                            Tu dirección de correo electrónico ha sido verificada correctamente. 
+                           
+                        </p>
                     </div>
-                    <a asp-page="/Login/login" class="btn btn-primary">Iniciar Sesión</a>
+
+                    <div class="verification-message">
+                        ¿Listo para comenzar?
+                    </div>
+
+                    <a asp-page="/Login/Login" class="btn-verification btn-success">
+                        <i class="zmdi zmdi-account"></i>
+                        Iniciar Sesión
+                    </a>
                 }
                 else
                 {
-                    <div class="alert alert-danger">
-                        <h3>Error de Verificación</h3>
-                        <p>@Model.Message</p>
+                    <h1 class="verification-title error-title">Error de Verificación</h1>
+
+      
+
+                    <!-- Contenedor de error -->
+                    <div class="status-container error-container">
+      
+                        <p class="status-detail">
+                            <strong>@Model.Message</strong><br>
+                            No pudimos verificar tu dirección de correo electrónico. 
+                            Esto puede deberse a que el enlace ha expirado o ya ha sido utilizado.
+                        </p>
                     </div>
-                    <a asp-page="/Login/login"" class="btn btn-primary">Volver al Login</a>
+
+
+                    <a asp-page="/Login/Login" class="btn-verification btn-error">
+                        <i class="zmdi zmdi-arrow-left"></i>
+                        Volver al Login
+                    </a>
                 }
             </div>
         </div>
