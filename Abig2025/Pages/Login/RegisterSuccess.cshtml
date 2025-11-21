@@ -11,93 +11,8 @@
     <title>Abig - Registro Exitoso</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="~/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
-    <link rel="stylesheet" href="~/css/styleRegister.css">
-    <style>
-        /* LOGO */
-        .logo-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            max-width: 70px;
-        }
-
-        .logo {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* ESTILOS PRINCIPALES */
-        body {
-            font-family: "Muli-Regular", sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .success-title {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: #28a745;
-            margin-bottom: 2rem;
-        }
-
-        .success-icon {
-            color: #28a745;
-            font-size: 6rem;
-            margin: 2rem 0;
-        }
-
-        .success-message {
-            font-size: 1.6rem;
-            margin-bottom: 1.5rem;
-            color: #444;
-        }
-
-        /* VERIFICACIÓN DE CORREO */
-        .verification-container {
-            background: #f8f9fa;
-            border-left: 5px solid #007bff;
-            padding: 2rem;
-            margin: 2rem 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .verification-title {
-            font-size: 1.8rem;
-            color: #007bff;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .verification-message {
-            font-size: 1.4rem;
-            color: #555;
-            line-height: 1.8;
-            margin: 0;
-        }
-
-        .verification-icon {
-            color: #007bff;
-            font-size: 2rem;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        /* CONTENEDORES */
-        .success-container {
-            text-align: center;
-            padding: 3rem 2rem;
-            width: 100%;
-        }
-
-        .inner {
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/auth-confirmation-styles.css">
+ 
 </head>
 
 <body>
@@ -129,6 +44,35 @@
                         Hemos enviado un enlace de verificación a tu dirección de correo electrónico.
                     </p>      
                 </div>
+            </div>
+            <div class="resend-container">
+                <form method="post" asp-page-handler="ResendVerification">
+                    <input type="hidden" name="Email" value="@Model.Email" />
+                    <p class="resend-message">
+                        ¿No recibiste el correo de verificación?
+                        <button type="submit" class="resend-link">Reenviar correo de verificación</button>
+                    </p>
+                </form>
+
+                <!-- Mensajes de estado -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+                @if (TempData["WarningMessage"] != null)
+                {
+                    <div class="alert alert-warning">
+                        @TempData["WarningMessage"]
+                    </div>
+                }
             </div>
         </div>
     </div>

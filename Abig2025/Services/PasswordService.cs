@@ -23,7 +23,7 @@ namespace Abig2025.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<(bool success, string message)> ForgotPasswordAsync(string email)
+        public async Task<(bool success, string message, string email)> ForgotPasswordAsync(string email)
         {
             try
             {
@@ -32,7 +32,8 @@ namespace Abig2025.Services
 
                 if (user == null)
                 {
-                    return (true, "Si el email existe, se enviarán instrucciones para resetear la contraseña");
+                    // Por seguridad, no revelamos si el email existe o no
+                    return (true, "Si el email existe, se enviarán instrucciones para resetear la contraseña", email);
                 }
 
                 user.PasswordResetToken = Guid.NewGuid();
@@ -43,24 +44,21 @@ namespace Abig2025.Services
 
                 var resetLink = GeneratePasswordResetLink(user.PasswordResetToken.Value, email);
 
-                /*
-                _logger.LogInformation("LINK DE RESETEO DE CONTRASEÑA (SIMULADO): {ResetLink}", resetLink);
-                */
                 // EMAIL REAL DE RECUPERACIÓN
                 var emailSent = await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
 
                 if (emailSent)
                 {
                     _logger.LogInformation("Email de recuperación enviado exitosamente a {Email}", user.Email);
-                    return (true, "Se han enviado las instrucciones para resetear tu contraseña a tu email");
+                    return (true, "Se han enviado las instrucciones para resetear tu contraseña a tu email", email);
                 }
 
-                return (true, "Si el email existe, se enviarán instrucciones para resetear la contraseña");
+                return (true, "Si el email existe, se enviarán instrucciones para resetear la contraseña", email);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error en ForgotPasswordAsync para {Email}", email);
-                return (false, "Ha ocurrido un error. Por favor, inténtelo de nuevo.");
+                return (false, "Ha ocurrido un error. Por favor, inténtelo de nuevo.", email);
             }
         }
 

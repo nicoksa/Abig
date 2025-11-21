@@ -1,0 +1,419 @@
+﻿/* ===== ESTILOS BASE Y FUENTES ===== */
+@font-face {
+    font-family: "Muli-Regular";
+    src: url("../fonts/muli/Muli-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Muli-SemiBold";
+    src: url("../fonts/muli/Muli-SemiBold.ttf");
+}
+
+@font-face {
+    font-family: "Muli-Bold";
+    src: url("../fonts/muli/Muli-Bold.ttf");
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Muli-Regular", sans-serif;
+    color: #333;
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+input, textarea, select, button {
+    font-family: "Muli-Regular";
+    color: #333;
+    font-size: 13px;
+}
+
+/* ===== ESTRUCTURA PRINCIPAL ===== */
+.wrapper {
+    max-height: 200vh;
+    min-height: 100vh;
+    width: 100%;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-attachment: fixed;
+    left: 0px;
+    right: 0px;
+}
+
+.inner {
+    width: 650px;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 500px;
+    justify-content: center;
+}
+
+/* ===== LOGO ===== */
+.logo-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    max-width: 70px;
+}
+
+.logo {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ===== CONTENEDORES DE CONFIRMACIÓN ===== */
+.confirmation-container,
+.success-container,
+.verification-content {
+    text-align: center;
+    padding: 3rem 2rem;
+    width: 100%;
+}
+
+/* ===== TÍTULOS Y TEXTO ===== */
+.success-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #28a745;
+    margin-bottom: 2rem;
+}
+
+.verification-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.success-title {
+    color: #28a745;
+}
+
+.error-title {
+    color: #dc3545;
+}
+
+.success-message,
+.verification-message {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+    color: #444;
+}
+
+/* ===== ICONOS ===== */
+.success-icon {
+    color: #28a745;
+    font-size: 6rem;
+    margin: 2rem 0;
+}
+
+.instructions-icon,
+.verification-icon,
+.status-action-icon,
+.success-action-icon {
+    font-size: 2rem;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.instructions-icon,
+.verification-icon {
+    color: #007bff;
+}
+
+.success-action-icon {
+    color: #28a745;
+}
+
+.error-action-icon {
+    color: #dc3545;
+}
+
+/* ===== CONTENEDORES ESPECIALIZADOS ===== */
+.instructions-container,
+.verification-container,
+.success-container,
+.status-container {
+    background: #f8f9fa;
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.instructions-container,
+.verification-container {
+    border-left: 5px solid #007bff;
+}
+
+.success-container {
+    border-left: 5px solid #28a745;
+}
+
+.error-container {
+    border-left: 5px solid #dc3545;
+}
+
+/* ===== TÍTULOS DE CONTENEDORES ===== */
+.instructions-title,
+.verification-title {
+    font-size: 1.8rem;
+    color: #007bff;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* ===== TEXTO DETALLADO ===== */
+.instructions-message,
+.verification-message,
+.status-detail,
+.success-detail {
+    font-size: 1.4rem;
+    color: #555;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* ===== LISTA DE PASOS ===== */
+.steps-list {
+    text-align: left;
+    margin: 1.5rem 0;
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.step-number {
+    background: #007bff;
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+    font-weight: bold;
+}
+
+/* ===== BOTONES ===== */
+.btn-success-action,
+.btn-verification {
+    display: inline-block;
+    padding: 14px 35px;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    margin-top: 2rem;
+}
+
+.btn-success-action,
+.btn-success {
+    background: #28a745;
+}
+
+    .btn-success:hover,
+    .btn-success-action:hover {
+        background: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+.btn-error {
+    background: #dc3545;
+}
+
+    .btn-error:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        color: white;
+    }
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) {
+    .inner {
+        width: 90%;
+        max-width: 600px;
+        min-width: auto;
+        margin: 20px auto;
+        padding: 30px 25px;
+    }
+
+    .logo-container {
+        position: relative !important;
+        top: 0 !important;
+        right: 0 !important;
+        margin: 25px auto 10px !important;
+        max-width: 200px !important;
+    }
+
+    .success-title,
+    .verification-title {
+        font-size: 2.4rem;
+    }
+}
+
+/* Mobile (767px y menos) */
+@media (max-width: 767px) {
+    .inner {
+        width: 95%;
+        margin: 15px auto;
+        padding: 25px 20px;
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .wrapper {
+        padding: 15px;
+        background-attachment: scroll;
+    }
+
+    .success-title,
+    .verification-title {
+        font-size: 2rem;
+    }
+
+    .success-message,
+    .verification-message {
+        font-size: 1.4rem;
+    }
+
+    .instructions-container,
+    .verification-container,
+    .success-container,
+    .status-container {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .step-item {
+        font-size: 1.2rem;
+    }
+
+    .btn-success-action,
+    .btn-verification {
+        padding: 12px 25px;
+        font-size: 1.4rem;
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+/* Mobile Pequeño (480px y menos) */
+@media (max-width: 480px) {
+    .inner {
+        padding: 20px 15px;
+    }
+
+    .success-title,
+    .verification-title {
+        font-size: 1.8rem;
+    }
+
+    .confirmation-container,
+    .success-container,
+    .verification-content {
+        padding: 2rem 1rem;
+    }
+
+    .instructions-title,
+    .verification-title {
+        font-size: 1.6rem;
+    }
+
+    .step-item {
+        font-size: 1.1rem;
+    }
+}
+
+
+
+
+
+/* Estilos para reenvío */
+.resend-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.resend-message {
+    margin: 0;
+    color: #6c757d;
+    text-align: center;
+}
+
+.resend-link {
+    background: none;
+    border: none;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+}
+
+    .resend-link:hover {
+        color: #0056b3;
+    }
+
+/* Alertas */
+.alert {
+    padding: 0.75rem 1.25rem;
+    margin-top: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+}

@@ -81,8 +81,8 @@ namespace Abig2025.Pages.Login
                 if (success)
                 {
                     _logger.LogInformation("Usuario {Email} registrado correctamente", Input.Email);
-                    SuccessMessage = message;
-                    return RedirectToPage("/Login/RegisterSuccess");
+                    //SuccessMessage = message;
+                    return RedirectToPage("/Login/RegisterSuccess", new { email = user.Email });
                 }
                 else
                 {

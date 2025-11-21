@@ -37,12 +37,12 @@ namespace Abig2025.Pages.Login
 
             try
             {
-                var (success, message) = await _passwordService.ForgotPasswordAsync(Input.Email);
+                var (success, message, email) = await _passwordService.ForgotPasswordAsync(Input.Email);
 
                 if (success)
                 {
                     StatusMessage = message;
-                    return RedirectToPage("./ForgotPasswordConfirmation");
+                    return RedirectToPage("./ForgotPasswordConfirmation", new { email = email });
                 }
                 else
                 {

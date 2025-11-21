@@ -344,6 +344,41 @@ namespace Abig2025.Services
         }
 
 
+        public async Task<(bool success, string message)> ResendVerificationEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == email && u.IsActive && !u.IsEmailVerified);
 
+                if (user == null)
+                    return (false, "Usuario no encontrado o ya verificado");
+
+                // Generar nuevo token
+                user.EmailVerificationToken = Guid.NewGuid();
+                user.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24);
+                user.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                // Enviar email
+                var verificationLink = GenerateVerificationLink(user.EmailVerificationToken.Value);
+                var emailSent = await _emailService.SendVerificationEmailAsync(user.Email, user.FirstName, verificationLink);
+
+                if (!emailSent)
+                {
+                    _logger.LogWarning("No se pudo enviar el email de verificación a {Email}", user.Email);
+                    return (false, "No se pudo enviar el correo de verificación");
+                }
+
+                _logger.LogInformation("Email de verificación reenviado a: {Email}", user.Email);
+                return (true, "Correo de verificación reenviado exitosamente");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reenviando email de verificación a {Email}", email);
+                return (false, "Error al reenviar el correo de verificación");
+            }
+        }
     }
 }
