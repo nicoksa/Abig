@@ -25,6 +25,10 @@ namespace Abig2025.Data
         public DbSet<UserReview> UserReviews{ get; set; }
         public DbSet<UserSubscription> UserSubscriptions { get; set; }
 
+        public DbSet<PropertyLocation> PropertyLocations { get; set; }
+        public DbSet<PropertyImage> PropertyImages { get; set; }
+        public DbSet<PropertyFeature> PropertyFeatures { get; set; }
+        public DbSet<PropertyStatus> PropertyStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,6 +78,32 @@ namespace Abig2025.Data
             modelBuilder.Entity<Favorite>()
                 .HasOne(f => f.Property)
                 .WithMany(p => p.Favorites)
+                .HasForeignKey(f => f.PropertyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //Proopiedad y sus detalles
+
+            modelBuilder.Entity<Property>()
+            .HasOne(p => p.Location)
+            .WithOne(l => l.Property)
+            .HasForeignKey<PropertyLocation>(l => l.PropertyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Property>()
+                .HasOne(p => p.Status)
+                .WithOne(s => s.Property)
+                .HasForeignKey<PropertyStatus>(s => s.PropertyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Property>()
+                .HasMany(p => p.Images)
+                .WithOne(i => i.Property)
+                .HasForeignKey(i => i.PropertyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Property>()
+                .HasMany(p => p.Features)
+                .WithOne(f => f.Property)
                 .HasForeignKey(f => f.PropertyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
