@@ -1,0 +1,397 @@
+﻿@page "{draftId?}"
+@model Abig2025.Pages.Post.PostModel
+@{
+    ViewData["Title"] = "Publicar Inmueble";
+}
+
+<link rel="stylesheet" href="~/css/stylePost.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+<div class="container-fluid px-4 py-5">
+
+    <!-- Campo oculto para draft -->
+    <input type="hidden" asp-for="DraftId" />
+
+    <!-- Campo oculto para coordenadas -->
+    <input type="hidden" asp-for="Data.Latitude" id="LatitudHidden" />
+    <input type="hidden" asp-for="Data.Longitude" id="LongitudHidden" />
+
+    <!-- Barra de progreso -->
+    <div class="progress-container mb-5">
+        <div class="progress-steps-wrapper">
+            <div class="progress-steps step-1">
+                <div class="step active">
+                    <div class="step-circle bg-primary text-white">1</div>
+                    <div class="step-label fw-bold">Principales</div>
+                </div>
+                <div class="step-connector active"></div>
+                <div class="step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Multimedia</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Extras</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Publicar</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center" style="padding-top:35px">
+        <div class="col-lg-10">
+
+            <!-- Encabezado -->
+            <div class="d-flex align-items-center mb-5 p-4 bg-white rounded-3 shadow-sm border-start border-4 border-primary">
+                <div class="flex-shrink-0 me-4">
+                    <i class="bi bi-house-add fs-1 text-primary"></i>
+                </div>
+                <div>
+                    <h1 class="fw-bold mb-2 text-primary">¡Hola! Empecemos a crear tu aviso</h1>
+                    <p class="lead text-muted mb-0">Completá los datos principales de tu propiedad</p>
+                </div>
+            </div>
+
+            <form method="post" class="needs-validation">
+
+                <!-- ============================
+                      SECCIÓN 1 - OPERACIÓN
+                ==============================-->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-tags me-2"></i>Tipo de operación
+                        </h5>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input type="radio" class="btn-check"
+                                       asp-for="Data.OperationType" id="opRent" value="Alquiler">
+                                <label class="btn btn-outline-primary w-100 py-3" for="opRent">
+                                    <i class="bi bi-house-door fs-4 d-block mb-2"></i>
+                                    <span class="fw-bold">Alquiler</span>
+                                </label>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input type="radio" class="btn-check"
+                                       asp-for="Data.OperationType" id="opTemp" value="AlquilerTemporal">
+                                <label class="btn btn-outline-primary w-100 py-3" for="opTemp">
+                                    <i class="bi bi-calendar-week fs-4 d-block mb-2"></i>
+                                    <span class="fw-bold">Temporal</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================
+                      SECCIÓN 2 - TIPO PROPIEDAD
+                ==============================-->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-house-gear me-2"></i>Tipo de propiedad
+                        </h5>
+                    </div>
+                    <div class="card-body pt-0">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tipo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-building"></i></span>
+                                    <select class="form-select" asp-for="Data.PropertyType">
+                                        <option disabled selected>Seleccioná</option>
+                                        <option value="Casa">Casa</option>
+                                        <option value="Departamento">Departamento</option>
+                                        <option value="PH">PH</option>
+                                        <option value="Terreno">Terreno</option>
+                                        <option value="Local">Local</option>
+                                        <option value="Oficina">Oficina</option>
+                                        <option value="Quinta">Quinta</option>
+                                        <option value="Campo">Campo</option>
+                                        <option value="Cochera">Cochera</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Subtipo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-building-add"></i></span>
+                                    <input class="form-control" asp-for="Data.Subtype" placeholder="Opcional" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ============================
+                      SECCIÓN 3 - UBICACIÓN
+                ==============================-->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-geo-alt me-2"></i>Ubicación
+                        </h5>
+                    </div>
+
+                    <div class="card-body pt-0">
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Provincia</label>
+                                <select class="form-select" asp-for="Data.Province">
+                                    <option disabled selected>Seleccioná</option>
+                                    <option value="Buenos Aires">Buenos Aires</option>
+                                    <option value="Mendoza">Mendoza</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Localidad</label>
+                                <select class="form-select" asp-for="Data.City">
+                                    <option disabled selected>Seleccioná</option>
+                                    <option value="San Miguel">San Miguel</option>
+                                    <option value="Belgrano">Belgrano</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Barrio</label>
+                                <select class="form-select" asp-for="Data.Neighborhood">
+                                    <option disabled selected>Seleccioná</option>
+                                    <option value="Centro">Centro</option>
+                                    <option value="Barrio Norte">Barrio Norte</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Calle</label>
+                                <input class="form-control" asp-for="Data.Street" />
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Número</label>
+                                <input class="form-control" asp-for="Data.Number" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Código Postal</label>
+                                <input class="form-control" asp-for="Data.PostalCode" />
+                            </div>
+
+                            <!-- MAPA -->
+                            <div class="col-12 mt-3">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body p-0">
+                                        <div id="map" style="height: 300px; border-radius: 8px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================
+                      SECCIÓN 4 - CARACTERÍSTICAS
+                ==============================-->
+                <div class="card mb-4 border-0 shadow-sm">
+
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-list-check me-2"></i>Características principales
+                        </h5>
+                    </div>
+
+                    <div class="card-body pt-0">
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Ambientes</label>
+                                <select class="form-select" asp-for="Data.MainRooms">
+                                    <option disabled selected>Seleccioná</option>
+                                    <option value="1">1 ambiente</option>
+                                    <option value="2">2 ambientes</option>
+                                    <option value="3">3 ambientes</option>
+                                    <option value="4">4 ambientes</option>
+                                    <option value="5">5+</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Dormitorios</label>
+                                <select class="form-select" asp-for="Data.Bedrooms">
+                                    <option disabled selected>Seleccioná</option>
+                                    <option value="1">1 dormitorio</option>
+                                    <option value="2">2 dormitorios</option>
+                                    <option value="3">3 dormitorios</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Baños</label>
+                                <select class="form-select" asp-for="Data.Bathrooms">
+                                    <option disabled selected>Seleccioná</option>
+                                    <option value="1">1 baño</option>
+                                    <option value="2">2 baños</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Cocheras</label>
+                                <select class="form-select" asp-for="Data.ParkingSpaces">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Superficie cubierta</label>
+                                <input type="number" class="form-control" asp-for="Data.CoveredArea" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Superficie total</label>
+                                <input type="number" class="form-control" asp-for="Data.TotalArea" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Antigüedad</label>
+                                <input type="number" class="form-control" asp-for="Data.Age" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input"
+                                           asp-for="Data.IsUnderConstruction" />
+                                    <label class="form-check-label fw-bold">En construcción</label>
+                                </div>
+
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input"
+                                           asp-for="Data.IsNew" />
+                                    <label class="form-check-label fw-bold">A estrenar</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================
+                      SECCIÓN 5 - PRECIO
+                ==============================-->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-currency-exchange me-2"></i>Precio
+                        </h5>
+                    </div>
+
+                    <div class="card-body pt-0">
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Moneda</label>
+                                <select class="form-select" asp-for="Data.Currency">
+                                    <option value="ARS">ARS</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Precio</label>
+                                <input type="number" class="form-control" asp-for="Data.Price" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Moneda expensas</label>
+                                <select class="form-select" asp-for="Data.ExpensesCurrency">
+                                    <option value="ARS">ARS</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Expensas (opcional)</label>
+                                <input type="number" class="form-control" asp-for="Data.Expenses" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================
+                      SECCIÓN 6 - DESCRIPCIÓN
+                ==============================-->
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom-0 py-3">
+                        <h5 class="mb-0 fw-bold text-primary">
+                            <i class="bi bi-text-paragraph me-2"></i>Descripción
+                        </h5>
+                    </div>
+
+                    <div class="card-body pt-0">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Título del aviso</label>
+                            <input class="form-control" asp-for="Data.Title" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Descripción</label>
+                            <textarea class="form-control" asp-for="Data.Description" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================
+                      BOTONES
+                ==============================-->
+                <div class="d-flex justify-content-between mb-5">
+
+                    <a asp-page="/Index" class="btn btn-outline-secondary px-4 py-2">
+                        <i class="bi bi-arrow-left me-2"></i>Cancelar
+                    </a>
+
+                    <button type="submit" class="btn btn-primary px-4 py-2">
+                        Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/post.js"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+<script>
+    // Inicializar mapa
+    const map = L.map('map').setView([-34.6037, -58.3816], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    const marker = L.marker([-34.6037, -58.3816], { draggable: true }).addTo(map);
+
+    marker.on('dragend', function () {
+        const pos = marker.getLatLng();
+        document.getElementById("LatitudHidden").value = pos.lat;
+        document.getElementById("LongitudHidden").value = pos.lng;
+    });
+</script>

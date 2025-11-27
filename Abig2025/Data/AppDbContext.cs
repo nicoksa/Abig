@@ -30,6 +30,7 @@ namespace Abig2025.Data
         public DbSet<PropertyFeature> PropertyFeatures { get; set; }
         public DbSet<PropertyStatus> PropertyStatuses { get; set; }
 
+        public DbSet<PropertyDraft> PropertyDrafts { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configurar relación muchos a muchos entre Users y Roles

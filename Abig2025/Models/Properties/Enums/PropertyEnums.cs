@@ -12,8 +12,11 @@
         Departamento,
         PH,
         Terreno,
-        LocalComercial,
+        Local,
         Oficina,
+        Campo,
+        Quinta,
+        Cochera,
         Otro
     }
 
