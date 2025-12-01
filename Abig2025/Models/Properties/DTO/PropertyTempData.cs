@@ -1,4 +1,5 @@
-﻿using Abig2025.Models.Properties.Enums;
+﻿using Abig2025.Helpers;
+using Abig2025.Models.Properties.Enums;
 
 namespace Abig2025.Models.DTO
 {
@@ -50,12 +51,21 @@ namespace Abig2025.Models.DTO
         public List<PropertyFeatureTemp> Features { get; set; } = new();
 
         // PASO 4 – Imágenes temporales
-        public List<string> TempImageNames { get; set; } = new();
+        public List<TempImageInfo> TempImages { get; set; } = new();
+        public string? VideoUrl { get; set; }
     }
 
     public class PropertyFeatureTemp
     {
         public string Name { get; set; } = string.Empty;
         public string? Value { get; set; }
+    }
+
+    public class TempImageInfo
+    {
+        public string FileName { get; set; } = string.Empty;
+        public string OriginalName { get; set; } = string.Empty;
+        public long Size { get; set; }
+        public DateTime UploadedAt { get; set; } = HoraArgentina.Now;
     }
 }

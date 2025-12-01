@@ -9,6 +9,7 @@ namespace Abig2025.Services
         Task<PropertyDraft> CreateDraftAsync(int userId, PropertyTempData data);
         Task UpdateDraftAsync(Guid draftId, PropertyTempData data, int nextStep);
         Task DeleteDraftAsync(Guid draftId);
+        Task CleanOldDraftsAsync(TimeSpan olderThan);
     }
 }
 

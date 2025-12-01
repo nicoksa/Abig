@@ -40,6 +40,8 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IExternalAuthService, ExternalAuthService>();
 builder.Services.AddScoped<IDraftService, DraftService>();
 
+builder.Services.AddScoped<ITempFileService, TempFileService>();
+builder.Services.AddHostedService<TempFileCleanupService>();
 
 
 // Session 
