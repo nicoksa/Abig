@@ -1,4 +1,5 @@
-﻿@page
+﻿@page "{draftId?}"
+@model Abig2025.Pages.Post.PostStep3Model
 @{
     ViewData["Title"] = "Publicar Inmueble - Paso 3";
 }
@@ -6,8 +7,10 @@
 <link rel="stylesheet" href="~/css/stylePost.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-
 <div class="container mt-4 pt-5">
+    <!-- Campo oculto para draft -->
+    <input type="hidden" asp-for="DraftId" />
+
     <!-- Barra de progreso -->
     <div class="progress-container mb-5">
         <div class="progress-steps-wrapper">
@@ -35,13 +38,9 @@
         </div>
     </div>
 
-    <!-- Encabezado -->
-
-
-
     <div class="row justify-content-center" style="padding-top:35px">
         <div class="col-lg-10">
-            
+            <!-- Encabezado -->
             <div class="d-flex align-items-center mb-5 p-4 bg-white rounded-3 shadow-sm border-start border-4 border-primary">
                 <div class="flex-shrink-0 me-4">
                     <i class="bi bi-list-check fs-1 text-primary"></i>
@@ -51,341 +50,555 @@
                     <p class="lead text-muted mb-0">Seleccioná los servicios y características disponibles</p>
                 </div>
             </div>
-        </div>
 
-    <!-- Formulario de servicios -->
-        <form method="post" style="padding-top:15px">
-        <!-- Sección de etiquetas seleccionadas -->
-        <div class="card mb-4" id="selected-tags-container" style="display: none;">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Etiquetas seleccionadas</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex flex-wrap gap-2" id="selected-tags">
-                    <!-- Las etiquetas seleccionadas aparecerán aquí -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Sección de Permite mascotas -->
-        <div class="card mb-4">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Permite mascotas</h5>
-            </div>
-            <div class="card-body">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="PermiteMascotas" name="PermiteMascotas">
-                    <label class="form-check-label" for="PermiteMascotas">La propiedad permite mascotas</label>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Sección de Características generales -->
-        <div class="card mb-4">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Características generales</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="AccesoDiscapacitados" name="AccesoDiscapacitados">
-                            <label class="form-check-label" for="AccesoDiscapacitados">
-                                <i class="bi bi-person-bounding-box me-2"></i>Acceso discapacitados
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Parrilla" name="Parrilla">
-                            <label class="form-check-label" for="Parrilla">
-                                <i class="bi bi-fire me-2"></i>Parrilla
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="AptoProfesional" name="AptoProfesional">
-                            <label class="form-check-label" for="AptoProfesional">
-                                <i class="bi bi-briefcase me-2"></i>Apto profesional
-                            </label>
-                        </div>
+            <!-- Formulario de servicios -->
+            <form method="post" style="padding-top:15px">
+                <!-- Sección de etiquetas seleccionadas -->
+                <div class="card mb-4" id="selected-tags-container" style="display: none;">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Etiquetas seleccionadas</h5>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="UsoComercial" name="UsoComercial">
-                            <label class="form-check-label" for="UsoComercial">
-                                <i class="bi bi-shop me-2"></i>Uso comercial
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Gimnasio" name="Gimnasio">
-                            <label class="form-check-label" for="Gimnasio">
-                                <i class="bi bi-activity me-2"></i>Gimnasio
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Hidromasaje" name="Hidromasaje">
-                            <label class="form-check-label" for="Hidromasaje">
-                                <i class="bi bi-droplet me-2"></i>Hidromasaje
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Solarium" name="Solarium">
-                            <label class="form-check-label" for="Solarium">
-                                <i class="bi bi-sun me-2"></i>Solarium
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="PistaDeportiva" name="PistaDeportiva">
-                            <label class="form-check-label" for="PistaDeportiva">
-                                <i class="bi bi-trophy me-2"></i>Pista deportiva
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="SalaJuegos" name="SalaJuegos">
-                            <label class="form-check-label" for="SalaJuegos">
-                                <i class="bi bi-joystick me-2"></i>Sala de juegos
-                            </label>
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap gap-2" id="selected-tags">
+                            <!-- Las etiquetas seleccionadas aparecerán aquí -->
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Sección de Características -->
-        <div class="card mb-4">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Características</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="AireAcondicionado" name="AireAcondicionado">
-                            <label class="form-check-label" for="AireAcondicionado">
-                                <i class="bi bi-snow me-2"></i>Aire acondicionado
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="CocinaEquipada" name="CocinaEquipada">
-                            <label class="form-check-label" for="CocinaEquipada">
-                                <i class="bi bi-egg-fried me-2"></i>Cocina equipada
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Amueblado" name="Amueblado">
-                            <label class="form-check-label" for="Amueblado">
-                                <i class="bi bi-house-door me-2"></i>Amueblado
-                            </label>
-                        </div>
+                <!-- Sección de Permite mascotas -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Permite mascotas</h5>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Alarma" name="Alarma">
-                            <label class="form-check-label" for="Alarma">
-                                <i class="bi bi-shield-lock me-2"></i>Alarma
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Quincho" name="Quincho">
-                            <label class="form-check-label" for="Quincho">
-                                <i class="bi bi-fire me-2"></i>Quincho
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Sauna" name="Sauna">
-                            <label class="form-check-label" for="Sauna">
-                                <i class="bi bi-thermometer-sun me-2"></i>Sauna
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Caldera" name="Caldera">
-                            <label class="form-check-label" for="Caldera">
-                                <i class="bi bi-thermometer-high me-2"></i>Caldera
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Lavavajillas" name="Lavavajillas">
-                            <label class="form-check-label" for="Lavavajillas">
-                                <i class="bi bi-cup-straw me-2"></i>Lavavajillas
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Termotanque" name="Termotanque">
-                            <label class="form-check-label" for="Termotanque">
-                                <i class="bi bi-droplet-half me-2"></i>Termotanque
-                            </label>
+                    <div class="card-body">
+                        <div class="form-check form-switch">
+                            @{
+                                var permiteMascotas = Model.Data.Features.FirstOrDefault(f => f.Name == "PermiteMascotas");
+                                var isMascotasChecked = permiteMascotas != null && permiteMascotas.Value == "true";
+                            }
+                            <input class="form-check-input" type="checkbox" id="PermiteMascotas" name="PermiteMascotas"
+                                   @(isMascotasChecked ? "checked" : "")>
+                            <label class="form-check-label" for="PermiteMascotas">La propiedad permite mascotas</label>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Sección de Ambientes -->
-        <div class="card mb-4">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Ambientes</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="DormitorioSuite" name="DormitorioSuite">
-                            <label class="form-check-label" for="DormitorioSuite">
-                                <i class="bi bi-door-closed me-2"></i>Dormitorio en suite
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Balcon" name="Balcon">
-                            <label class="form-check-label" for="Balcon">
-                                <i class="bi bi-border-width me-2"></i>Balcón
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Cocina" name="Cocina">
-                            <label class="form-check-label" for="Cocina">
-                                <i class="bi bi-cup-hot me-2"></i>Cocina
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Sòtano" name="Sòtano">
-                            <label class="form-check-label" for="Sòtano">
-                                <i class="bi-layers-fill"></i> Sòtano
-                            </label>
-                        </div>
+                <!-- Sección de Características generales -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Características generales</h5>
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Patio" name="Patio">
-                            <label class="form-check-label" for="Patio">
-                                <i class="bi bi-tree me-2"></i>Patio
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Escritorio" name="Escritorio">
-                            <label class="form-check-label" for="Escritorio">
-                                <i class="bi bi-pc-display me-2"></i>Escritorio
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Jardin" name="Jardin">
-                            <label class="form-check-label" for="Jardin">
-                                <i class="bi bi-flower2 me-2"></i>Jardín
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Comedor" name="Comedor">
-                            <label class="form-check-label" for="Comedor">
-                                <i class="bi-cup-fill"></i> Comedor
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Baulera" name="Baulera">
-                            <label class="form-check-label" for="Baulera">
-                                <i class="bi bi-box-seam me-2"></i>Baulera
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Terraza" name="Terraza">
-                            <label class="form-check-label" for="Terraza">
-                                <i class="bi bi-sun me-2"></i>Terraza
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Toilette" name="Toilette">
-                            <label class="form-check-label" for="Toilette">
-                                <i class="bi bi-bucket me-2"></i>Toilette
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Lavadero" name="Lavadero">
-                            <label class="form-check-label" for="Lavadero">
-                                <i class="bi-water"></i> Lavadero
-                            </label>
-                        </div>
-                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @{
+                                    var accesoDiscapacitados = Model.Data.Features.FirstOrDefault(f => f.Name == "AccesoDiscapacitados");
+                                    var isAccesoChecked = accesoDiscapacitados != null && accesoDiscapacitados.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="AccesoDiscapacitados" name="AccesoDiscapacitados"
+                                           @(isAccesoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="AccesoDiscapacitados">
+                                        <i class="bi bi-person-bounding-box me-2"></i>Acceso discapacitados
+                                    </label>
+                                </div>
 
-                </div>
-            </div>
-        </div>
+                                @{
+                                    var parrilla = Model.Data.Features.FirstOrDefault(f => f.Name == "Parrilla");
+                                    var isParrillaChecked = parrilla != null && parrilla.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Parrilla" name="Parrilla"
+                                           @(isParrillaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Parrilla">
+                                        <i class="bi bi-fire me-2"></i>Parrilla
+                                    </label>
+                                </div>
 
-        <!-- Sección de Servicios -->
-        <div class="card mb-4">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Servicios</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="InternetWifi" name="InternetWifi">
-                            <label class="form-check-label" for="InternetWifi">
-                                <i class="bi bi-wifi me-2"></i>Internet / WiFi
-                            </label>
-                        </div>
-                    </div>
+                                @{
+                                    var aptoProfesional = Model.Data.Features.FirstOrDefault(f => f.Name == "AptoProfesional");
+                                    var isAptoProfesionalChecked = aptoProfesional != null && aptoProfesional.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="AptoProfesional" name="AptoProfesional"
+                                           @(isAptoProfesionalChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="AptoProfesional">
+                                        <i class="bi bi-briefcase me-2"></i>Apto profesional
+                                    </label>
+                                </div>
+                            </div>
 
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Ascensor" name="Ascensor">
-                            <label class="form-check-label" for="Ascensor">
-                                <i  class="bi bi-door-open me-2"></i>Ascensor
-                            </label>
-                        </div>
-                    </div>
+                            <div class="col-md-4">
+                                @{
+                                    var usoComercial = Model.Data.Features.FirstOrDefault(f => f.Name == "UsoComercial");
+                                    var isUsoComercialChecked = usoComercial != null && usoComercial.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="UsoComercial" name="UsoComercial"
+                                           @(isUsoComercialChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="UsoComercial">
+                                        <i class="bi bi-shop me-2"></i>Uso comercial
+                                    </label>
+                                </div>
 
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Vigilancia" name="Vigilancia">
-                            <label class="form-check-label" for="Vigilancia">
-                                <i class="bi bi-shield-check me-2"></i>Encargado / Vigilancia
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Limpieza" name="Limpieza">
-                            <label class="form-check-label" for="Limpieza">
-                                <i class="bi-bucket-fill"></i> Servicio de limpieza
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Agua" name="Agua">
-                            <label class="form-check-label" for="Agua">
-                                <i class="bi-droplet-fill"></i> Agua corriente
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="Electricidad" name="Electricidad">
-                            <label class="form-check-label" for="Electricidad">
-                                <i class="bi-lightning-charge-fill"></i> Electricidad
-                            </label>
+                                @{
+                                    var gimnasio = Model.Data.Features.FirstOrDefault(f => f.Name == "Gimnasio");
+                                    var isGimnasioChecked = gimnasio != null && gimnasio.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Gimnasio" name="Gimnasio"
+                                           @(isGimnasioChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Gimnasio">
+                                        <i class="bi bi-activity me-2"></i>Gimnasio
+                                    </label>
+                                </div>
+
+                                @{
+                                    var hidromasaje = Model.Data.Features.FirstOrDefault(f => f.Name == "Hidromasaje");
+                                    var isHidromasajeChecked = hidromasaje != null && hidromasaje.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Hidromasaje" name="Hidromasaje"
+                                           @(isHidromasajeChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Hidromasaje">
+                                        <i class="bi bi-droplet me-2"></i>Hidromasaje
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var solarium = Model.Data.Features.FirstOrDefault(f => f.Name == "Solarium");
+                                    var isSolariumChecked = solarium != null && solarium.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Solarium" name="Solarium"
+                                           @(isSolariumChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Solarium">
+                                        <i class="bi bi-sun me-2"></i>Solarium
+                                    </label>
+                                </div>
+
+                                @{
+                                    var pistaDeportiva = Model.Data.Features.FirstOrDefault(f => f.Name == "PistaDeportiva");
+                                    var isPistaDeportivaChecked = pistaDeportiva != null && pistaDeportiva.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="PistaDeportiva" name="PistaDeportiva"
+                                           @(isPistaDeportivaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="PistaDeportiva">
+                                        <i class="bi bi-trophy me-2"></i>Pista deportiva
+                                    </label>
+                                </div>
+
+                                @{
+                                    var salaJuegos = Model.Data.Features.FirstOrDefault(f => f.Name == "SalaJuegos");
+                                    var isSalaJuegosChecked = salaJuegos != null && salaJuegos.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="SalaJuegos" name="SalaJuegos"
+                                           @(isSalaJuegosChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="SalaJuegos">
+                                        <i class="bi bi-joystick me-2"></i>Sala de juegos
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Botones de navegación -->
-        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-            <a asp-page="/Post/PostStep2" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Anterior
-            </a>
-            <div>
-                <a asp-page="/Post/PostStep4" class="btn btn-primary">
-                    Siguiente <i class="bi bi-arrow-right ms-1"></i>
-                </a>
-            </div>
+                <!-- Sección de Características -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Características</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @{
+                                    var aireAcondicionado = Model.Data.Features.FirstOrDefault(f => f.Name == "AireAcondicionado");
+                                    var isAireAcondicionadoChecked = aireAcondicionado != null && aireAcondicionado.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="AireAcondicionado" name="AireAcondicionado"
+                                           @(isAireAcondicionadoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="AireAcondicionado">
+                                        <i class="bi bi-snow me-2"></i>Aire acondicionado
+                                    </label>
+                                </div>
+
+                                @{
+                                    var cocinaEquipada = Model.Data.Features.FirstOrDefault(f => f.Name == "CocinaEquipada");
+                                    var isCocinaEquipadaChecked = cocinaEquipada != null && cocinaEquipada.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="CocinaEquipada" name="CocinaEquipada"
+                                           @(isCocinaEquipadaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="CocinaEquipada">
+                                        <i class="bi bi-egg-fried me-2"></i>Cocina equipada
+                                    </label>
+                                </div>
+
+                                @{
+                                    var amueblado = Model.Data.Features.FirstOrDefault(f => f.Name == "Amueblado");
+                                    var isAmuebladoChecked = amueblado != null && amueblado.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Amueblado" name="Amueblado"
+                                           @(isAmuebladoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Amueblado">
+                                        <i class="bi bi-house-door me-2"></i>Amueblado
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var alarma = Model.Data.Features.FirstOrDefault(f => f.Name == "Alarma");
+                                    var isAlarmaChecked = alarma != null && alarma.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Alarma" name="Alarma"
+                                           @(isAlarmaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Alarma">
+                                        <i class="bi bi-shield-lock me-2"></i>Alarma
+                                    </label>
+                                </div>
+
+                                @{
+                                    var quincho = Model.Data.Features.FirstOrDefault(f => f.Name == "Quincho");
+                                    var isQuinchoChecked = quincho != null && quincho.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Quincho" name="Quincho"
+                                           @(isQuinchoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Quincho">
+                                        <i class="bi bi-fire me-2"></i>Quincho
+                                    </label>
+                                </div>
+
+                                @{
+                                    var sauna = Model.Data.Features.FirstOrDefault(f => f.Name == "Sauna");
+                                    var isSaunaChecked = sauna != null && sauna.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Sauna" name="Sauna"
+                                           @(isSaunaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Sauna">
+                                        <i class="bi bi-thermometer-sun me-2"></i>Sauna
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var caldera = Model.Data.Features.FirstOrDefault(f => f.Name == "Caldera");
+                                    var isCalderaChecked = caldera != null && caldera.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Caldera" name="Caldera"
+                                           @(isCalderaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Caldera">
+                                        <i class="bi bi-thermometer-high me-2"></i>Caldera
+                                    </label>
+                                </div>
+
+                                @{
+                                    var lavavajillas = Model.Data.Features.FirstOrDefault(f => f.Name == "Lavavajillas");
+                                    var isLavavajillasChecked = lavavajillas != null && lavavajillas.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Lavavajillas" name="Lavavajillas"
+                                           @(isLavavajillasChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Lavavajillas">
+                                        <i class="bi bi-cup-straw me-2"></i>Lavavajillas
+                                    </label>
+                                </div>
+
+                                @{
+                                    var termotanque = Model.Data.Features.FirstOrDefault(f => f.Name == "Termotanque");
+                                    var isTermotanqueChecked = termotanque != null && termotanque.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Termotanque" name="Termotanque"
+                                           @(isTermotanqueChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Termotanque">
+                                        <i class="bi bi-droplet-half me-2"></i>Termotanque
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Ambientes -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Ambientes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @{
+                                    var dormitorioSuite = Model.Data.Features.FirstOrDefault(f => f.Name == "DormitorioSuite");
+                                    var isDormitorioSuiteChecked = dormitorioSuite != null && dormitorioSuite.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="DormitorioSuite" name="DormitorioSuite"
+                                           @(isDormitorioSuiteChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="DormitorioSuite">
+                                        <i class="bi bi-door-closed me-2"></i>Dormitorio en suite
+                                    </label>
+                                </div>
+
+                                @{
+                                    var balcon = Model.Data.Features.FirstOrDefault(f => f.Name == "Balcon");
+                                    var isBalconChecked = balcon != null && balcon.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Balcon" name="Balcon"
+                                           @(isBalconChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Balcon">
+                                        <i class="bi bi-border-width me-2"></i>Balcón
+                                    </label>
+                                </div>
+
+                                @{
+                                    var cocina = Model.Data.Features.FirstOrDefault(f => f.Name == "Cocina");
+                                    var isCocinaChecked = cocina != null && cocina.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Cocina" name="Cocina"
+                                           @(isCocinaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Cocina">
+                                        <i class="bi bi-cup-hot me-2"></i>Cocina
+                                    </label>
+                                </div>
+
+                                @{
+                                    var sotano = Model.Data.Features.FirstOrDefault(f => f.Name == "Sotano");
+                                    var isSotanoChecked = sotano != null && sotano.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Sotano" name="Sotano"
+                                           @(isSotanoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Sotano">
+                                        <i class="bi bi-layers-fill me-2"></i>Sótano
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var patio = Model.Data.Features.FirstOrDefault(f => f.Name == "Patio");
+                                    var isPatioChecked = patio != null && patio.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Patio" name="Patio"
+                                           @(isPatioChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Patio">
+                                        <i class="bi bi-tree me-2"></i>Patio
+                                    </label>
+                                </div>
+
+                                @{
+                                    var escritorio = Model.Data.Features.FirstOrDefault(f => f.Name == "Escritorio");
+                                    var isEscritorioChecked = escritorio != null && escritorio.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Escritorio" name="Escritorio"
+                                           @(isEscritorioChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Escritorio">
+                                        <i class="bi bi-pc-display me-2"></i>Escritorio
+                                    </label>
+                                </div>
+
+                                @{
+                                    var jardin = Model.Data.Features.FirstOrDefault(f => f.Name == "Jardin");
+                                    var isJardinChecked = jardin != null && jardin.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Jardin" name="Jardin"
+                                           @(isJardinChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Jardin">
+                                        <i class="bi bi-flower2 me-2"></i>Jardín
+                                    </label>
+                                </div>
+
+                                @{
+                                    var comedor = Model.Data.Features.FirstOrDefault(f => f.Name == "Comedor");
+                                    var isComedorChecked = comedor != null && comedor.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Comedor" name="Comedor"
+                                           @(isComedorChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Comedor">
+                                        <i class="bi bi-cup-fill me-2"></i>Comedor
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var baulera = Model.Data.Features.FirstOrDefault(f => f.Name == "Baulera");
+                                    var isBauleraChecked = baulera != null && baulera.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Baulera" name="Baulera"
+                                           @(isBauleraChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Baulera">
+                                        <i class="bi bi-box-seam me-2"></i>Baulera
+                                    </label>
+                                </div>
+
+                                @{
+                                    var terraza = Model.Data.Features.FirstOrDefault(f => f.Name == "Terraza");
+                                    var isTerrazaChecked = terraza != null && terraza.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Terraza" name="Terraza"
+                                           @(isTerrazaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Terraza">
+                                        <i class="bi bi-sun me-2"></i>Terraza
+                                    </label>
+                                </div>
+
+                                @{
+                                    var toilette = Model.Data.Features.FirstOrDefault(f => f.Name == "Toilette");
+                                    var isToiletteChecked = toilette != null && toilette.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Toilette" name="Toilette"
+                                           @(isToiletteChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Toilette">
+                                        <i class="bi bi-bucket me-2"></i>Toilette
+                                    </label>
+                                </div>
+
+                                @{
+                                    var lavadero = Model.Data.Features.FirstOrDefault(f => f.Name == "Lavadero");
+                                    var isLavaderoChecked = lavadero != null && lavadero.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Lavadero" name="Lavadero"
+                                           @(isLavaderoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Lavadero">
+                                        <i class="bi bi-water me-2"></i>Lavadero
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Servicios -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Servicios</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @{
+                                    var internetWifi = Model.Data.Features.FirstOrDefault(f => f.Name == "InternetWifi");
+                                    var isInternetWifiChecked = internetWifi != null && internetWifi.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="InternetWifi" name="InternetWifi"
+                                           @(isInternetWifiChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="InternetWifi">
+                                        <i class="bi bi-wifi me-2"></i>Internet / WiFi
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var ascensor = Model.Data.Features.FirstOrDefault(f => f.Name == "Ascensor");
+                                    var isAscensorChecked = ascensor != null && ascensor.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Ascensor" name="Ascensor"
+                                           @(isAscensorChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Ascensor">
+                                        <i class="bi bi-door-open me-2"></i>Ascensor
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var vigilancia = Model.Data.Features.FirstOrDefault(f => f.Name == "Vigilancia");
+                                    var isVigilanciaChecked = vigilancia != null && vigilancia.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Vigilancia" name="Vigilancia"
+                                           @(isVigilanciaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Vigilancia">
+                                        <i class="bi bi-shield-check me-2"></i>Encargado / Vigilancia
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var limpieza = Model.Data.Features.FirstOrDefault(f => f.Name == "Limpieza");
+                                    var isLimpiezaChecked = limpieza != null && limpieza.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Limpieza" name="Limpieza"
+                                           @(isLimpiezaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Limpieza">
+                                        <i class="bi bi-bucket-fill me-2"></i>Servicio de limpieza
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var agua = Model.Data.Features.FirstOrDefault(f => f.Name == "Agua");
+                                    var isAguaChecked = agua != null && agua.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Agua" name="Agua"
+                                           @(isAguaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Agua">
+                                        <i class="bi bi-droplet-fill me-2"></i>Agua corriente
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var electricidad = Model.Data.Features.FirstOrDefault(f => f.Name == "Electricidad");
+                                    var isElectricidadChecked = electricidad != null && electricidad.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Electricidad" name="Electricidad"
+                                           @(isElectricidadChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Electricidad">
+                                        <i class="bi bi-lightning-charge-fill me-2"></i>Electricidad
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de navegación -->
+                <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                    <a asp-page="/Post/PostStep2" asp-route-draftId="@Model.DraftId" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Anterior
+                    </a>
+                    <div>
+                        <button type="submit" class="btn btn-primary">
+                            Siguiente <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 
 <script>
@@ -425,4 +638,3 @@
     // Inicializar al cargar la página
     document.addEventListener('DOMContentLoaded', updateSelectedTags);
 </script>
-
