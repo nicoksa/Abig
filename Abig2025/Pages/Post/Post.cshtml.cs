@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
 
+
 namespace Abig2025.Pages.Post
 {
     public class PostModel : PageModel
@@ -41,11 +42,9 @@ namespace Abig2025.Pages.Post
 
         public async Task<IActionResult> OnPost()
         {
-            Console.WriteLine("OnPost ejecutado");
 
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("ModelState no es válido");
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     Console.WriteLine(error.ErrorMessage);

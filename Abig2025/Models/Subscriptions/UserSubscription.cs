@@ -1,6 +1,7 @@
 ﻿using Abig2025.Models.Users;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Abig2025.Helpers;
 
 namespace Abig2025.Models.Subscriptions
 {
@@ -15,7 +16,7 @@ namespace Abig2025.Models.Subscriptions
         [Required]
         public int PlanId { get; set; }
 
-        public DateTime StartDate { get; set; } = DateTime.UtcNow;
+        public DateTime StartDate { get; set; } = HoraArgentina.Now;
 
         public DateTime EndDate { get; set; }
 

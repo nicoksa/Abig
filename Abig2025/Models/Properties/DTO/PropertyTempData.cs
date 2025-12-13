@@ -1,5 +1,6 @@
 ﻿using Abig2025.Helpers;
 using Abig2025.Models.Properties.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Abig2025.Models.DTO
 {
@@ -11,10 +12,12 @@ namespace Abig2025.Models.DTO
         public string? Subtype { get; set; }
 
         // Título + descripción
+        [Required(ErrorMessage = "El título es obligatorio")]
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
 
         // Precio
+        [Required(ErrorMessage = "El precio es obligatorio")]
         public decimal Price { get; set; }
         public CurrencyType Currency { get; set; }
 

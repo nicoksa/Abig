@@ -58,7 +58,7 @@
                 </div>
             </div>
 
-            <form method="post" class="needs-validation">
+            <form method="post" id="propertyForm" class="needs-validation" novalidate>
 
                 <!-- ============================
                       SECCIÓN 1 - OPERACIÓN
@@ -109,7 +109,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="bi bi-building"></i></span>
                                     <select class="form-select" asp-for="Data.PropertyType">
-                                        <option disabled selected>Seleccioná</option>
+                                        <option disabled selected>Selecciona</option>
                                         <option value="Casa">Casa</option>
                                         <option value="Departamento">Departamento</option>
                                         <option value="PH">PH</option>
@@ -151,7 +151,7 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Provincia</label>
                                 <select class="form-select" asp-for="Data.Province">
-                                    <option disabled selected>Seleccioná</option>
+                                    <option disabled selected>Selecciona </option>
                                     <option value="Buenos Aires">Buenos Aires</option>
                                     <option value="Mendoza">Mendoza</option>
                                 </select>
@@ -160,7 +160,7 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Localidad</label>
                                 <select class="form-select" asp-for="Data.City">
-                                    <option disabled selected>Seleccioná</option>
+                                    <option disabled selected>Selecciona</option>
                                     <option value="San Miguel">San Miguel</option>
                                     <option value="Belgrano">Belgrano</option>
                                 </select>
@@ -169,7 +169,7 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Barrio</label>
                                 <select class="form-select" asp-for="Data.Neighborhood">
-                                    <option disabled selected>Seleccioná</option>
+                                    <option disabled selected>Selecciona</option>
                                     <option value="Centro">Centro</option>
                                     <option value="Barrio Norte">Barrio Norte</option>
                                 </select>
@@ -309,11 +309,17 @@
                                     <option value="ARS">ARS</option>
                                     <option value="USD">USD</option>
                                 </select>
+                                <span asp-validation-for="Data.Currency" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Precio</label>
-                                <input type="number" class="form-control" asp-for="Data.Price" />
+                                <input type="number" class="form-control"
+                                       asp-for="Data.Price"
+                                       required
+                                       min="1"
+                                        />
+                                <div class="invalid-feedback">Ingresá un precio válido (mayor a 0)</div>
                             </div>
 
                             <div class="col-md-6">
@@ -346,7 +352,8 @@
                     <div class="card-body pt-0">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Título del aviso</label>
-                            <input class="form-control" asp-for="Data.Title" />
+                            <input class="form-control" asp-for="Data.Title" required />
+                            <div class="invalid-feedback">El título es obligatorio</div>
                         </div>
 
                         <div class="mb-3">
@@ -378,20 +385,93 @@
 
 <script src="~/js/post.js"></script>
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Inicializar mapa (igual que antes)
+        const map = L.map('map').setView([-34.6037, -58.3816], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        const marker = L.marker([-34.6037, -58.3816], { draggable: true }).addTo(map);
+
+        marker.on('dragend', function () {
+            const pos = marker.getLatLng();
+            document.getElementById("LatitudHidden").value = pos.lat;
+            document.getElementById("LongitudHidden").value = pos.lng;
+        });
+
+        // VALIDACIÓN CON BOOTSTRAP (JavaScript puro)
+        (function () {
+            'use strict'
+
+            // Obtener el formulario
+            const form = document.getElementById('propertyForm');
+
+            // Validar al enviar
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // Agregar la clase was-validated para mostrar errores
+                form.classList.add('was-validated');
+            }, false);
+
+            // Validación en tiempo real (opcional)
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function () {
+                    if (!this.checkValidity()) {
+                        this.classList.add('is-invalid');
+                        this.classList.remove('is-valid');
+                    } else {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+
+                    // Si el formulario ya fue validado, mantener was-validated
+                    if (form.classList.contains('was-validated')) {
+                        form.classList.add('was-validated');
+                    }
+                });
+
+                // Limpiar validación al escribir
+                input.addEventListener('input', function () {
+                    if (this.checkValidity()) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                });
+            });
+
+            // Validar radio buttons (especial)
+            const radioButtons = form.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    const name = this.name;
+                    const radios = form.querySelectorAll(`input[name="${name}"]`);
+                    const radioGroup = radios[0].closest('.row') || form;
+
+                    // Verificar si algún radio está seleccionado
+                    const isChecked = Array.from(radios).some(r => r.checked);
+
+                    if (!isChecked) {
+                        radios.forEach(r => {
+                            const label = form.querySelector(`label[for="${r.id}"]`);
+                            if (label) label.classList.add('is-invalid');
+                        });
+                    } else {
+                        radios.forEach(r => {
+                            const label = form.querySelector(`label[for="${r.id}"]`);
+                            if (label) label.classList.remove('is-invalid');
+                        });
+                    }
+                });
+            });
+        })();
+    </script>
 }
-<script>
-    // Inicializar mapa
-    const map = L.map('map').setView([-34.6037, -58.3816], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-    const marker = L.marker([-34.6037, -58.3816], { draggable: true }).addTo(map);
-
-    marker.on('dragend', function () {
-        const pos = marker.getLatLng();
-        document.getElementById("LatitudHidden").value = pos.lat;
-        document.getElementById("LongitudHidden").value = pos.lng;
-    });
-</script>
