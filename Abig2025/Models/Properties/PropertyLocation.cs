@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Abig2025.Models.Location;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Abig2025.Models.Properties
@@ -20,14 +21,10 @@ namespace Abig2025.Models.Properties
         [MaxLength(20)]
         public string? Number { get; set; }
 
-        [MaxLength(100)]
-        public string? Neighborhood { get; set; }
 
-        [MaxLength(100)]
-        public string? City { get; set; }
-
-        [MaxLength(100)]
-        public string? Province { get; set; }
+        public int? NeighborhoodId { get; set; }
+        public int? ProvinceId { get; set; }
+        public int? CityId { get; set; }
 
         [MaxLength(20)]
         public string? PostalCode { get; set; }
@@ -37,5 +34,22 @@ namespace Abig2025.Models.Properties
 
         [ForeignKey("PropertyId")]
         public virtual Property Property { get; set; } = new Property();
+
+        // Navegación
+        [ForeignKey("ProvinceId")]
+        public virtual Province? Province { get; set; }
+
+        [ForeignKey("CityId")]
+        public virtual City? City { get; set; }
+
+        [ForeignKey("NeighborhoodId")]
+        public virtual Neighborhood? Neighborhood { get; set; }
+
+        // Mantener los campos de texto como respaldo
+        [MaxLength(100)]
+        public string? CityName { get; set; } // Si no encuentra en DB
+
+        [MaxLength(100)]
+        public string? ProvinceName { get; set; }
     }
 }

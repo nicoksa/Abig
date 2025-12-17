@@ -1,10 +1,12 @@
 ﻿// Data/AppDbContext.cs
+using Abig2025.Models.Location;
 using Abig2025.Models.Properties;
 using Abig2025.Models.Subscriptions;
 using Abig2025.Models.Users;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using Abig2025.Data.SeedData;
 
 namespace Abig2025.Data
 {
@@ -31,6 +33,13 @@ namespace Abig2025.Data
         public DbSet<PropertyStatus> PropertyStatuses { get; set; }
 
         public DbSet<PropertyDraft> PropertyDrafts { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<Province> Provinces { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<Neighborhood> Neighborhoods { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configurar relación muchos a muchos entre Users y Roles
@@ -108,20 +117,46 @@ namespace Abig2025.Data
                 .HasForeignKey(f => f.PropertyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Insertar datos iniciales
-            modelBuilder.Entity<Role>().HasData(
-                new Role { RoleId = 1, RoleName = "Administrator", Description = "Acceso completo al sistema" },
-                new Role { RoleId = 2, RoleName = "User", Description = "Usuario estándar del sistema" },
-                new Role { RoleId = 3, RoleName = "Guest", Description = "Usuario con permisos limitados" }
-                );
+            modelBuilder.Entity<Province>()
+                .HasOne(p => p.Country)
+                .WithMany(c => c.Provinces)
+                .HasForeignKey(p => p.CountryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Datos iniciales de Planes
-            modelBuilder.Entity<SubscriptionPlan>().HasData(
-                new SubscriptionPlan { PlanId = 1, Name = "Gratuito", Price = 0, DurationDays = 30, MaxPublications = 1, IncludesContractManagement = false },
-                new SubscriptionPlan { PlanId = 2, Name = "Plata", Price = 1000, DurationDays = 45, MaxPublications = 4, IncludesContractManagement = false },
-                new SubscriptionPlan { PlanId = 3, Name = "Oro", Price = 2000, DurationDays = 60, MaxPublications = -1, IncludesContractManagement = false },
-                new SubscriptionPlan { PlanId = 4, Name = "Platino", Price = 2000, DurationDays = 60, MaxPublications = -1, IncludesContractManagement = true }
-            );
+            modelBuilder.Entity<City>()
+                .HasOne(c => c.Province)
+                .WithMany(p => p.Cities)
+                .HasForeignKey(c => c.ProvinceId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Índices para búsqueda rápida
+            modelBuilder.Entity<Province>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<City>()
+                .HasIndex(c => new { c.Name, c.ProvinceId })
+                .IsUnique();
+
+            ConfigureNeighborhoodRelationships(modelBuilder);
+            // SEED DATA (opcional pero recomendado)
+            SeedInitialData.SeedAll(modelBuilder);
+
+        }
+
+        private void ConfigureNeighborhoodRelationships(ModelBuilder modelBuilder)
+        {
+            // Neighborhood ↔ City (muchos a uno)
+            modelBuilder.Entity<Neighborhood>()
+                .HasOne(n => n.City)
+                .WithMany(c => c.Neighborhoods)
+                .HasForeignKey(n => n.CityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Índice único por nombre dentro de una ciudad
+            modelBuilder.Entity<Neighborhood>()
+                .HasIndex(n => new { n.Name, n.CityId })
+                .IsUnique();
         }
     }
 }

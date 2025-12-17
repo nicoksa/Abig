@@ -585,6 +585,133 @@
                     </div>
                 </div>
 
+                <!-- Sección de Características de Campo (solo para tipo Campo) -->
+                <div class="card mb-4" id="field-features-section">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"> Características del Campo</h5>
+                    </div>
+                    <div class="card-body">
+
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                @{
+                                    var campoMolino = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_Molino");
+                                    var isCampoMolinoChecked = campoMolino != null && campoMolino.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_Molino" name="Campo_Molino"
+                                           @(isCampoMolinoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_Molino">
+                                        <i class="bi bi-gear me-2"></i>Molino
+                                    </label>
+                                </div>
+
+                                @{
+                                    var campoManga = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_Manga");
+                                    var isCampoMangaChecked = campoManga != null && campoManga.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_Manga" name="Campo_Manga"
+                                           @(isCampoMangaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_Manga">
+                                        <i class="bi bi-box me-2"></i>Manga
+                                    </label>
+                                </div>
+
+                                @{
+                                    var campoCargador = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_Cargador");
+                                    var isCampoCargadorChecked = campoCargador != null && campoCargador.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_Cargador" name="Campo_Cargador"
+                                           @(isCampoCargadorChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_Cargador">
+                                        <i class="bi bi-truck me-2"></i>Cargador
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var campoAlambrado = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_Alambrado");
+                                    var isCampoAlambradoChecked = campoAlambrado != null && campoAlambrado.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_Alambrado" name="Campo_Alambrado"
+                                           @(isCampoAlambradoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_Alambrado">
+                                        <i class="bi bi-fence me-2"></i>Alambrado
+                                    </label>
+                                </div>
+
+                                @{
+                                    var campoGalpon = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_Galpon");
+                                    var isCampoGalponChecked = campoGalpon != null && campoGalpon.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_Galpon" name="Campo_Galpon"
+                                           @(isCampoGalponChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_Galpon">
+                                        <i class="bi bi-house-down me-2"></i>Galpón
+                                    </label>
+                                </div>
+
+                                @{
+                                    var campoRiego = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_SistemaRiego");
+                                    var isCampoRiegoChecked = campoRiego != null && campoRiego.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_SistemaRiego" name="Campo_SistemaRiego"
+                                           @(isCampoRiegoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_SistemaRiego">
+                                        <i class="bi bi-droplet me-2"></i>Sistema de riego
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @{
+                                    var campoAgricola = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_Agricola");
+                                    var isCampoAgricolaChecked = campoAgricola != null && campoAgricola.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_Agricola" name="Campo_Agricola"
+                                           @(isCampoAgricolaChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_Agricola">
+                                        <i class="bi bi-tree me-2"></i>Agrícola
+                                    </label>
+                                </div>
+
+                                @{
+                                    var campoGanadero = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_Ganadero");
+                                    var isCampoGanaderoChecked = campoGanadero != null && campoGanadero.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_Ganadero" name="Campo_Ganadero"
+                                           @(isCampoGanaderoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_Ganadero">
+                                        <i class="bi bi-cow me-2"></i>Ganadero
+                                    </label>
+                                </div>
+
+                                @{
+                                    var campoMixto = Model.Data.FieldFeatures.FirstOrDefault(f => f.Name == "Campo_Mixto");
+                                    var isCampoMixtoChecked = campoMixto != null && campoMixto.Value == "true";
+                                }
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="Campo_Mixto" name="Campo_Mixto"
+                                           @(isCampoMixtoChecked ? "checked" : "")>
+                                    <label class="form-check-label" for="Campo_Mixto">
+                                        <i class="bi bi-arrows-angle-contract me-2"></i>Mixto (Agro-Ganadero)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <!-- Botones de navegación -->
                 <div class="d-flex justify-content-between mt-4 pt-3 border-top">
                     <a asp-page="/Post/PostStep2" asp-route-draftId="@Model.DraftId" class="btn btn-outline-secondary">
@@ -637,4 +764,56 @@
 
     // Inicializar al cargar la página
     document.addEventListener('DOMContentLoaded', updateSelectedTags);
+</script>
+
+
+
+<script>
+    // Mostrar/ocultar sección de características de campo basado en el tipo de propiedad
+    document.addEventListener('DOMContentLoaded', function() {
+        // Esta función se llamaría cuando se seleccione el tipo de propiedad
+        // Por ahora, mostraremos todas las secciones y luego filtramos
+        updateFieldFeaturesSection();
+    });
+
+    function updateFieldFeaturesSection() {
+        // Aquí podrías agregar lógica para mostrar/ocultar basado en PropertyType
+        // Por ejemplo, si PropertyType == "Campo"
+        const fieldSection = document.getElementById('field-features-section');
+
+        // Por ahora mostramos siempre, pero puedes modificar según tus necesidades
+        // fieldSection.style.display = 'none'; // para ocultar inicialmente
+    }
+
+    // Actualizar script de etiquetas seleccionadas para incluir características de campo
+    function updateSelectedTags() {
+        const container = document.getElementById('selected-tags-container');
+        const tagsContainer = document.getElementById('selected-tags');
+        tagsContainer.innerHTML = '';
+
+        // Incluir tanto checkboxes regulares como de campo
+        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        const checkedBoxes = Array.from(allCheckboxes).filter(cb => cb.checked);
+
+        if (checkedBoxes.length > 0) {
+            container.style.display = 'block';
+
+            checkedBoxes.forEach(checkbox => {
+                const labelElement = document.querySelector(`label[for="${checkbox.id}"]`);
+                if (labelElement) {
+                    const label = labelElement.textContent.trim();
+                    const tag = document.createElement('span');
+                    tag.className = 'badge bg-success d-flex align-items-center mb-1 me-1';
+                    tag.innerHTML = `
+                        ${label}
+                        <button type="button" class="btn-close btn-close-white ms-2" aria-label="Remove"
+                                onclick="document.getElementById('${checkbox.id}').click()"></button>
+                    `;
+                    tagsContainer.appendChild(tag);
+                }
+            });
+        } else {
+            container.style.display = 'none';
+        }
+    }
 </script>

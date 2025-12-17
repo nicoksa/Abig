@@ -61,12 +61,14 @@ namespace Abig2025.Pages.Post
 
             // Actualizar características del paso 3
             UpdateFeaturesFromForm(existingData.Features);
+            UpdateFieldFeaturesFromForm(existingData.FieldFeatures);
 
             // Actualizar el draft con paso 3 completado
             await _draftService.UpdateDraftAsync(DraftId.Value, existingData, nextStep: 3);
 
             return RedirectToPage("/Post/PostStep4", new { draftId = DraftId });
         }
+
 
         private void EnsureFeaturesExist()
         {
@@ -112,6 +114,20 @@ namespace Abig2025.Pages.Post
                 "Electricidad"
             };
 
+            // Características específicas para campos
+            var fieldFeatures = new List<string>
+            {
+                "Campo_Molino",
+                "Campo_Manga",
+                "Campo_Cargador",
+                "Campo_Alambrado",
+                "Campo_Galpon",
+                "Campo_SistemaRiego",
+                "Campo_Agricola",
+                "Campo_Ganadero",
+                "Campo_Mixto"
+            };
+
             foreach (var featureName in predefinedFeatures)
             {
                 // Si no existe la característica en la lista, la agregamos
@@ -121,6 +137,19 @@ namespace Abig2025.Pages.Post
                     {
                         Name = featureName,
                         Value = "false" // Por defecto desactivado
+                    });
+                }
+            }
+
+            // Inicializar características de campo si no existen
+            foreach (var fieldFeatureName in fieldFeatures)
+            {
+                if (!Data.FieldFeatures.Any(f => f.Name == fieldFeatureName))
+                {
+                    Data.FieldFeatures.Add(new FieldFeatureTemp
+                    {
+                        Name = fieldFeatureName,
+                        Value = "false"
                     });
                 }
             }
@@ -137,6 +166,17 @@ namespace Abig2025.Pages.Post
                 // Verificar si el checkbox está marcado en el formulario
                 var isChecked = form.ContainsKey(feature.Name);
                 feature.Value = isChecked.ToString().ToLower();
+            }
+        }
+
+        private void UpdateFieldFeaturesFromForm(List<FieldFeatureTemp> fieldFeatures)
+        {
+            var form = Request.Form;
+
+            foreach (var fieldFeature in fieldFeatures)
+            {
+                var isChecked = form.ContainsKey(fieldFeature.Name);
+                fieldFeature.Value = isChecked.ToString().ToLower();
             }
         }
     }

@@ -10,12 +10,6 @@
 
 <div class="container-fluid px-4 py-5">
 
-    <!-- Campo oculto para draft -->
-    <input type="hidden" asp-for="DraftId" />
-
-    <!-- Campo oculto para coordenadas -->
-    <input type="hidden" asp-for="Data.Latitude" id="LatitudHidden" />
-    <input type="hidden" asp-for="Data.Longitude" id="LongitudHidden" />
 
     <!-- Barra de progreso -->
     <div class="progress-container mb-5">
@@ -59,6 +53,15 @@
             </div>
 
             <form method="post" id="propertyForm" class="needs-validation" novalidate>
+
+
+                <input type="hidden" asp-for="DraftId" />
+
+                <!-- Campo oculto para coordenadas -->
+                <input type="hidden" asp-for="Data.Latitude" id="LatitudHidden"
+                       value="@(Model.Data.Latitude?.ToString("F6", System.Globalization.CultureInfo.InvariantCulture))" />
+                <input type="hidden" asp-for="Data.Longitude" id="LongitudHidden"
+                       value="@(Model.Data.Longitude?.ToString("F6", System.Globalization.CultureInfo.InvariantCulture))" />
 
                 <!-- ============================
                       SECCIÓN 1 - OPERACIÓN
@@ -391,15 +394,52 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        // Inicializar mapa (igual que antes)
-        const map = L.map('map').setView([-34.6037, -58.3816], 13);
+        // Obtener valores iniciales de los campos ocultos
+        const latInput = document.getElementById("LatitudHidden");
+        const lngInput = document.getElementById("LongitudHidden");
+
+        // IMPORTANTE: Convertir los valores de string a número
+        let initialLat = -34.6037;
+        let initialLng = -58.3816;
+
+        // Verificar si hay valores en los campos ocultos
+        if (latInput && latInput.value && latInput.value.trim() !== '') {
+            const latValue = parseFloat(latInput.value);
+            if (!isNaN(latValue)) {
+                initialLat = latValue;
+            }
+        }
+
+        if (lngInput && lngInput.value && lngInput.value.trim() !== '') {
+            const lngValue = parseFloat(lngInput.value);
+            if (!isNaN(lngValue)) {
+                initialLng = lngValue;
+            }
+        }
+
+        console.log("Coordenadas iniciales para el mapa:", initialLat, initialLng);
+
+        // Inicializar mapa CON LAS COORDENADAS GUARDADAS
+        const map = L.map('map').setView([initialLat, initialLng], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        const marker = L.marker([-34.6037, -58.3816], { draggable: true }).addTo(map);
+
+        // Crear marcador EN LA POSICIÓN GUARDADA
+        const marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
+
+        // Centrar el mapa en el marcador (por si acaso)
+        map.setView([initialLat, initialLng], 13);
 
         marker.on('dragend', function () {
             const pos = marker.getLatLng();
-            document.getElementById("LatitudHidden").value = pos.lat;
-            document.getElementById("LongitudHidden").value = pos.lng;
+            // Formatear con 6 decimales
+            const lat = pos.lat.toFixed(6);
+            const lng = pos.lng.toFixed(6);
+
+            // Actualizar los campos ocultos
+            if (latInput) latInput.value = lat;
+            if (lngInput) lngInput.value = lng;
+
+            console.log("Coordenadas actualizadas:", lat, lng);
         });
 
         // VALIDACIÓN CON BOOTSTRAP (JavaScript puro)
@@ -472,6 +512,43 @@
                 });
             });
         })();
+    </script>
+
+
+    <script>
+                $(document).ready(function() {
+            // Cargar provincias al inicio
+            loadProvinces();
+
+            $('#Data_ProvinceId').change(function() {
+                var provinceId = $(this).val();
+                if (provinceId) {
+                    loadCities(provinceId);
+                }
+            });
+        });
+
+        function loadProvinces() {
+            $.get('/api/location/provinces', function(data) {
+                var select = $('#Data_ProvinceId');
+                select.empty();
+                select.append('<option value="">Selecciona provincia</option>');
+                $.each(data, function(index, province) {
+                    select.append(`<option value="${province.provinceId}">${province.name}</option>`);
+                });
+            });
+        }
+
+        function loadCities(provinceId) {
+            $.get(`/api/location/provinces/${provinceId}/cities`, function(data) {
+                var select = $('#Data_CityId');
+                select.empty();
+                select.append('<option value="">Selecciona localidad</option>');
+                $.each(data, function(index, city) {
+                    select.append(`<option value="${city.cityId}">${city.name}</option>`);
+                });
+            });
+        }
     </script>
 }
 
