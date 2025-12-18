@@ -52,6 +52,12 @@ namespace Abig2025.Models.DTO
         [JsonPropertyName("neighborhood")]
         public string? Neighborhood { get; set; }
 
+
+        public int? ProvinceId { get; set; }
+        public int? CityId { get; set; }
+        public int? NeighborhoodId { get; set; }
+
+
         [JsonPropertyName("street")]
         public string? Street { get; set; }
 

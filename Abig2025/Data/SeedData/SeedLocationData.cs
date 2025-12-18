@@ -108,11 +108,7 @@ namespace Abig2025.Data.SeedData
             new() { NeighborhoodId = 3, Name = "Belgrano", CityId = 100, PostalCodePrefix = "C1428" },
             new() { NeighborhoodId = 4, Name = "Núñez", CityId = 100, PostalCodePrefix = "C1429" },
             new() { NeighborhoodId = 5, Name = "Colegiales", CityId = 100, PostalCodePrefix = "C1426" },
-            
-            // San Miguel (CityId = 1)
-            new() { NeighborhoodId = 101, Name = "Centro", CityId = 1, PostalCodePrefix = "B1663" },
-            new() { NeighborhoodId = 102, Name = "Barrio Parque", CityId = 1, PostalCodePrefix = "B1663" },
-            
+                       
             // Mendoza Capital (CityId = 7)
             new() { NeighborhoodId = 201, Name = "Centro", CityId = 7, PostalCodePrefix = "M5500" },
             new() { NeighborhoodId = 202, Name = "Quinta Sección", CityId = 7, PostalCodePrefix = "M5501" },
