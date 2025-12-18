@@ -1,4 +1,5 @@
 using Abig2025.Data;
+using Abig2025.Data.SeedData;
 using Abig2025.Services;
 
 using Abig2025.Services.Interfaces;
@@ -109,6 +110,15 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+
+    await LocationJsonLoader.LoadAsync(context, env);
+}
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

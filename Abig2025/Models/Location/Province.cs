@@ -17,6 +17,8 @@ namespace Abig2025.Models.Location
 
         public int CountryId { get; set; } = 1; // Argentina por defecto
 
+        public bool isActive { get; set; } = true;
+
         // Navegación
         public virtual ICollection<City> Cities { get; set; } = new List<City>();
         public virtual Country Country { get; set; } = null!;

@@ -518,6 +518,9 @@
 
     <script>
         $(document).ready(function() {
+
+             const CABA_CITY_ID = 3954;
+
             // Cargar provincias al inicio
             loadProvinces();
 
@@ -541,24 +544,25 @@
             });
 
             // Cuando cambia la ciudad
-            $('#Data_CityId').change(function() {
+                        $('#Data_CityId').change(function() {
                 var cityId = $(this).val();
                 var cityName = $(this).find('option:selected').text();
                 $('#CityName').val(cityName);
 
-                if (cityId) {
+                if (cityId && parseInt(cityId) === CABA_CITY_ID) {
+
                     loadNeighborhoods(cityId);
                     $('#Data_NeighborhoodId').prop('disabled', false);
-                } else {
-                    $('#Data_NeighborhoodId').prop('disabled', true).empty()
-                        .append('<option value="">Primero selecciona localidad</option>');
-                }
-            });
 
-            // Cuando cambia el barrio
-            $('#Data_NeighborhoodId').change(function() {
-                var neighborhoodName = $(this).find('option:selected').text();
-                $('#NeighborhoodName').val(neighborhoodName);
+                } else {
+
+                    $('#Data_NeighborhoodId')
+                        .prop('disabled', true)
+                        .empty()
+                        .append('<option value="">Barrio solo disponible para CABA</option>');
+
+                    $('#NeighborhoodName').val('');
+                }
             });
         });
 
@@ -623,7 +627,7 @@
                 var currentNeighborhoodId = '@Model.Data.NeighborhoodId';
 
                 select.empty();
-                select.append('<option value="">Selecciona barrio (opcional)</option>');
+                select.append('<option value="">Selecciona barrio </option>');
 
                 $.each(data, function(index, neighborhood) {
                     var option = $('<option></option>')

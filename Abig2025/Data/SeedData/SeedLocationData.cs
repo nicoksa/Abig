@@ -10,8 +10,9 @@ namespace Abig2025.Data.SeedData
         {
             SeedCountries(modelBuilder);
             SeedProvinces(modelBuilder);
-            SeedCities(modelBuilder);
-            SeedNeighborhoods(modelBuilder);
+            
+            //SeedCities(modelBuilder);
+            //SeedNeighborhoods(modelBuilder);
         }
 
         private static void SeedCountries(ModelBuilder modelBuilder)
@@ -72,6 +73,7 @@ namespace Abig2025.Data.SeedData
             modelBuilder.Entity<Province>().HasData(provinces);
         }
 
+        /*
         private static void SeedCities(ModelBuilder modelBuilder)
         {
             // Ciudades principales de Buenos Aires (ejemplo)
@@ -116,5 +118,6 @@ namespace Abig2025.Data.SeedData
 
             modelBuilder.Entity<Neighborhood>().HasData(neighborhoods);
         }
+        */
     }
 }

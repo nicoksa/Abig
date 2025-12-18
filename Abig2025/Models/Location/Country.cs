@@ -12,6 +12,8 @@ namespace Abig2025.Models.Location
         [MaxLength(10)]
         public string? Code { get; set; } // "AR", "BR", etc.
 
+        public bool isActive { get; set; } = true;
+
         // Navegación
         public virtual ICollection<Province> Provinces { get; set; } = new List<Province>();
     }

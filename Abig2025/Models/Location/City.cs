@@ -16,6 +16,8 @@ namespace Abig2025.Models.Location
         [MaxLength(20)]
         public string? PostalCodePrefix { get; set; }
 
+        public bool isActive { get; set; } = true;  
+
         // Navegación
         public virtual Province Province { get; set; } = null!;
 
