@@ -1,10 +1,11 @@
 ﻿using Abig2025.Data;
 using Abig2025.Models.DTO;
+using Abig2025.Models.Properties;
 using Abig2025.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using Abig2025.Models.Properties;
 
 
 namespace Abig2025.Pages.Post
@@ -38,6 +39,29 @@ namespace Abig2025.Pages.Post
                 if (draft != null)
                 {
                     Data = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
+
+                    //  buscar los IDs
+                    if (!string.IsNullOrEmpty(Data.Province) && !Data.ProvinceId.HasValue)
+                    {
+                        var province = await _context.Provinces
+                            .FirstOrDefaultAsync(p => p.Name == Data.Province);
+                        if (province != null) Data.ProvinceId = province.ProvinceId;
+                    }
+
+                    if (!string.IsNullOrEmpty(Data.City) && !Data.CityId.HasValue)
+                    {
+                        var city = await _context.Cities
+                            .FirstOrDefaultAsync(c => c.Name == Data.City);
+                        if (city != null) Data.CityId = city.CityId;
+                    }
+
+                    if (!string.IsNullOrEmpty(Data.Neighborhood) && !Data.NeighborhoodId.HasValue)
+                    {
+                        var neighborhood = await _context.Neighborhoods
+                            .FirstOrDefaultAsync(n => n.Name == Data.Neighborhood);
+                        if (neighborhood != null) Data.NeighborhoodId = neighborhood.NeighborhoodId;
+                    }
+
                 }
             }
 
