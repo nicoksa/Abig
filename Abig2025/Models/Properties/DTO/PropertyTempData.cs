@@ -53,8 +53,13 @@ namespace Abig2025.Models.DTO
         public string? Neighborhood { get; set; }
 
 
+        [JsonPropertyName("provinceId")]
         public int? ProvinceId { get; set; }
+
+        [JsonPropertyName("cityId")]
         public int? CityId { get; set; }
+
+        [JsonPropertyName("neighborhoodId")]
         public int? NeighborhoodId { get; set; }
 
 
@@ -77,16 +82,34 @@ namespace Abig2025.Models.DTO
         public decimal? Longitude { get; set; }
 
         // PASO 3 – Características principales
+
+        [JsonPropertyName("mainrooms")]
         public int? MainRooms { get; set; }             // Ambientes
+
+        [JsonPropertyName("bedrooms")]
         public int? Bedrooms { get; set; }              // Dormitorios
+
+        [JsonPropertyName("bathrooms")]
         public int? Bathrooms { get; set; }             // Baños
+
+        [JsonPropertyName("parkingSpaces")]
         public int? ParkingSpaces { get; set; }         // Cocheras
 
+
+        [JsonPropertyName("coveredArea")]
         public double? CoveredArea { get; set; }        // Sup cubierta
+
+        [JsonPropertyName("totalArea")]
         public double? TotalArea { get; set; }          // Sup total
 
+
+        [JsonPropertyName("age")]
         public int? Age { get; set; }                   // Antigüedad
+
+        [JsonPropertyName("isUnderConstruction")]
         public bool IsUnderConstruction { get; set; }   // En construcción
+
+        [JsonPropertyName("isNew")]
         public bool IsNew { get; set; }                 // A estrenar
 
         // PASO 3 extra – Features dinámicos

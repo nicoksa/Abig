@@ -272,12 +272,12 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Superficie cubierta</label>
+                                <label class="form-label fw-bold">Superficie cubierta (m²) </label>
                                 <input type="number" class="form-control" asp-for="Data.CoveredArea" />
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Superficie total</label>
+                                <label class="form-label fw-bold">Superficie total (m²) </label>
                                 <input type="number" class="form-control" asp-for="Data.TotalArea" />
                             </div>
 
@@ -287,13 +287,13 @@
                             </div>
 
                             <div class="col-md-6">
-                                <div class="form-check">
+                                <div class="form-check" style="margin-top: 1.75rem;">
                                     <input type="checkbox" class="form-check-input"
                                            asp-for="Data.IsUnderConstruction" />
                                     <label class="form-check-label fw-bold">En construcción</label>
                                 </div>
 
-                                <div class="form-check mt-2">
+                                <div class="form-check mt-2" style="margin-top: 1.75rem;">
                                     <input type="checkbox" class="form-check-input"
                                            asp-for="Data.IsNew" />
                                     <label class="form-check-label fw-bold">A estrenar</label>
@@ -327,13 +327,13 @@
                                 <span asp-validation-for="Data.Currency" class="text-danger"></span>
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Precio</label>
+                            <div class="col-md-6" style="margin-top: 0.4rem;">
+                                <label class="form-label fw-bold">Precio*</label>
                                 <input type="number" class="form-control"
                                        asp-for="Data.Price"
                                        required
                                        min="1"
-                                        />
+                                       "/>
                                 <div class="invalid-feedback">Ingresá un precio válido (mayor a 0)</div>
                             </div>
 
@@ -345,7 +345,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6" style="margin-top: 0.5rem;">
                                 <label class="form-label fw-bold">Expensas (opcional)</label>
                                 <input type="number" class="form-control" asp-for="Data.Expenses" />
                             </div>
@@ -366,7 +366,7 @@
 
                     <div class="card-body pt-0">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Título del aviso</label>
+                            <label class="form-label fw-bold">Título del aviso*</label>
                             <input class="form-control" asp-for="Data.Title" required />
                             <div class="invalid-feedback">El título es obligatorio</div>
                         </div>
@@ -405,74 +405,42 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
+    <!-- Agregar datos a los elementos para que JavaScript los use -->
     <script>
-        // Obtener valores iniciales de los campos ocultos
-        const latInput = document.getElementById("LatitudHidden");
-        const lngInput = document.getElementById("LongitudHidden");
+        // Pasar datos del modelo a JavaScript
+        $(document).ready(function() {
+            // Provincia actual
+            $('#Data_ProvinceId').data('current', '@Model.Data.ProvinceId');
 
-        // IMPORTANTE: Convertir los valores de string a número
-        let initialLat = -34.6037;
-        let initialLng = -58.3816;
+            // Ciudad actual
+            $('#Data_CityId').data('current', '@Model.Data.CityId');
 
-        // Verificar si hay valores en los campos ocultos
-        if (latInput && latInput.value && latInput.value.trim() !== '') {
-            const latValue = parseFloat(latInput.value);
-            if (!isNaN(latValue)) {
-                initialLat = latValue;
-            }
-        }
+            // Barrio actual
+            $('#Data_NeighborhoodId').data('current', '@Model.Data.NeighborhoodId');
 
-        if (lngInput && lngInput.value && lngInput.value.trim() !== '') {
-            const lngValue = parseFloat(lngInput.value);
-            if (!isNaN(lngValue)) {
-                initialLng = lngValue;
-            }
-        }
-
-        console.log("Coordenadas iniciales para el mapa:", initialLat, initialLng);
-
-        // Inicializar mapa CON LAS COORDENADAS GUARDADAS
-        const map = L.map('map').setView([initialLat, initialLng], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-        // Crear marcador EN LA POSICIÓN GUARDADA
-        const marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);
-
-        // Centrar el mapa en el marcador (por si acaso)
-        map.setView([initialLat, initialLng], 13);
-
-        marker.on('dragend', function () {
-            const pos = marker.getLatLng();
-            // Formatear con 6 decimales
-            const lat = pos.lat.toFixed(6);
-            const lng = pos.lng.toFixed(6);
-
-            // Actualizar los campos ocultos
-            if (latInput) latInput.value = lat;
-            if (lngInput) lngInput.value = lng;
-
-            console.log("Coordenadas actualizadas:", lat, lng);
+            $('#Data_PropertyType').data('current', '@Model.Data.PropertyType');
         });
+    </script>
 
-        // VALIDACIÓN CON BOOTSTRAP (JavaScript puro)
+    <!-- Cargar archivos JavaScript externos -->
+    <script src="~/js/post/location.js" asp-append-version="true"></script>
+    <script src="~/js/post/map.js" asp-append-version="true"></script>
+    <script src="~/js/post/property-type-handler.js" asp-append-version="true"></script>
+
+    <!-- Script de validación (mantenerlo aquí) -->
+    <script>
         (function () {
             'use strict'
-
-            // Obtener el formulario
             const form = document.getElementById('propertyForm');
 
-            // Validar al enviar
             form.addEventListener('submit', function (event) {
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
                 }
-
-                // Agregar la clase was-validated para mostrar errores
                 form.classList.add('was-validated');
             }, false);
 
-            // Validación en tiempo real (opcional)
             const inputs = form.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
                 input.addEventListener('blur', function () {
@@ -483,14 +451,8 @@
                         this.classList.remove('is-invalid');
                         this.classList.add('is-valid');
                     }
-
-                    // Si el formulario ya fue validado, mantener was-validated
-                    if (form.classList.contains('was-validated')) {
-                        form.classList.add('was-validated');
-                    }
                 });
 
-                // Limpiar validación al escribir
                 input.addEventListener('input', function () {
                     if (this.checkValidity()) {
                         this.classList.remove('is-invalid');
@@ -498,164 +460,7 @@
                     }
                 });
             });
-
-            // Validar radio buttons (especial)
-            const radioButtons = form.querySelectorAll('input[type="radio"]');
-            radioButtons.forEach(radio => {
-                radio.addEventListener('change', function () {
-                    const name = this.name;
-                    const radios = form.querySelectorAll(`input[name="${name}"]`);
-                    const radioGroup = radios[0].closest('.row') || form;
-
-                    // Verificar si algún radio está seleccionado
-                    const isChecked = Array.from(radios).some(r => r.checked);
-
-                    if (!isChecked) {
-                        radios.forEach(r => {
-                            const label = form.querySelector(`label[for="${r.id}"]`);
-                            if (label) label.classList.add('is-invalid');
-                        });
-                    } else {
-                        radios.forEach(r => {
-                            const label = form.querySelector(`label[for="${r.id}"]`);
-                            if (label) label.classList.remove('is-invalid');
-                        });
-                    }
-                });
-            });
         })();
-    </script>
-
-
-    <script>
-        $(document).ready(function() {
-
-             const CABA_CITY_ID = 3954;
-
-            // Cargar provincias al inicio
-            loadProvinces();
-
-            // Cuando cambia la provincia
-            $('#Data_ProvinceId').change(function() {
-                var provinceId = $(this).val();
-                var provinceName = $(this).find('option:selected').text();
-                $('#ProvinceName').val(provinceName);
-
-                if (provinceId) {
-                    loadCities(provinceId);
-                    $('#Data_CityId').prop('disabled', false);
-                    $('#Data_NeighborhoodId').prop('disabled', true).empty()
-                        .append('<option value="">Primero selecciona localidad</option>');
-                } else {
-                    $('#Data_CityId').prop('disabled', true).empty()
-                        .append('<option value="">Primero selecciona provincia</option>');
-                    $('#Data_NeighborhoodId').prop('disabled', true).empty()
-                        .append('<option value="">Primero selecciona localidad</option>');
-                }
-            });
-
-            // Cuando cambia la ciudad
-                        $('#Data_CityId').change(function() {
-                var cityId = $(this).val();
-                var cityName = $(this).find('option:selected').text();
-                $('#CityName').val(cityName);
-
-                if (cityId && parseInt(cityId) === CABA_CITY_ID) {
-
-                    loadNeighborhoods(cityId);
-                    $('#Data_NeighborhoodId').prop('disabled', false);
-
-                } else {
-
-                    $('#Data_NeighborhoodId')
-                        .prop('disabled', true)
-                        .empty()
-                        .append('<option value="">Barrio solo disponible para CABA</option>');
-
-                    $('#NeighborhoodName').val('');
-                }
-            });
-        });
-
-        function loadProvinces() {
-            $.get('/api/location/provinces', function(data) {
-                var select = $('#Data_ProvinceId');
-                var currentProvinceId = '@Model.Data.ProvinceId';
-
-                select.empty();
-                select.append('<option value="">Selecciona provincia</option>');
-
-                $.each(data, function(index, province) {
-                    var option = $('<option></option>')
-                        .val(province.provinceId)
-                        .text(province.name);
-
-                    if (province.provinceId == currentProvinceId) {
-                        option.prop('selected', true);
-                        $('#ProvinceName').val(province.name);
-                    }
-
-                    select.append(option);
-                });
-
-                // Si hay una provincia seleccionada, cargar sus ciudades
-                if (currentProvinceId) {
-                    loadCities(currentProvinceId);
-                }
-            });
-        }
-
-        function loadCities(provinceId) {
-            $.get(`/api/location/provinces/${provinceId}/cities`, function(data) {
-                var select = $('#Data_CityId');
-                var currentCityId = '@Model.Data.CityId';
-
-                select.empty();
-                select.append('<option value="">Selecciona localidad</option>');
-
-                $.each(data, function(index, city) {
-                    var option = $('<option></option>')
-                        .val(city.cityId)
-                        .text(city.name);
-
-                    if (city.cityId == currentCityId) {
-                        option.prop('selected', true);
-                        $('#CityName').val(city.name);
-                        // Cargar barrios si hay ciudad seleccionada
-                        loadNeighborhoods(currentCityId);
-                    }
-
-                    select.append(option);
-                });
-
-                select.prop('disabled', false);
-            });
-        }
-
-        function loadNeighborhoods(cityId) {
-            $.get(`/api/location/cities/${cityId}/neighborhoods`, function(data) {
-                var select = $('#Data_NeighborhoodId');
-                var currentNeighborhoodId = '@Model.Data.NeighborhoodId';
-
-                select.empty();
-                select.append('<option value="">Selecciona barrio </option>');
-
-                $.each(data, function(index, neighborhood) {
-                    var option = $('<option></option>')
-                        .val(neighborhood.neighborhoodId)
-                        .text(neighborhood.name);
-
-                    if (neighborhood.neighborhoodId == currentNeighborhoodId) {
-                        option.prop('selected', true);
-                        $('#NeighborhoodName').val(neighborhood.name);
-                    }
-
-                    select.append(option);
-                });
-
-                select.prop('disabled', false);
-            });
-        }
     </script>
 }
 
