@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Abig2025.Helpers;
 
 
 namespace Abig2025.Pages.Post
@@ -77,7 +78,6 @@ namespace Abig2025.Pages.Post
 
             var userId = 1;
 
-            // Configurar opciones de serialización para decimales
             var jsonOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -85,6 +85,9 @@ namespace Abig2025.Pages.Post
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
 
+            // ==========================
+            // NUEVO DRAFT
+            // ==========================
             if (!DraftId.HasValue)
             {
                 var draft = new PropertyDraft
@@ -92,22 +95,88 @@ namespace Abig2025.Pages.Post
                     DraftId = Guid.NewGuid(),
                     UserId = userId,
                     JsonData = JsonSerializer.Serialize(Data, jsonOptions),
-                    CurrentStep = 1
+                    CurrentStep = 1,
+                    LastUpdated = DateTime.UtcNow
                 };
 
                 _context.PropertyDrafts.Add(draft);
                 await _context.SaveChangesAsync();
+
                 return RedirectToPage("/Post/PostStep2", new { draftId = draft.DraftId });
             }
 
+            // ==========================
+            // DRAFT EXISTENTE (MERGE COMPLETO)
+            // ==========================
             var existingDraft = await _draftService.GetDraftAsync(DraftId.Value);
-            if (existingDraft != null)
+            if (existingDraft == null)
             {
-                existingDraft.JsonData = JsonSerializer.Serialize(Data, jsonOptions);
-                existingDraft.CurrentStep = 1;
-                existingDraft.LastUpdated = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                return RedirectToPage("/Post/Post");
             }
+
+            var existingData = JsonSerializer.Deserialize<PropertyTempData>(existingDraft.JsonData)!;
+
+            // ACTUALIZAR TODOS LOS CAMPOS DEL STEP 1 CON LOS VALORES DEL FORMULARIO
+            existingData.OperationType = Data.OperationType;
+            existingData.PropertyType = Data.PropertyType;
+            existingData.Subtype = Data.Subtype;
+            existingData.Title = Data.Title;
+            existingData.Description = Data.Description;
+            existingData.Price = Data.Price;
+            existingData.Currency = Data.Currency;
+            existingData.Expenses = Data.Expenses;
+            existingData.ExpensesCurrency = Data.ExpensesCurrency;
+
+            // Ubicación 
+            existingData.Province = Data.Province;
+            existingData.City = Data.City;
+            existingData.Neighborhood = Data.Neighborhood;
+            existingData.ProvinceId = Data.ProvinceId;
+            existingData.CityId = Data.CityId;
+            existingData.NeighborhoodId = Data.NeighborhoodId;
+            existingData.Street = Data.Street;
+            existingData.Number = Data.Number;
+            existingData.PostalCode = Data.PostalCode;
+
+            // Características principales 
+            existingData.MainRooms = Data.MainRooms;
+            existingData.Bedrooms = Data.Bedrooms;
+            existingData.Bathrooms = Data.Bathrooms;
+            existingData.ParkingSpaces = Data.ParkingSpaces;
+            existingData.CoveredArea = Data.CoveredArea;
+            existingData.TotalArea = Data.TotalArea;
+            existingData.Age = Data.Age;
+            existingData.IsUnderConstruction = Data.IsUnderConstruction;
+            existingData.IsNew = Data.IsNew;
+
+            // Coordenadas 
+            existingData.Latitude = Data.Latitude;
+            existingData.Longitude = Data.Longitude;
+
+            //  PRESERVAR DATOS DE OTROS PASOS (NO SOBREESCRIBIR)
+            // Mantener features si ya existen
+            if (existingData.Features == null || existingData.Features.Count == 0)
+            {
+                existingData.Features = Data.Features;
+            }
+
+            // Mantener imágenes temporales si ya existen
+            if (existingData.TempImages == null || existingData.TempImages.Count == 0)
+            {
+                existingData.TempImages = Data.TempImages;
+            }
+
+            // Mantener video si ya existe
+            if (string.IsNullOrEmpty(existingData.VideoUrl))
+            {
+                existingData.VideoUrl = Data.VideoUrl;
+            }
+
+            existingDraft.JsonData = JsonSerializer.Serialize(existingData, jsonOptions);
+            existingDraft.CurrentStep = 1;
+            existingDraft.LastUpdated = HoraArgentina.Now;
+
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("/Post/PostStep2", new { draftId = DraftId });
         }

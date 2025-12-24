@@ -113,30 +113,49 @@ namespace Abig2025.Models.DTO
         public bool IsNew { get; set; }                 // A estrenar
 
         // PASO 3 extra – Features dinámicos
+        [JsonPropertyName("features")]
         public List<PropertyFeatureTemp> Features { get; set; } = new();
+
+        [JsonPropertyName("fieldFeatures")]
         public List<FieldFeatureTemp> FieldFeatures { get; set; } = new();
 
 
         // PASO 4 – Imágenes temporales
+        [JsonPropertyName("tempImages")]
         public List<TempImageInfo> TempImages { get; set; } = new();
+
+        [JsonPropertyName("videoUrl")]
         public string? VideoUrl { get; set; }
     }
 
     public class PropertyFeatureTemp
     {
-        public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("featureDefinitionId")]
+        public int FeatureDefinitionId { get; set; }
+
+        [JsonPropertyName("value")]
         public string? Value { get; set; }
     }
     public class FieldFeatureTemp
     {
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
+
+        [JsonPropertyName("value")]
         public string? Value { get; set; }
     }
     public class TempImageInfo
     {
+        [JsonPropertyName("fileName")]
         public string FileName { get; set; } = string.Empty;
+
+        [JsonPropertyName("originalName")]
         public string OriginalName { get; set; } = string.Empty;
+
+        [JsonPropertyName("size")]
         public long Size { get; set; }
+
+        [JsonPropertyName("uploadedAt")]
         public DateTime UploadedAt { get; set; } = HoraArgentina.Now;
     }
 }

@@ -1,4 +1,5 @@
-using Abig2025.Models.DTO;
+ï»¿using Abig2025.Models.DTO;
+using Abig2025.Models.ViewModels;
 using Abig2025.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,156 +11,225 @@ namespace Abig2025.Pages.Post
     {
         private readonly IDraftService _draftService;
         private readonly ITempFileService _tempFileService;
+        private readonly ILogger<PostStep2Model> _logger;
 
-        public PostStep2Model(IDraftService draftService, ITempFileService tempFileService)
+        public PostStep2Model(
+            IDraftService draftService,
+            ITempFileService tempFileService,
+            ILogger<PostStep2Model> logger)
         {
             _draftService = draftService;
             _tempFileService = tempFileService;
+            _logger = logger;
         }
 
         [BindProperty(SupportsGet = true)]
         public Guid? DraftId { get; set; }
 
+        // SOLO video va en el ViewModel
         [BindProperty]
-        public PropertyTempData Data { get; set; } = new();
+        public PostStep2ViewModel Step2 { get; set; } = new();
 
+        //  EL QUE USA LA VISTA
         [BindProperty]
         public List<IFormFile> Imagenes { get; set; } = new();
 
         public List<string> UploadErrors { get; set; } = new();
 
+        public PropertyTempData Data { get; set; } = new();
+
+        /* ===========================
+           GET
+        =========================== */
         public async Task<IActionResult> OnGet()
         {
             if (!DraftId.HasValue)
-            {
                 return RedirectToPage("/Post/Post");
-            }
 
             var draft = await _draftService.GetDraftAsync(DraftId.Value);
             if (draft == null)
-            {
                 return RedirectToPage("/Post/Post");
-            }
 
             Data = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
+
+            Step2.VideoUrl = Data.VideoUrl;
+
             return Page();
         }
 
-        public async Task<IActionResult> OnPost()
+        /* ===========================
+           POST STEP 2
+        =========================== */
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!DraftId.HasValue)
-            {
                 return RedirectToPage("/Post/Post");
-            }
 
             var draft = await _draftService.GetDraftAsync(DraftId.Value);
             if (draft == null)
-            {
                 return RedirectToPage("/Post/Post");
-            }
 
-            // Cargar los datos existentes
-            var existingData = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
+            var existingData =
+                JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
 
-            // Actualizar video
-            if (!string.IsNullOrEmpty(Data.VideoUrl))
+            // =========================
+            // VIDEO
+            // =========================
+            existingData.VideoUrl = Step2.VideoUrl;
+
+            // =========================
+            // IMÃGENES NUEVAS
+            // =========================
+            if (Imagenes.Any())
             {
-                existingData.VideoUrl = Data.VideoUrl;
-            }
+                int total = existingData.TempImages.Count + Imagenes.Count;
 
-            // Procesar nuevas imágenes
-            if (Imagenes != null && Imagenes.Count > 0)
-            {
-                // Validar límite máximo de imágenes
-                int totalImages = existingData.TempImages.Count + Imagenes.Count;
-                if (totalImages > 20)
+                if (total > 20)
                 {
-                    ModelState.AddModelError("Imagenes", $"Solo puedes subir hasta 20 imágenes. Ya tienes {existingData.TempImages.Count}.");
+                    ModelState.AddModelError(
+                        string.Empty,
+                        "MÃ¡ximo 20 imÃ¡genes"
+                    );
+
                     Data = existingData;
                     return Page();
                 }
 
-                // Procesar cada imagen
-                foreach (var imagen in Imagenes)
+                foreach (var img in Imagenes)
                 {
-                    if (imagen.Length > 0)
+                    var fileName =
+                        await _tempFileService.SaveTempImageAsync(img);
+
+                    existingData.TempImages.Add(new TempImageInfo
                     {
-                        try
-                        {
-                            // Validar imagen
-                            if (!_tempFileService.IsValidImage(imagen))
-                            {
-                                UploadErrors.Add($"La imagen '{imagen.FileName}' no es válida. Asegúrate de que sea JPG, PNG o GIF y pese menos de 5MB.");
-                                continue;
-                            }
-
-                            // Guardar temporalmente
-                            var fileName = await _tempFileService.SaveTempImageAsync(imagen);
-
-                            // Agregar a la lista de imágenes temporales
-                            existingData.TempImages.Add(new TempImageInfo
-                            {
-                                FileName = fileName,
-                                OriginalName = imagen.FileName,
-                                Size = imagen.Length
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            UploadErrors.Add($"Error al subir '{imagen.FileName}': {ex.Message}");
-                        }
-                    }
+                        FileName = fileName,
+                        OriginalName = img.FileName,
+                        Size = img.Length,
+                        UploadedAt = DateTime.UtcNow
+                    });
                 }
             }
 
-            // Actualizar el draft con los datos combinados
-            await _draftService.UpdateDraftAsync(DraftId.Value, existingData, nextStep: 2);
 
-            // Si hay errores, mostrar en la página
-            if (UploadErrors.Count > 0)
-            {
-                foreach (var error in UploadErrors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
-                Data = existingData;
-                return Page();
-            }
+            // ðŸ”¥GUARDAR SIEMPRE STEP 2
+   
+            await _draftService.UpdateDraftAsync(
+                DraftId.Value,
+                existingData,
+                nextStep: 2
+            );
 
-            return RedirectToPage("/Post/PostStep3", new { draftId = DraftId });
+            // AVANZAR
+            return RedirectToPage(
+                "/Post/PostStep3",
+                new { draftId = DraftId.Value }
+            );
         }
 
-        // Método para eliminar una imagen específica
+        /* ===========================
+           ELIMINAR IMAGEN
+        =========================== */
         public async Task<IActionResult> OnPostDeleteImage(string fileName)
         {
             if (!DraftId.HasValue)
-            {
-                return BadRequest();
-            }
+                return RedirectToPage("/Post/Post");
 
             var draft = await _draftService.GetDraftAsync(DraftId.Value);
             if (draft == null)
+                return RedirectToPage("/Post/Post");
+
+            var existingData =
+                JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
+
+            var image =
+                existingData.TempImages
+                    .FirstOrDefault(x => x.FileName == fileName);
+
+            if (image != null)
             {
-                return BadRequest();
+                _tempFileService.DeleteTempImage(fileName);
+                existingData.TempImages.Remove(image);
+
+                await _draftService.UpdateDraftAsync(
+                    DraftId.Value,
+                    existingData,
+                    nextStep: 2
+                );
             }
+
+            return RedirectToPage(new
+            {
+                draftId = DraftId.Value,
+                preserveNewImages = true  // Nuevo parÃ¡metro para indicar que debe preservar
+            });
+        }
+
+        /* ===========================
+           BACK
+        =========================== */
+
+        public async Task<IActionResult> OnPostBackAsync()
+        {
+            if (!DraftId.HasValue)
+                return RedirectToPage("/Post/Post");
+
+            var draft = await _draftService.GetDraftAsync(DraftId.Value);
+            if (draft == null)
+                return RedirectToPage("/Post/Post");
 
             var existingData = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
 
-            // Eliminar la imagen de la lista
-            var imageToRemove = existingData.TempImages.FirstOrDefault(img => img.FileName == fileName);
-            if (imageToRemove != null)
+ 
+            // GUARDAR VIDEO (si hay cambios)
+
+            existingData.VideoUrl = Step2.VideoUrl;
+
+            // GUARDAR NUEVAS IMÃGENES 
+
+            if (Imagenes.Any())
             {
-                // Eliminar archivo físico
-                _tempFileService.DeleteTempImage(fileName);
+                int total = existingData.TempImages.Count + Imagenes.Count;
 
-                // Eliminar de la lista
-                existingData.TempImages.Remove(imageToRemove);
+                if (total > 20)
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        "MÃ¡ximo 20 imÃ¡genes"
+                    );
 
-                // Actualizar el draft
-                await _draftService.UpdateDraftAsync(DraftId.Value, existingData, nextStep: 2);
+                    Data = existingData;
+                    return Page();
+                }
+
+                foreach (var img in Imagenes)
+                {
+                    var fileName = await _tempFileService.SaveTempImageAsync(img);
+
+                    existingData.TempImages.Add(new TempImageInfo
+                    {
+                        FileName = fileName,
+                        OriginalName = img.FileName,
+                        Size = img.Length,
+                        UploadedAt = DateTime.UtcNow
+                    });
+                }
             }
 
-            return RedirectToPage(new { draftId = DraftId });
+            //  GUARDAR SIEMPRE ANTES DE RETROCEDER
+
+            await _draftService.UpdateDraftAsync(
+                DraftId.Value,
+                existingData,
+                nextStep: 1  // Nota: retrocedemos al paso 1
+            );
+
+
+            // RETROCEDER AL PASO 1
+
+            return RedirectToPage(
+                "/Post/Post",
+                new { draftId = DraftId.Value }
+            );
         }
     }
 }

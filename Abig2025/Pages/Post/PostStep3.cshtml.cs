@@ -1,5 +1,8 @@
+
 using Abig2025.Models.DTO;
+using Abig2025.Models.Properties;
 using Abig2025.Services;
+using Abig2025.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
@@ -9,174 +12,179 @@ namespace Abig2025.Pages.Post
     public class PostStep3Model : PageModel
     {
         private readonly IDraftService _draftService;
+        private readonly IFeatureService _featureService;
 
-        public PostStep3Model(IDraftService draftService)
+        public PostStep3Model(IDraftService draftService, IFeatureService featureService)
         {
             _draftService = draftService;
+            _featureService = featureService;
         }
 
         [BindProperty(SupportsGet = true)]
-        public Guid? DraftId { get; set; }
+        public Guid DraftId { get; set; }
 
         [BindProperty]
         public PropertyTempData Data { get; set; } = new();
 
+        public List<FeatureDefinition> FeatureDefinitions { get; set; } = new();
+
+
         public async Task<IActionResult> OnGet()
         {
-            if (!DraftId.HasValue)
-            {
+            if (DraftId == Guid.Empty)
                 return RedirectToPage("/Post/Post");
-            }
 
-            var draft = await _draftService.GetDraftAsync(DraftId.Value);
+            var draft = await _draftService.GetDraftAsync(DraftId);
             if (draft == null)
-            {
                 return RedirectToPage("/Post/Post");
-            }
 
-            // Cargar datos existentes del draft
             Data = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
 
-            // Inicializar características si no existen
-            EnsureFeaturesExist();
+            FeatureDefinitions = await _featureService
+                .GetFeaturesForProperty(Data.PropertyType);
+
+            SyncDraftFeatures();
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            if (!DraftId.HasValue)
+            try
             {
-                return RedirectToPage("/Post/Post");
-            }
+                if (DraftId == Guid.Empty)
+                {
+                    return RedirectToPage("/Post/Post");
+                }
 
-            var draft = await _draftService.GetDraftAsync(DraftId.Value);
-            if (draft == null)
+                var draft = await _draftService.GetDraftAsync(DraftId);
+                if (draft == null)
+                {
+                    return RedirectToPage("/Post/Post");
+                }
+
+                // Cargar datos existentes del draft
+                var existingData = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
+
+                // Obtener definiciones de características
+                FeatureDefinitions = await _featureService
+                    .GetFeaturesForProperty(existingData.PropertyType);
+
+                // Actualizar características desde el formulario
+                UpdateFeaturesFromForm(existingData);
+
+                // Actualizar el draft con los cambios
+                await _draftService.UpdateDraftAsync(
+                    DraftId,
+                    existingData,
+                    nextStep: 3);
+
+                // Redirigir al siguiente paso
+                return RedirectToPage("/Post/PostStep4", new { draftId = DraftId });
+            }
+            catch (Exception ex)
             {
-                return RedirectToPage("/Post/Post");
+                // Log error y mostrar mensaje
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+
+                // Recargar los datos para mostrar la página con el error
+                return await OnGet();
             }
-
-            // Cargar los datos existentes del draft
-            var existingData = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
-
-            // Actualizar características del paso 3
-            UpdateFeaturesFromForm(existingData.Features);
-            UpdateFieldFeaturesFromForm(existingData.FieldFeatures);
-
-            // Actualizar el draft con paso 3 completado
-            await _draftService.UpdateDraftAsync(DraftId.Value, existingData, nextStep: 3);
-
-            return RedirectToPage("/Post/PostStep4", new { draftId = DraftId });
         }
 
-
-        private void EnsureFeaturesExist()
+        // Método para volver al paso 2
+        public async Task<IActionResult> OnPostBackAsync()
         {
-            // Lista de características predefinidas para el paso 3
-            var predefinedFeatures = new List<string>
+            try
             {
-                "PermiteMascotas",
-                "AccesoDiscapacitados",
-                "Parrilla",
-                "AptoProfesional",
-                "UsoComercial",
-                "Gimnasio",
-                "Hidromasaje",
-                "Solarium",
-                "PistaDeportiva",
-                "SalaJuegos",
-                "AireAcondicionado",
-                "CocinaEquipada",
-                "Amueblado",
-                "Alarma",
-                "Quincho",
-                "Sauna",
-                "Caldera",
-                "Lavavajillas",
-                "Termotanque",
-                "DormitorioSuite",
-                "Balcon",
-                "Cocina",
-                "Sotano",
-                "Patio",
-                "Escritorio",
-                "Jardin",
-                "Comedor",
-                "Baulera",
-                "Terraza",
-                "Toilette",
-                "Lavadero",
-                "InternetWifi",
-                "Ascensor",
-                "Vigilancia",
-                "Limpieza",
-                "Agua",
-                "Electricidad"
-            };
+                if (DraftId == Guid.Empty)
+                {
+                    return RedirectToPage("/Post/Post");
+                }
 
-            // Características específicas para campos
-            var fieldFeatures = new List<string>
-            {
-                "Campo_Molino",
-                "Campo_Manga",
-                "Campo_Cargador",
-                "Campo_Alambrado",
-                "Campo_Galpon",
-                "Campo_SistemaRiego",
-                "Campo_Agricola",
-                "Campo_Ganadero",
-                "Campo_Mixto"
-            };
+                var draft = await _draftService.GetDraftAsync(DraftId);
+                if (draft == null)
+                {
+                    return RedirectToPage("/Post/Post");
+                }
 
-            foreach (var featureName in predefinedFeatures)
+                // Cargar datos existentes
+                var existingData = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
+
+                // Obtener definiciones de características
+                FeatureDefinitions = await _featureService
+                    .GetFeaturesForProperty(existingData.PropertyType);
+
+                // Actualizar características desde el formulario antes de retroceder
+                UpdateFeaturesFromForm(existingData);
+
+                // Guardar los cambios en el draft (mantener el step 2)
+                await _draftService.UpdateDraftAsync(
+                    DraftId,
+                    existingData,
+                    nextStep: 2);
+
+                // Redirigir al paso 2
+                return RedirectToPage("/Post/PostStep2", new { draftId = DraftId });
+            }
+            catch (Exception ex)
             {
-                // Si no existe la característica en la lista, la agregamos
-                if (!Data.Features.Any(f => f.Name == featureName))
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                return await OnGet();
+            }
+        }
+
+        private void SyncDraftFeatures()
+        {
+            // Asegurar que todas las características definidas estén en el Data
+            foreach (var def in FeatureDefinitions)
+            {
+                var existingFeature = Data.Features
+                    .FirstOrDefault(f => f.FeatureDefinitionId == def.FeatureDefinitionId);
+
+                if (existingFeature == null)
                 {
                     Data.Features.Add(new PropertyFeatureTemp
                     {
-                        Name = featureName,
-                        Value = "false" // Por defecto desactivado
+                        FeatureDefinitionId = def.FeatureDefinitionId,
+                        Value = "false" // Valor por defecto
                     });
                 }
             }
 
-            // Inicializar características de campo si no existen
-            foreach (var fieldFeatureName in fieldFeatures)
+            // Eliminar características que ya no existen en las definiciones
+            var featureIdsToRemove = Data.Features
+                .Where(f => !FeatureDefinitions.Any(d => d.FeatureDefinitionId == f.FeatureDefinitionId))
+                .Select(f => f.FeatureDefinitionId)
+                .ToList();
+
+            foreach (var id in featureIdsToRemove)
             {
-                if (!Data.FieldFeatures.Any(f => f.Name == fieldFeatureName))
+                Data.Features.RemoveAll(f => f.FeatureDefinitionId == id);
+            }
+        }
+
+        private void UpdateFeaturesFromForm(PropertyTempData data)
+        {
+            foreach (var def in FeatureDefinitions)
+            {
+                var key = $"feature_{def.FeatureDefinitionId}";
+                var isChecked = Request.Form.ContainsKey(key);
+
+                // Buscar o crear la característica
+                var feature = data.Features
+                    .FirstOrDefault(f => f.FeatureDefinitionId == def.FeatureDefinitionId);
+
+                if (feature == null)
                 {
-                    Data.FieldFeatures.Add(new FieldFeatureTemp
+                    feature = new PropertyFeatureTemp
                     {
-                        Name = fieldFeatureName,
-                        Value = "false"
-                    });
+                        FeatureDefinitionId = def.FeatureDefinitionId
+                    };
+                    data.Features.Add(feature);
                 }
-            }
-        }
 
-        private void UpdateFeaturesFromForm(List<PropertyFeatureTemp> features)
-        {
-            // Obtener todos los checkboxes del formulario
-            var form = Request.Form;
-
-            // Para cada característica en la lista, actualizar su valor basado en el formulario
-            foreach (var feature in features)
-            {
-                // Verificar si el checkbox está marcado en el formulario
-                var isChecked = form.ContainsKey(feature.Name);
-                feature.Value = isChecked.ToString().ToLower();
-            }
-        }
-
-        private void UpdateFieldFeaturesFromForm(List<FieldFeatureTemp> fieldFeatures)
-        {
-            var form = Request.Form;
-
-            foreach (var fieldFeature in fieldFeatures)
-            {
-                var isChecked = form.ContainsKey(fieldFeature.Name);
-                fieldFeature.Value = isChecked.ToString().ToLower();
+                feature.Value = isChecked ? "true" : "false";
             }
         }
     }

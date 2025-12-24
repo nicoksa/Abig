@@ -13,6 +13,8 @@ namespace Abig2025.Data.SeedData
 
             // Seed de ubicaciones
             SeedLocationData.Seed(modelBuilder);
+
+            FeatureDefinitionSeed.Seed(modelBuilder);
         }
 
         private static void SeedRoles(ModelBuilder modelBuilder)

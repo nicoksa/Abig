@@ -1,4 +1,5 @@
-﻿@page
+﻿@page "{draftId?}"
+@model Abig2025.Pages.Post.PostStep4Model
 @{
     ViewData["Title"] = "Publicar Inmueble - Paso 4";
 }
@@ -44,102 +45,126 @@
     <!-- Formulario de selección de plan -->
     <form method="post" style="padding-top:25px">
         <!-- Plan actual -->
-        <div class="card mb-4">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Plan actual</h5>
-            </div>
-            <div class="card-body">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="PlanSeleccionado" id="PlanActual" value="PlanActual" checked>
-                    <label class="form-check-label fw-bold" for="PlanActual">
-                        Gratis - Visibilidad baja
-                    </label>
-                    <p class="text-muted mt-1">Una publicaciòn gratuita por 30 dias</p>
+      
+
+      
+        @if (Model.FreePlan != null)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Plan actual (@Model.CurrentSubscription?.Plan?.Name ?? "Gratuito")</h5>
                 </div>
-            </div>
-        </div>
-
-        <!-- Más planes disponibles -->
-        <div class="card mb-4">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Más planes para vos</h5>
-                <p class="mb-0 text-muted">Gestioná y publicá con cualquiera de estos planes</p>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <!-- Plan Premium -->
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 border-primary">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0" style="color:white;">Premium</h5>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title pricing-card-title">$150.670<small class="text-muted fw-light">/mes*</small></h3>
-                                <ul class="list-unstyled mt-3 mb-4">
-                                   
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Mayor visibilidad en resultados de búsqueda</li>
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Destacado en la sección de propiedades </li>
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Recibe mayor cantidad de interesados</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Renovación automática</li>
-                                </ul>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <button type="button" class="btn btn-outline-primary w-100" onclick="window.location.href='/Pay'">
-                                    Seleccionar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Plan Destacado -->
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100 border-warning">
-                            <div class="card-header bg-warning text-dark">
-                                <h5 class="mb-0">Destacado</h5>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title pricing-card-title">$94.165<small class="text-muted fw-light">/mes*</small></h3>
-                                <ul class="list-unstyled mt-3 mb-4">
-                                    
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Visibilidad mejorada en resultados</li>
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Prioridad en listados de búsqueda</li>
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Recibe mayor cantidad de interesados</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Renovación automática</li>
-                                </ul>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <button type="button" class="btn btn-outline-warning w-100" onclick="window.location.href='/Post/Pay'">
-                                    Seleccionar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Plan Básico -->
-                    <div class="col-md-4 mb-3">
-                        <div class="card h-100">
-                            <div class="card-header bg-light">
-                                <h5 class="mb-0">Básico</h5>
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title pricing-card-title">$43.450<small class="text-muted fw-light">/mes*</small></h3>
-                                <ul class="list-unstyled mt-3 mb-4">
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Publicación básica</li>
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Contacto directo con interesados</li>
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Recibe notificaciones de interesados</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Renovación automática</li>
-                                </ul>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <button type="button" class="btn btn-outline-secondary w-100" onclick="window.location.href='/Post/Pay'">
-                                    Seleccionar
-                                </button>
-                            </div>
-                        </div>
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                               name="SelectedPlan" id="PlanActual" value="PlanActual" checked>
+                        <label class="form-check-label fw-bold" for="PlanActual">
+                            @(Model.CurrentSubscription?.Plan?.Name ?? Model.FreePlan.Name)
+                            @if (Model.CurrentSubscription?.Plan?.Price == 0 || Model.FreePlan.Price == 0)
+                            {
+                                <text>- Gratis</text>
+                            }
+                            else
+                            {
+                                <text>- $@(Model.CurrentSubscription?.Plan?.Price.ToString("N0") ?? "0")/mes</text>
+                            }
+                        </label>
+                        <p class="text-muted mt-1">
+                            Publicaciones restantes: @Model.RemainingPublications
+                            @if (Model.CurrentSubscription?.Plan?.MaxPublications == -1)
+                            {
+                                <text>(Ilimitadas)</text>
+                            }
+                        </p>
+                        @if (Model.CurrentSubscription?.EndDate != null)
+                        {
+                            <p class="text-muted mb-0">
+                                Vence: @Model.CurrentSubscription.EndDate.ToString("dd/MM/yyyy")
+                            </p>
+                        }
                     </div>
                 </div>
             </div>
-        </div>
+        }
+
+        @if (Model.AvailablePlans.Any())
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Actualizar tu plan</h5>
+                    <p class="mb-0 text-muted">Obtén más visibilidad y beneficios</p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var plan in Model.AvailablePlans)
+                        {
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 @(plan.Name.Contains("Destacada") ? "border-warning" :
+                                                                                    plan.Name.Contains("Vip") ? "border-primary" : "")">
+                            <div class="card-header @(plan.Name.Contains("Destacada") ? "bg-warning text-dark" :
+                                                                                    plan.Name.Contains("Vip") ? "bg-primary text-white" : "bg-light")">
+                                <h5 class="mb-0">@plan.Name</h5>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title pricing-card-title">
+                                    @if (plan.Price == 0)
+                                            {
+                                                <text>Gratis</text>
+                                            }
+                                            else
+                                            {
+                                                @($"${plan.Price:N0}")
+                                            }
+                                            <small class="text-muted fw-light">/@plan.DurationDays días</small>
+                                        </h3>
+                                        <ul class="list-unstyled mt-3 mb-4">
+                                            <li class="mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                @if (plan.MaxPublications == -1)
+                                                {
+                                                    <text>Publicaciones ilimitadas</text>
+                                                }
+                                                else
+                                                {
+                                                    @($"{plan.MaxPublications} publicaciones")
+                                                }
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                @plan.DurationDays días de visibilidad
+                                            </li>
+                                            @if (plan.IncludesContractManagement)
+                                            {
+                                                <li class="mb-2">
+                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                    Gestión de contratos
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        @if (plan.Price == 0)
+                                        {
+                                            <button type="button" class="btn btn-outline-primary w-100"
+                                                    onclick="document.getElementById('SelectedPlan').value = '@plan.PlanId'">
+                                                Seleccionar
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <a href="/Subscriptions/Subscribe?planId=@plan.PlanId&draftId=@Model.DraftId"
+                                               class="btn btn-outline-primary w-100">
+                                                Suscribirse
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
 
         <!-- Nota sobre los planes -->
         <div class="alert alert-info">
@@ -154,7 +179,8 @@
 
         <!-- Botones de acción -->
         <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-            <a asp-page="/Post/PostStep3" class="btn btn-outline-secondary">
+            <a asp-page="/Post/PostStep3" asp-route-draftId="@Model.DraftId"
+               class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-1"></i>Anterior
             </a>
             <div>

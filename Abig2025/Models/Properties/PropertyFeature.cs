@@ -6,21 +6,21 @@ namespace Abig2025.Models.Properties
     public class PropertyFeature
     {
         [Key]
-        public int FeatureId { get; set; }
+        public int PropertyFeatureId { get; set; }
 
         [Required]
         public int PropertyId { get; set; }
 
         [Required]
-        [MaxLength(100)]
-        public string Name { get; set; } = string.Empty; // Ej: "Ambientes"
+        public int FeatureDefinitionId { get; set; }
 
         [MaxLength(150)]
-        public string? Value { get; set; } // Ej: "3"
+        public string? Value { get; set; }
 
-        public int DisplayOrder { get; set; } = 0;
+        [ForeignKey(nameof(PropertyId))]
+        public Property Property { get; set; } = null!;
 
-        [ForeignKey("PropertyId")]
-        public virtual Property Property { get; set; } = new Property();
+        [ForeignKey(nameof(FeatureDefinitionId))]
+        public FeatureDefinition FeatureDefinition { get; set; } = null!;
     }
 }

@@ -46,7 +46,7 @@ namespace Abig2025.Services
 
             draft.JsonData = JsonSerializer.Serialize(data);
             draft.CurrentStep = nextStep;
-            draft.LastUpdated = DateTime.UtcNow;
+            draft.LastUpdated = HoraArgentina.Now;
 
             await _context.SaveChangesAsync();
         }

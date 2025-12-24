@@ -31,13 +31,17 @@ namespace Abig2025.Data
         public DbSet<PropertyImage> PropertyImages { get; set; }
         public DbSet<PropertyFeature> PropertyFeatures { get; set; }
         public DbSet<PropertyStatus> PropertyStatuses { get; set; }
-
+        public DbSet<FeatureDefinition> FeatureDefinitions { get; set; }
         public DbSet<PropertyDraft> PropertyDrafts { get; set; }
+        public DbSet<PropertyPublication> PropertyPublications { get; set; }
+
 
         public DbSet<Country> Countries { get; set; }
         public DbSet<Province> Provinces { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Neighborhood> Neighborhoods { get; set; }
+
+        
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -117,6 +121,44 @@ namespace Abig2025.Data
                 .HasForeignKey(f => f.PropertyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // ============================================
+            // CONFIGURACIÓN PARA PropertyPublication
+            // ============================================
+
+            modelBuilder.Entity<PropertyPublication>()
+                .HasIndex(pp => new { pp.PropertyId, pp.UserId, pp.PlanId, pp.PublishedAt })
+                .IsUnique();
+
+            modelBuilder.Entity<PropertyPublication>()
+                .HasOne(pp => pp.Property)
+                .WithMany()
+                .HasForeignKey(pp => pp.PropertyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PropertyPublication>()
+                .HasOne(pp => pp.User)
+                .WithMany()
+                .HasForeignKey(pp => pp.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PropertyPublication>()
+                .HasOne(pp => pp.Plan)
+                .WithMany()
+                .HasForeignKey(pp => pp.PlanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PropertyPublication>()
+                .HasIndex(pp => pp.PublishedAt);
+
+            modelBuilder.Entity<PropertyPublication>()
+                .HasIndex(pp => pp.ExpiresAt);
+
+            modelBuilder.Entity<PropertyPublication>()
+                .HasIndex(pp => pp.IsActive);
+
+
+
+
             modelBuilder.Entity<Province>()
                 .HasOne(p => p.Country)
                 .WithMany(c => c.Provinces)
@@ -139,7 +181,7 @@ namespace Abig2025.Data
                 .IsUnique();
 
             ConfigureNeighborhoodRelationships(modelBuilder);
-            // SEED DATA (opcional pero recomendado)
+            // SEED DATA 
             SeedInitialData.SeedAll(modelBuilder);
 
         }

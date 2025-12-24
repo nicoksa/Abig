@@ -381,6 +381,540 @@ namespace Abig2025.Data.Migrations
                     b.ToTable("Favorites");
                 });
 
+            modelBuilder.Entity("Abig2025.Models.Properties.FeatureDefinition", b =>
+                {
+                    b.Property<int>("FeatureDefinitionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeatureDefinitionId"));
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Scope")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ValueType")
+                        .HasColumnType("int");
+
+                    b.HasKey("FeatureDefinitionId");
+
+                    b.ToTable("FeatureDefinitions");
+
+                    b.HasData(
+                        new
+                        {
+                            FeatureDefinitionId = 1,
+                            DisplayName = "Permite mascotas",
+                            DisplayOrder = 1,
+                            Group = "Mascotas",
+                            Icon = "bi bi-heart",
+                            IsActive = true,
+                            Key = "PermiteMascotas",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 2,
+                            DisplayName = "Acceso discapacitados",
+                            DisplayOrder = 10,
+                            Group = "Generales",
+                            Icon = "bi bi-person-bounding-box",
+                            IsActive = true,
+                            Key = "AccesoDiscapacitados",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 3,
+                            DisplayName = "Apto profesional",
+                            DisplayOrder = 11,
+                            Group = "Generales",
+                            Icon = "bi bi-briefcase",
+                            IsActive = true,
+                            Key = "AptoProfesional",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 4,
+                            DisplayName = "Uso comercial",
+                            DisplayOrder = 12,
+                            Group = "Generales",
+                            Icon = "bi bi-shop",
+                            IsActive = true,
+                            Key = "UsoComercial",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 5,
+                            DisplayName = "Parrilla",
+                            DisplayOrder = 20,
+                            Group = "Amenities",
+                            Icon = "bi bi-fire",
+                            IsActive = true,
+                            Key = "Parrilla",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 6,
+                            DisplayName = "Quincho",
+                            DisplayOrder = 21,
+                            Group = "Amenities",
+                            Icon = "bi bi-fire",
+                            IsActive = true,
+                            Key = "Quincho",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 7,
+                            DisplayName = "Gimnasio",
+                            DisplayOrder = 22,
+                            Group = "Amenities",
+                            Icon = "bi bi-activity",
+                            IsActive = true,
+                            Key = "Gimnasio",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 8,
+                            DisplayName = "Solarium",
+                            DisplayOrder = 23,
+                            Group = "Amenities",
+                            Icon = "bi bi-sun",
+                            IsActive = true,
+                            Key = "Solarium",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 9,
+                            DisplayName = "Hidromasaje",
+                            DisplayOrder = 24,
+                            Group = "Amenities",
+                            Icon = "bi bi-droplet",
+                            IsActive = true,
+                            Key = "Hidromasaje",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 10,
+                            DisplayName = "Sauna",
+                            DisplayOrder = 25,
+                            Group = "Amenities",
+                            Icon = "bi bi-thermometer-sun",
+                            IsActive = true,
+                            Key = "Sauna",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 11,
+                            DisplayName = "Pista deportiva",
+                            DisplayOrder = 26,
+                            Group = "Amenities",
+                            Icon = "bi bi-trophy",
+                            IsActive = true,
+                            Key = "PistaDeportiva",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 12,
+                            DisplayName = "Sala de juegos",
+                            DisplayOrder = 27,
+                            Group = "Amenities",
+                            Icon = "bi bi-joystick",
+                            IsActive = true,
+                            Key = "SalaJuegos",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 13,
+                            DisplayName = "Aire acondicionado",
+                            DisplayOrder = 30,
+                            Group = "Confort",
+                            Icon = "bi bi-snow",
+                            IsActive = true,
+                            Key = "AireAcondicionado",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 14,
+                            DisplayName = "Caldera",
+                            DisplayOrder = 31,
+                            Group = "Confort",
+                            Icon = "bi bi-thermometer-high",
+                            IsActive = true,
+                            Key = "Caldera",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 15,
+                            DisplayName = "Termotanque",
+                            DisplayOrder = 32,
+                            Group = "Confort",
+                            Icon = "bi bi-droplet-half",
+                            IsActive = true,
+                            Key = "Termotanque",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 16,
+                            DisplayName = "Lavavajillas",
+                            DisplayOrder = 33,
+                            Group = "Confort",
+                            Icon = "bi bi-cup-straw",
+                            IsActive = true,
+                            Key = "Lavavajillas",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 17,
+                            DisplayName = "Alarma",
+                            DisplayOrder = 34,
+                            Group = "Confort",
+                            Icon = "bi bi-shield-lock",
+                            IsActive = true,
+                            Key = "Alarma",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 18,
+                            DisplayName = "Amueblado",
+                            DisplayOrder = 40,
+                            Group = "Interiores",
+                            Icon = "bi bi-house-door",
+                            IsActive = true,
+                            Key = "Amueblado",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 19,
+                            DisplayName = "Cocina equipada",
+                            DisplayOrder = 41,
+                            Group = "Interiores",
+                            Icon = "bi bi-egg-fried",
+                            IsActive = true,
+                            Key = "CocinaEquipada",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 20,
+                            DisplayName = "Lavadero",
+                            DisplayOrder = 42,
+                            Group = "Interiores",
+                            Icon = "bi bi-bucket",
+                            IsActive = true,
+                            Key = "Lavadero",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 21,
+                            DisplayName = "Baulera",
+                            DisplayOrder = 43,
+                            Group = "Interiores",
+                            Icon = "bi bi-box",
+                            IsActive = true,
+                            Key = "Baulera",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 22,
+                            DisplayName = "Toilette",
+                            DisplayOrder = 44,
+                            Group = "Interiores",
+                            Icon = "bi bi-door-open",
+                            IsActive = true,
+                            Key = "Toilette",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 23,
+                            DisplayName = "Balcón",
+                            DisplayOrder = 45,
+                            Group = "Interiores",
+                            Icon = "bi bi-layout-sidebar-inset",
+                            IsActive = true,
+                            Key = "Balcon",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 24,
+                            DisplayName = "Terraza",
+                            DisplayOrder = 46,
+                            Group = "Interiores",
+                            Icon = "bi bi-layers",
+                            IsActive = true,
+                            Key = "Terraza",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 25,
+                            DisplayName = "Patio",
+                            DisplayOrder = 47,
+                            Group = "Interiores",
+                            Icon = "bi bi-tree",
+                            IsActive = true,
+                            Key = "Patio",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 26,
+                            DisplayName = "Jardín",
+                            DisplayOrder = 48,
+                            Group = "Interiores",
+                            Icon = "bi bi-flower1",
+                            IsActive = true,
+                            Key = "Jardin",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 27,
+                            DisplayName = "Internet / WiFi",
+                            DisplayOrder = 50,
+                            Group = "Servicios",
+                            Icon = "bi bi-wifi",
+                            IsActive = true,
+                            Key = "InternetWifi",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 28,
+                            DisplayName = "Ascensor",
+                            DisplayOrder = 51,
+                            Group = "Servicios",
+                            Icon = "bi bi-arrow-up",
+                            IsActive = true,
+                            Key = "Ascensor",
+                            Scope = 1,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 29,
+                            DisplayName = "Vigilancia",
+                            DisplayOrder = 52,
+                            Group = "Servicios",
+                            Icon = "bi bi-eye",
+                            IsActive = true,
+                            Key = "Vigilancia",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 30,
+                            DisplayName = "Servicio de limpieza",
+                            DisplayOrder = 53,
+                            Group = "Servicios",
+                            Icon = "bi bi-stars",
+                            IsActive = true,
+                            Key = "Limpieza",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 31,
+                            DisplayName = "Agua",
+                            DisplayOrder = 54,
+                            Group = "Servicios",
+                            Icon = "bi bi-droplet",
+                            IsActive = true,
+                            Key = "Agua",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 32,
+                            DisplayName = "Electricidad",
+                            DisplayOrder = 55,
+                            Group = "Servicios",
+                            Icon = "bi bi-lightning",
+                            IsActive = true,
+                            Key = "Electricidad",
+                            Scope = 0,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 33,
+                            DisplayName = "Molino",
+                            DisplayOrder = 60,
+                            Group = "Campo",
+                            Icon = "bi bi-wind",
+                            IsActive = true,
+                            Key = "Campo_Molino",
+                            Scope = 2,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 34,
+                            DisplayName = "Manga",
+                            DisplayOrder = 61,
+                            Group = "Campo",
+                            Icon = "bi bi-diagram-3",
+                            IsActive = true,
+                            Key = "Campo_Manga",
+                            Scope = 2,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 35,
+                            DisplayName = "Cargador",
+                            DisplayOrder = 62,
+                            Group = "Campo",
+                            Icon = "bi bi-truck",
+                            IsActive = true,
+                            Key = "Campo_Cargador",
+                            Scope = 2,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 36,
+                            DisplayName = "Alambrado",
+                            DisplayOrder = 63,
+                            Group = "Campo",
+                            Icon = "bi bi-border",
+                            IsActive = true,
+                            Key = "Campo_Alambrado",
+                            Scope = 2,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 37,
+                            DisplayName = "Galpón",
+                            DisplayOrder = 64,
+                            Group = "Campo",
+                            Icon = "bi bi-house",
+                            IsActive = true,
+                            Key = "Campo_Galpon",
+                            Scope = 2,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 38,
+                            DisplayName = "Sistema de riego",
+                            DisplayOrder = 65,
+                            Group = "Campo",
+                            Icon = "bi bi-droplet",
+                            IsActive = true,
+                            Key = "Campo_SistemaRiego",
+                            Scope = 2,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 39,
+                            DisplayName = "Uso agrícola",
+                            DisplayOrder = 66,
+                            Group = "Campo",
+                            Icon = "bi bi-seedling",
+                            IsActive = true,
+                            Key = "Campo_Agricola",
+                            Scope = 2,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 40,
+                            DisplayName = "Uso ganadero",
+                            DisplayOrder = 67,
+                            Group = "Campo",
+                            Icon = "bi bi-cow",
+                            IsActive = true,
+                            Key = "Campo_Ganadero",
+                            Scope = 2,
+                            ValueType = 1
+                        },
+                        new
+                        {
+                            FeatureDefinitionId = 41,
+                            DisplayName = "Uso mixto",
+                            DisplayOrder = 68,
+                            Group = "Campo",
+                            Icon = "bi bi-intersect",
+                            IsActive = true,
+                            Key = "Campo_Mixto",
+                            Scope = 2,
+                            ValueType = 1
+                        });
+                });
+
             modelBuilder.Entity("Abig2025.Models.Properties.Property", b =>
                 {
                     b.Property<int>("PropertyId")
@@ -452,19 +986,14 @@ namespace Abig2025.Data.Migrations
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyFeature", b =>
                 {
-                    b.Property<int>("FeatureId")
+                    b.Property<int>("PropertyFeatureId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeatureId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PropertyFeatureId"));
 
-                    b.Property<int>("DisplayOrder")
+                    b.Property<int>("FeatureDefinitionId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("PropertyId")
                         .HasColumnType("int");
@@ -473,7 +1002,9 @@ namespace Abig2025.Data.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.HasKey("FeatureId");
+                    b.HasKey("PropertyFeatureId");
+
+                    b.HasIndex("FeatureDefinitionId");
 
                     b.HasIndex("PropertyId");
 
@@ -585,6 +1116,54 @@ namespace Abig2025.Data.Migrations
                     b.HasIndex("ProvinceId");
 
                     b.ToTable("PropertyLocations");
+                });
+
+            modelBuilder.Entity("Abig2025.Models.Properties.PropertyPublication", b =>
+                {
+                    b.Property<int>("PublicationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PublicationId"));
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PlanId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PublicationId");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("PublishedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("PropertyId", "UserId", "PlanId", "PublishedAt")
+                        .IsUnique();
+
+                    b.ToTable("PropertyPublications");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyStatus", b =>
@@ -1025,11 +1604,19 @@ namespace Abig2025.Data.Migrations
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyFeature", b =>
                 {
+                    b.HasOne("Abig2025.Models.Properties.FeatureDefinition", "FeatureDefinition")
+                        .WithMany()
+                        .HasForeignKey("FeatureDefinitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Abig2025.Models.Properties.Property", "Property")
                         .WithMany("Features")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("FeatureDefinition");
 
                     b.Navigation("Property");
                 });
@@ -1072,6 +1659,33 @@ namespace Abig2025.Data.Migrations
                     b.Navigation("Property");
 
                     b.Navigation("Province");
+                });
+
+            modelBuilder.Entity("Abig2025.Models.Properties.PropertyPublication", b =>
+                {
+                    b.HasOne("Abig2025.Models.Subscriptions.SubscriptionPlan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Abig2025.Models.Properties.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Abig2025.Models.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("Property");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyStatus", b =>

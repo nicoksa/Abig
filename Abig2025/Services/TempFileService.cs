@@ -73,7 +73,15 @@ namespace Abig2025.Services
 
         public string GetTempImagePath(string fileName)
         {
-            return Path.Combine(TempFolder, fileName).Replace("\\", "/");
+            // Esto devuelve ruta física: "C:\proyecto\wwwroot\uploads\temp\archivo.jpg"
+            return Path.Combine(_environment.WebRootPath, TempFolder, fileName);
+        }
+
+        public string GetTempImageUrl(string fileName)
+        {
+            // Devuelve la URL relativa para usar en vistas HTML
+            //"/uploads/temp/archivo.jpg"
+            return $"/{TempFolder}/{fileName}".Replace("\\", "/");
         }
 
         public void DeleteTempImage(string fileName)
@@ -171,6 +179,8 @@ namespace Abig2025.Services
 
             return true;
         }
+
+
     }
 }
 
