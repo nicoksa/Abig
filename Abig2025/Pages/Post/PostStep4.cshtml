@@ -1,239 +1,406 @@
 ﻿@page "{draftId?}"
 @model Abig2025.Pages.Post.PostStep4Model
 @{
-    ViewData["Title"] = "Publicar Inmueble - Paso 4";
+    ViewData["Title"] = "Resumen de publicación";
 }
 
 <link rel="stylesheet" href="~/css/stylePost.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-<div class="container mt-4 pt-5">
-    <!-- Barra de progreso -->
-    <div class="progress-container mb-5">
-        <div class="progress-steps-wrapper">
-            <div class="progress-steps step-4">
-                <div class="step completed">
-                    <div class="step-circle bg-primary text-white">1</div>
-                    <div class="step-label fw-bold">Principales</div>
+<div class="container mt-5 pt-5">
+    <!-- Encabezado con ícono -->
+    <div class="text-center mb-5">
+        <div class="mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 p-4">
+                <i class="bi bi-eye-fill text-primary" style="font-size: 2.5rem;"></i>
+            </div>
+        </div>
+        <h1 class="fw-bold display-5 mb-3">Revisa tu publicación</h1>
+        <p class="lead text-muted fs-5">Un último vistazo antes de que tu propiedad esté visible</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna izquierda: Resumen detallado -->
+        <div class="col-lg-8">
+            <!-- Card de resumen principal -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-white border-0 py-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                                <i class="bi bi-house-door-fill text-primary fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h3 class="card-title fw-bold mb-2">@Model.DraftData.Title</h3>
+                            <div class="d-flex align-items-center text-muted">
+                                <i class="bi bi-geo-alt me-2"></i>
+                                <span>@Model.DraftData.Street @Model.DraftData.Number, @Model.DraftData.City</span>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <span class="badge bg-primary bg-opacity-10 text-primary fs-6 px-3 py-2">
+                                @Model.DraftData.PropertyType
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="step-connector active"></div>
-                <div class="step completed">
-                    <div class="step-circle bg-primary text-white">2</div>
-                    <div class="step-label fw-bold">Multimedia</div>
-                </div>
-                <div class="step-connector active"></div>
-                <div class="step completed">
-                    <div class="step-circle bg-primary text-white">3</div>
-                    <div class="step-label">Extras</div>
-                </div>
-                <div class="step-connector"></div>
-                <div class="step active">
-                    <div class="step-circle bg-primary text-white">4</div>
-                    <div class="step-label">Publicar</div>
+                <div class="card-body">
+                    <!-- Sección de precio destacada -->
+                    <div class="alert alert-primary bg-primary bg-opacity-10 border-0 mb-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h4 class="fw-bold text-primary mb-1">
+                                    $@Model.DraftData.Price.ToString("N0") @Model.DraftData.Currency
+                                </h4>
+                                <p class="text-muted mb-0">
+                                    <i class="bi bi-tag me-2"></i>
+                                    @Model.DraftData.OperationType
+                                    @if (Model.DraftData.Expenses > 0)
+                                    {
+                                        <span class="ms-3">
+                                            <i class="bi bi-building me-1"></i>
+                                            Expensas: $@Model.DraftData.Expenses @Model.DraftData.ExpensesCurrency
+                                        </span>
+                                    }
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <span class="badge bg-success bg-opacity-25 text-success fs-6 px-3 py-2">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Precio configurado
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid de características -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-md-3">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body text-center py-3">
+                                    <div class="text-primary mb-2">
+                                        <i class="bi bi-door-open fs-3"></i>
+                                    </div>
+                                    <h4 class="fw-bold mb-1">@Model.DraftData.MainRooms</h4>
+                                    <p class="text-muted small mb-0">Ambientes</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body text-center py-3">
+                                    <div class="text-primary mb-2">
+                                        <i class="bi bi-bed fs-3"></i>
+                                    </div>
+                                    <h4 class="fw-bold mb-1">@Model.DraftData.Bedrooms</h4>
+                                    <p class="text-muted small mb-0">Dormitorios</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body text-center py-3">
+                                    <div class="text-primary mb-2">
+                                        <i class="bi bi-thermometer-half fs-3"></i>
+                                    </div>
+                                    <h4 class="fw-bold mb-1">@Model.DraftData.Bathrooms</h4>
+                                    <p class="text-muted small mb-0">Baños</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body text-center py-3">
+                                    <div class="text-primary mb-2">
+                                        <i class="bi bi-arrows-fullscreen fs-3"></i>
+                                    </div>
+                                    <h4 class="fw-bold mb-1">@Model.DraftData.TotalArea</h4>
+                                    <p class="text-muted small mb-0">m² totales</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vista previa de imágenes -->
+                    @if (Model.DraftData.TempImages?.Count > 0)
+                    {
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-0 py-3">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="bi bi-images text-primary me-2"></i>
+                                    Galería de imágenes
+                                    <span class="badge bg-primary bg-opacity-10 text-primary ms-2">
+                                        @Model.DraftData.TempImages.Count imágenes
+                                    </span>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    @for (int i = 0; i < Math.Min(4, Model.DraftData.TempImages.Count); i++)
+                                    {
+                                        <div class="col-6 col-md-3">
+                                            <div class="position-relative">
+                                                <img src="~/uploads/temp/@Model.DraftData.TempImages[i].FileName"
+                                                     class="img-fluid rounded-3 shadow-sm w-100"
+                                                     style="height: 150px; object-fit: cover;"
+                                                     alt="Imagen @(i + 1)">
+                                                @if (i == 0)
+                                                {
+                                                    <span class="badge bg-primary position-absolute top-0 start-0 m-2">
+                                                        <i class="bi bi-star-fill"></i> Principal
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (Model.DraftData.TempImages.Count > 4)
+                                    {
+                                        <div class="col-6 col-md-3">
+                                            <div class="d-flex align-items-center justify-content-center bg-light rounded-3 h-100"
+                                                 style="height: 150px;">
+                                                <div class="text-center">
+                                                    <i class="bi bi-plus-circle fs-1 text-muted opacity-50"></i>
+                                                    <p class="small text-muted mt-2">
+                                                        +@(Model.DraftData.TempImages.Count - 4) más
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Descripción -->
+                    @if (!string.IsNullOrEmpty(Model.DraftData.Description))
+                    {
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-0 py-3">
+                                <h5 class="fw-bold mb-0">
+                                    <i class="bi bi-text-paragraph text-primary me-2"></i>
+                                    Descripción
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">@Model.DraftData.Description</p>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Encabezado -->
-    <div class="mb-4 text-center" style="padding-top:35px">
-        <h1 class="fw-bold mb-2">¡Estás a un paso de terminar!</h1>
-        <p class="lead text-muted">Selecciona el plan con el que querés publicar</p>
-    </div>
-
-
-    <!-- Formulario de selección de plan -->
-    <form method="post" style="padding-top:25px">
-        <!-- Plan actual -->
-      
-
-      
-        @if (Model.FreePlan != null)
-        {
-            <div class="card mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Plan actual (@Model.CurrentSubscription?.Plan?.Name ?? "Gratuito")</h5>
+        <!-- Columna derecha: Panel de acción -->
+        <div class="col-lg-4">
+            <!-- Card de confirmación -->
+            <div class="card border-0 shadow-lg sticky-top" style="top: 100px;">
+                <div class="card-header bg-white border-0 py-4">
+                    <h4 class="fw-bold text-center mb-0">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        ¡Todo listo!
+                    </h4>
                 </div>
-                <div class="card-body">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio"
-                               name="SelectedPlan" id="PlanActual" value="PlanActual" checked>
-                        <label class="form-check-label fw-bold" for="PlanActual">
-                            @(Model.CurrentSubscription?.Plan?.Name ?? Model.FreePlan.Name)
-                            @if (Model.CurrentSubscription?.Plan?.Price == 0 || Model.FreePlan.Price == 0)
-                            {
-                                <text>- Gratis</text>
-                            }
-                            else
-                            {
-                                <text>- $@(Model.CurrentSubscription?.Plan?.Price.ToString("N0") ?? "0")/mes</text>
-                            }
-                        </label>
-                        <p class="text-muted mt-1">
-                            Publicaciones restantes: @Model.RemainingPublications
-                            @if (Model.CurrentSubscription?.Plan?.MaxPublications == -1)
-                            {
-                                <text>(Ilimitadas)</text>
-                            }
-                        </p>
-                        @if (Model.CurrentSubscription?.EndDate != null)
-                        {
-                            <p class="text-muted mb-0">
-                                Vence: @Model.CurrentSubscription.EndDate.ToString("dd/MM/yyyy")
-                            </p>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-
-        @if (Model.AvailablePlans.Any())
-        {
-            <div class="card mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Actualizar tu plan</h5>
-                    <p class="mb-0 text-muted">Obtén más visibilidad y beneficios</p>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        @foreach (var plan in Model.AvailablePlans)
-                        {
-                            <div class="col-md-4 mb-3">
-                                <div class="card h-100 @(plan.Name.Contains("Destacada") ? "border-warning" :
-                                                                                    plan.Name.Contains("Vip") ? "border-primary" : "")">
-                            <div class="card-header @(plan.Name.Contains("Destacada") ? "bg-warning text-dark" :
-                                                                                    plan.Name.Contains("Vip") ? "bg-primary text-white" : "bg-light")">
-                                <h5 class="mb-0">@plan.Name</h5>
-                            </div>
+                <div class="card-body p-4">
+                    <!-- Info del plan -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-muted mb-3">
+                            <i class="bi bi-rocket-takeoff me-2"></i>
+                            Publicarás con:
+                        </h6>
+                        <div class="card border-0 bg-primary bg-opacity-5">
                             <div class="card-body">
-                                <h3 class="card-title pricing-card-title">
-                                    @if (plan.Price == 0)
-                                            {
-                                                <text>Gratis</text>
-                                            }
-                                            else
-                                            {
-                                                @($"${plan.Price:N0}")
-                                            }
-                                            <small class="text-muted fw-light">/@plan.DurationDays días</small>
-                                        </h3>
-                                        <ul class="list-unstyled mt-3 mb-4">
-                                            <li class="mb-2">
-                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                @if (plan.MaxPublications == -1)
-                                                {
-                                                    <text>Publicaciones ilimitadas</text>
-                                                }
-                                                else
-                                                {
-                                                    @($"{plan.MaxPublications} publicaciones")
-                                                }
-                                            </li>
-                                            <li class="mb-2">
-                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                @plan.DurationDays días de visibilidad
-                                            </li>
-                                            @if (plan.IncludesContractManagement)
-                                            {
-                                                <li class="mb-2">
-                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                    Gestión de contratos
-                                                </li>
-                                            }
-                                        </ul>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="flex-shrink-0 me-3">
+                                        <i class="bi bi-award-fill text-primary fs-4"></i>
                                     </div>
-                                    <div class="card-footer bg-transparent">
-                                        @if (plan.Price == 0)
+                                    <div class="flex-grow-1">
+                                        <h5 class="fw-bold mb-1">@Model.CurrentSubscription?.Plan?.Name</h5>
+                                        @if (Model.CurrentSubscription?.EndDate != null)
                                         {
-                                            <button type="button" class="btn btn-outline-primary w-100"
-                                                    onclick="document.getElementById('SelectedPlan').value = '@plan.PlanId'">
-                                                Seleccionar
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <a href="/Subscriptions/Subscribe?planId=@plan.PlanId&draftId=@Model.DraftId"
-                                               class="btn btn-outline-primary w-100">
-                                                Suscribirse
-                                            </a>
+                                            <p class="text-muted small mb-0">
+                                                <i class="bi bi-calendar-check me-1"></i>
+                                                Vence el @Model.CurrentSubscription.EndDate.ToString("dd/MM/yyyy")
+                                            </p>
                                         }
                                     </div>
                                 </div>
                             </div>
-                        }
+                        </div>
+                    </div>
+
+                    <!-- Checklist de verificación -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-muted mb-3">
+                            <i class="bi bi-clipboard-check me-2"></i>
+                            Verificación final
+                        </h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">Datos completos</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">Imágenes subidas</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">Características definidas</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">Plan activo disponible</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="mt-4 pt-3 border-top">
+                        <form method="post">
+                            <div class="d-grid gap-3">
+                                <button type="submit" asp-page-handler="Publish"
+                                        class="btn btn-success btn-lg py-3 fw-bold shadow-sm">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    Confirmar y publicar
+                                </button>
+
+                                <div class="d-grid gap-2">
+                                    <a asp-page="/Post/PostStep3"
+                                       asp-route-draftId="@Model.DraftId"
+                                       class="btn btn-outline-secondary py-2">
+                                        <i class="bi bi-pencil-square me-2"></i>
+                                        Editar detalles
+                                    </a>
+
+                                    <a asp-page="/Post/Plans"
+                                       class="btn btn-outline-primary py-2">
+                                        <i class="bi bi-rocket-takeoff me-2"></i>
+                                        Cambiar plan
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Info adicional -->
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="alert alert-light border-0 mb-0">
+                            <h6 class="fw-bold text-muted mb-2">
+                                <i class="bi bi-info-circle me-2"></i>
+                                ¿Qué pasa después?
+                            </h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-1">Tu propiedad será revisada por nuestro equipo</li>
+                                <li class="mb-1">Recibirás notificaciones de interés</li>
+                                <li>Podrás gestionarla desde tu panel</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        }
-
-        <!-- Nota sobre los planes -->
-        <div class="alert alert-info">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="AceptarTerminos" name="AceptarTerminos" required>
-                <label class="form-check-label" for="AceptarTerminos">
-                    Acepto los términos y condiciones. Duración de mes igual a 30 días. Plan con renovación automática.
-                </label>
-            </div>
-            <div class="invalid-feedback">Debes aceptar los términos y condiciones para continuar</div>
         </div>
+    </div>
 
-        <!-- Botones de acción -->
-        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-            <a asp-page="/Post/PostStep3" asp-route-draftId="@Model.DraftId"
-               class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-1"></i>Anterior
-            </a>
-            <div>
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i>Publicar ahora
-                </button>
+    <!-- Footer informativo -->
+    <div class="mt-5 pt-4 border-top">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="bi bi-shield-check text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Publicación segura</h6>
+                        <p class="text-muted small mb-0">Verificamos cada propiedad publicada</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="bi bi-eye-fill text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Visibilidad inmediata</h6>
+                        <p class="text-muted small mb-0">Publicación activa en minutos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="bi bi-headset text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Contactanos</h6>
+                        <p class="text-muted small mb-0">Ayuda disponible siempre</p>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <!-- Campo oculto para el plan seleccionado -->
-        <input type="hidden" id="PlanSeleccionado" name="PlanSeleccionado" value="PlanActual">
-    </form>
+    </div>
 </div>
 
-<script>
-    // Función para seleccionar un plan
-    function seleccionarPlan(plan) {
-        document.getElementById('PlanSeleccionado').value = plan;
-
-        // Remover clases activas de todos los cards
-        document.querySelectorAll('.card').forEach(card => {
-            card.classList.remove('border-3', 'border-success', 'shadow');
-        });
-
-        // Agregar clase activa al plan seleccionado
-        const planCard = document.querySelector(`.card-header:contains('${plan}')`).closest('.card');
-        planCard.classList.add('border-3', 'border-success', 'shadow');
-
-        // Marcar el radio button correspondiente
-        document.getElementById('PlanActual').checked = false;
-    }
-
-    // Extensión para :contains selector
-    jQuery.expr[':'].contains = function(a, i, m) {
-        return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-    };
-</script>
-
 <style>
-    .pricing-card-title {
-        font-size: 2rem;
-    }
-
-    .card {
+    /* Estilos adicionales para mejor UX */
+    .sticky-top {
         transition: all 0.3s ease;
     }
 
+    .card {
+        border-radius: 16px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
         }
 
-    .border-3 {
-        border-width: 3px !important;
+    .badge {
+        border-radius: 20px;
+        padding: 6px 12px;
     }
+
+    .progress-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+    }
+
+
 </style>
+
+<script>
+    // Animación suave al cargar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Efecto de entrada
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Efecto hover en botones
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>

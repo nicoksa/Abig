@@ -9,15 +9,17 @@ using System.Text.Json;
 
 namespace Abig2025.Pages.Post
 {
-    public class PostStep3Model : PageModel
+    public class PostStep3Model : PostPageBase
     {
         private readonly IDraftService _draftService;
         private readonly IFeatureService _featureService;
+        private readonly ILogger<PostStep2Model> _logger;
 
-        public PostStep3Model(IDraftService draftService, IFeatureService featureService)
+        public PostStep3Model(IDraftService draftService, IFeatureService featureService, ILogger<PostStep2Model> logger)
         {
             _draftService = draftService;
             _featureService = featureService;
+            _logger = logger;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -31,10 +33,14 @@ namespace Abig2025.Pages.Post
 
         public async Task<IActionResult> OnGet()
         {
+            var (error, draft) = await GetAndValidateDraftAsync(DraftId, _draftService, _logger);
+            if (error != null) return error;
+
+
             if (DraftId == Guid.Empty)
                 return RedirectToPage("/Post/Post");
 
-            var draft = await _draftService.GetDraftAsync(DraftId);
+            //var draft = await _draftService.GetDraftAsync(DraftId);
             if (draft == null)
                 return RedirectToPage("/Post/Post");
 

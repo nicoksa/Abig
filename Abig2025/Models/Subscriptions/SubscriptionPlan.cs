@@ -18,6 +18,8 @@ namespace Abig2025.Models.Subscriptions
         public int MaxPublications { get; set; } // -1 si es ilimitado
 
         public bool IncludesContractManagement { get; set; }
+
+        public bool IsActive { get; set; } = true;
     }
 
 }

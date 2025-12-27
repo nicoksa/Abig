@@ -8,12 +8,11 @@ using Abig2025.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using System.Text.Json;
 
 namespace Abig2025.Pages.Post
 {
-    public class PostStep4Model : PageModel
+    public class PostStep4Model : PostPageBase
     {
         private readonly IDraftService _draftService;
         private readonly IPropertyService _propertyService;
@@ -25,17 +24,10 @@ namespace Abig2025.Pages.Post
         [BindProperty(SupportsGet = true)]
         public Guid? DraftId { get; set; }
 
-        [BindProperty]
-        public string? SelectedPlan { get; set; } = "PlanActual"; // "PlanActual" o ID de plan
-
-        [BindProperty]
-        public bool AcceptTerms { get; set; }
-
         public PropertyTempData DraftData { get; set; } = new();
         public UserSubscription? CurrentSubscription { get; set; }
-        public List<SubscriptionPlan> AvailablePlans { get; set; } = new();
         public int RemainingPublications { get; set; }
-        public SubscriptionPlan? FreePlan { get; set; }
+        public bool CanPublish { get; set; }
 
         public PostStep4Model(
             IDraftService draftService,
@@ -57,160 +49,129 @@ namespace Abig2025.Pages.Post
         {
             try
             {
+                // 1. Validar draft
                 if (!DraftId.HasValue || DraftId == Guid.Empty)
-                {
                     return RedirectToPage("/Post/Post");
-                }
 
-                var draft = await _draftService.GetDraftAsync(DraftId.Value);
+                var (error, draft) = await GetAndValidateDraftAsync(DraftId, _draftService, _logger);
+                if (error != null) return error;
+
                 if (draft == null)
-                {
                     return RedirectToPage("/Post/Post");
-                }
 
-                // Cargar datos del draft
+                // 2. Cargar datos del draft
                 DraftData = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
 
-                // Obtener el usuario actual
-                var userId = GetCurrentUserId();
-                if (userId <= 0)
-                {
-                    return RedirectToPage("/Account/Login");
-                }
+                // 3. Obtener usuario
+                var userId = GetAuthenticatedUserIdOrThrow();
 
-                // Obtener suscripción actual del usuario
+                // 4. Validar suscripción y publicaciones
                 CurrentSubscription = await _subscriptionService.GetActiveUserSubscriptionAsync(userId);
-
-                // Obtener planes disponibles (excluyendo el gratuito si ya tiene)
-                AvailablePlans = await _subscriptionService.GetAvailablePlansAsync();
-
-                // Obtener plan gratuito (siempre disponible)
-                FreePlan = await _context.SubscriptionPlans
-                    .FirstOrDefaultAsync(p => p.PlanId == 1); // Plan gratuito
-
-                // Obtener publicaciones restantes
                 RemainingPublications = await _subscriptionService.GetRemainingPublicationsAsync(userId);
+                CanPublish = await _subscriptionService.CanUserPublishAsync(userId);
 
-                /* Si no tiene publicaciones disponibles, redirigir
-                if (RemainingPublications <= 0 && CurrentSubscription?.Plan.MaxPublications != -1)
+                // 5. VALIDACIÓN CRÍTICA: Redirigir si no puede publicar
+                if (!CanPublish || RemainingPublications <= 0)
                 {
-                    TempData["ErrorMessage"] = "No tienes publicaciones disponibles en tu plan actual.";
-                    return RedirectToPage("/Subscriptions/Upgrade");
+                    _logger.LogWarning(
+                        "Usuario {UserId} sin publicaciones disponibles. Redirigiendo a /Post/Plans",
+                        userId);
+
+                    TempData["NoPublications"] = true;
+                    TempData["RemainingPublications"] = RemainingPublications;
+                    TempData["CurrentPlan"] = CurrentSubscription?.Plan?.Name ?? "Sin plan";
+
+                    return RedirectToPage("/Post/Plans");
                 }
-                */
+
                 return Page();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al cargar el paso 4");
-                ModelState.AddModelError(string.Empty, "Error al cargar los datos. Intenta nuevamente.");
+                _logger.LogError(ex, "Error al cargar Step 4");
+                ModelState.AddModelError(string.Empty, "Error al cargar los datos");
                 return Page();
             }
         }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostPublishAsync()
         {
             try
             {
-                if (!AcceptTerms)
-                {
-                    ModelState.AddModelError(string.Empty, "Debes aceptar los términos y condiciones.");
-                    await LoadPageData();
-                    return Page();
-                }
-
+                // 1. Validaciones iniciales
                 if (!DraftId.HasValue)
-                {
                     return RedirectToPage("/Post/Post");
-                }
 
-                // 1. Obtener el draft
                 var draft = await _draftService.GetDraftAsync(DraftId.Value);
                 if (draft == null)
-                {
                     return RedirectToPage("/Post/Post");
-                }
 
-                var userId = GetCurrentUserId();
-                if (userId <= 0)
-                {
-                    return RedirectToPage("/Account/Login");
-                }
+                var userId = GetAuthenticatedUserIdOrThrow();
 
-                // 2. Verificar si puede publicar
+                // 2. VERIFICACIÓN CRÍTICA: ¿Puede publicar?
                 var canPublish = await _subscriptionService.CanUserPublishAsync(userId);
                 if (!canPublish)
                 {
-                    TempData["ErrorMessage"] = "No tienes publicaciones disponibles en tu plan actual.";
-                    await LoadPageData();
-                    return Page();
+                    TempData["ErrorMessage"] = "No tienes publicaciones disponibles en tu plan actual";
+                    TempData["NoPublications"] = true;
+                    return RedirectToPage("/Post/Plans");
                 }
 
-                // 3. Deserializar datos del draft
+                // 3. Obtener suscripción actual
+                var subscription = await _subscriptionService.GetActiveUserSubscriptionAsync(userId);
+                if (subscription == null)
+                {
+                    TempData["ErrorMessage"] = "No tienes un plan activo";
+                    return RedirectToPage("/Post/Plans");
+                }
+
+                // 4. Deserializar draft
                 var propertyData = JsonSerializer.Deserialize<PropertyTempData>(draft.JsonData)!;
 
-                // 4. Determinar el plan a usar
-                int planId;
-                if (SelectedPlan == "PlanActual" && CurrentSubscription != null)
-                {
-                    planId = CurrentSubscription.PlanId;
-                }
-                else if (SelectedPlan == "PlanActual" && CurrentSubscription == null)
-                {
-                    // Usar plan gratuito
-                    planId = 1; // ID del plan gratuito
-                }
-                else if (int.TryParse(SelectedPlan, out int selectedPlanId))
-                {
-                    planId = selectedPlanId;
-
-                    // Verificar si el usuario necesita suscribirse a este plan
-                    var selectedPlan = await _subscriptionService.GetPlanByIdAsync(planId);
-                    if (selectedPlan != null && selectedPlan.Price > 0)
-                    {
-                        // Redirigir a página de pago/suscripción
-                        return RedirectToPage("/Subscriptions/Subscribe", new { planId = planId, draftId = DraftId.Value });
-                    }
-                }
-                else
-                {
-                    // Fallback al plan gratuito
-                    planId = 1;
-                }
-
-                // 5. Crear la propiedad en la base de datos
-                var propertyId = await CreatePropertyFromDraftAsync(propertyData, userId);
+                // 5. Crear propiedad
+                var propertyId = await _propertyService.CreatePropertyFromDraftAsync(propertyData, userId);
 
                 if (propertyId == 0)
                 {
-                    ModelState.AddModelError(string.Empty, "Error al crear la propiedad.");
+                    ModelState.AddModelError(string.Empty, "Error al crear la propiedad");
                     await LoadPageData();
                     return Page();
                 }
 
-                // 6. Mover imágenes temporales a ubicación permanente
+                // 6. Mover imágenes temporales
                 await MoveTempImagesToPermanentAsync(propertyData.TempImages, propertyId);
 
-                // 7. Registrar la publicación
-                await RecordPublicationAsync(userId, propertyId, planId);
+                // 7. Registrar publicación
+                await RecordPublicationAsync(userId, propertyId, subscription.PlanId);
 
-                // 8. Eliminar el draft
+                // 8. Eliminar draft
                 await _draftService.DeleteDraftAsync(DraftId.Value);
 
-                // 9. Redirigir a la página de éxito
+                // 9. Mensaje de éxito
+                TempData["SuccessMessage"] = "¡Propiedad publicada exitosamente!";
+
                 return RedirectToPage("/Post/PublicationSuccess", new { propertyId });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al publicar la propiedad");
+                _logger.LogError(ex, "Error al publicar propiedad");
                 ModelState.AddModelError(string.Empty,
-                    "Ocurrió un error al publicar la propiedad. Por favor, intenta nuevamente.");
+                    "Ocurrió un error al publicar. Intenta nuevamente.");
                 await LoadPageData();
                 return Page();
             }
         }
 
-        // Método auxiliar para cargar datos de la página
+        public async Task<IActionResult> OnPostBackAsync()
+        {
+            if (!DraftId.HasValue)
+                return RedirectToPage("/Post/Post");
+
+            return RedirectToPage("/Post/PostStep3", new { draftId = DraftId.Value });
+        }
+
+        // ========== MÉTODOS AUXILIARES ==========
+
         private async Task LoadPageData()
         {
             if (DraftId.HasValue)
@@ -222,24 +183,10 @@ namespace Abig2025.Pages.Post
                 }
             }
 
-            var userId = GetCurrentUserId();
+            var userId = GetAuthenticatedUserIdOrThrow();
             CurrentSubscription = await _subscriptionService.GetActiveUserSubscriptionAsync(userId);
-            AvailablePlans = await _subscriptionService.GetAvailablePlansAsync();
             RemainingPublications = await _subscriptionService.GetRemainingPublicationsAsync(userId);
-        }
-
-        private async Task<int> CreatePropertyFromDraftAsync(PropertyTempData draftData, int userId)
-        {
-            try
-            {
-                // Usar el servicio de propiedades
-                return await _propertyService.CreatePropertyFromDraftAsync(draftData, userId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al crear propiedad desde draft");
-                throw;
-            }
+            CanPublish = await _subscriptionService.CanUserPublishAsync(userId);
         }
 
         private async Task MoveTempImagesToPermanentAsync(List<TempImageInfo> tempImages, int propertyId)
@@ -250,12 +197,10 @@ namespace Abig2025.Pages.Post
                 {
                     try
                     {
-                        // Mover la imagen de temp a permanente
                         var permanentPath = await _tempFileService.MoveToPermanentAsync(
                             tempImage.FileName,
                             propertyId);
 
-                        // Registrar en la base de datos
                         var propertyImage = new PropertyImage
                         {
                             PropertyId = propertyId,
@@ -271,8 +216,7 @@ namespace Abig2025.Pages.Post
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, $"Error al mover imagen {tempImage.FileName}");
-                        // Continuar con las demás imágenes
+                        _logger.LogError(ex, $"Error moviendo imagen {tempImage.FileName}");
                     }
                 }
 
@@ -284,9 +228,7 @@ namespace Abig2025.Pages.Post
         {
             var plan = await _subscriptionService.GetPlanByIdAsync(planId);
             if (plan == null)
-            {
-                throw new ArgumentException($"Plan con ID {planId} no encontrado");
-            }
+                throw new ArgumentException($"Plan {planId} no encontrado");
 
             var publication = new PropertyPublication
             {
@@ -294,8 +236,9 @@ namespace Abig2025.Pages.Post
                 UserId = userId,
                 PlanId = planId,
                 PublishedAt = HoraArgentina.Now,
-                ExpiresAt = plan.DurationDays > 0 ?
-                    HoraArgentina.Now.AddDays(plan.DurationDays) : null,
+                ExpiresAt = plan.DurationDays > 0
+                    ? HoraArgentina.Now.AddDays(plan.DurationDays)
+                    : null,
                 IsActive = true,
                 Notes = $"Publicación desde borrador {DraftId}"
             };
@@ -303,49 +246,9 @@ namespace Abig2025.Pages.Post
             _context.PropertyPublications.Add(publication);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Publicación registrada: Propiedad {PropertyId}, Usuario {UserId}, Plan {PlanId}",
+            _logger.LogInformation(
+                "Publicación registrada: Property={PropertyId}, User={UserId}, Plan={PlanId}",
                 propertyId, userId, planId);
-        }
-
-        private int GetCurrentUserId()
-        {
-            try
-            {
-                // Obtener el ID del usuario desde los claims
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                // Si usas un claim personalizado
-                if (string.IsNullOrEmpty(userIdClaim))
-                {
-                    userIdClaim = User.FindFirst("UserId")?.Value;
-                }
-
-                if (int.TryParse(userIdClaim, out int userId))
-                {
-                    return userId;
-                }
-
-                // Para desarrollo/testing - REMOVER EN PRODUCCIÓN
-                _logger.LogWarning("No se pudo obtener el ID del usuario, usando valor por defecto 1");
-                return 1;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al obtener ID de usuario");
-                return 0;
-            }
-        }
-
-        // Método para retroceder al paso 3
-        public async Task<IActionResult> OnPostBackAsync()
-        {
-            if (!DraftId.HasValue)
-            {
-                return RedirectToPage("/Post/Post");
-            }
-
-            // Redirigir al paso 3 manteniendo el draft
-            return RedirectToPage("/Post/PostStep3", new { draftId = DraftId.Value });
         }
     }
 }

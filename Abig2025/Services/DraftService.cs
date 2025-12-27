@@ -68,6 +68,17 @@ namespace Abig2025.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteUserDraftsAsync(int userId)
+        {
+            var userDrafts = await _context.PropertyDrafts
+                .Where(d => d.UserId == userId)
+                .ToListAsync();
+
+            foreach (var draft in userDrafts)
+            {
+                await DeleteDraftAsync(draft.DraftId);
+            }
+        }
 
         public async Task CleanOldDraftsAsync(TimeSpan olderThan)
         {

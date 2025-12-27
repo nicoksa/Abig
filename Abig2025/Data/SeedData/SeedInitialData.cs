@@ -29,9 +29,9 @@ namespace Abig2025.Data.SeedData
         private static void SeedSubscriptionPlans(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Abig2025.Models.Subscriptions.SubscriptionPlan>().HasData(
-                new { PlanId = 1, Name = "Gratuito", Price = 0m, DurationDays = 30, MaxPublications = 1, IncludesContractManagement = false },
-                new { PlanId = 2, Name = "Destacada", Price = 1000m, DurationDays = 30, MaxPublications = 3, IncludesContractManagement = false },
-                new { PlanId = 3, Name = "Vip", Price = 2000m, DurationDays = 45, MaxPublications = -1, IncludesContractManagement = false }
+                new { PlanId = 1, Name = "Gratuito", Price = 0m, DurationDays = 30, MaxPublications = 1, IncludesContractManagement = false, IsActive = true },
+                new { PlanId = 2, Name = "Destacada", Price = 1000m, DurationDays = 30, MaxPublications = 3, IncludesContractManagement = false, IsActive = true },
+                new { PlanId = 3, Name = "Premium", Price = 2000m, DurationDays = 45, MaxPublications = -1, IncludesContractManagement = false, IsActive = true }
             );
         }
     }

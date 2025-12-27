@@ -31,7 +31,7 @@ namespace Abig2025.Models.Properties
         public DateTime UploadedAt { get; set; } = HoraArgentina.Now;
 
         [ForeignKey("PropertyId")]
-        public virtual Property Property { get; set; } = new Property();
+        public virtual Property Property { get; set; } = null!;
     }
 }
 

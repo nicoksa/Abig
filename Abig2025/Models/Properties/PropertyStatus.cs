@@ -30,6 +30,6 @@ namespace Abig2025.Models.Properties
         public string? Notes { get; set; }
 
         [ForeignKey("PropertyId")]
-        public virtual Property Property { get; set; } = new Property();
+        public virtual Property Property { get; set; } = null!;
     }
 }

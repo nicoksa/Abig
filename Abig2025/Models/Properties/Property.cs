@@ -36,7 +36,7 @@ namespace Abig2025.Models.Properties
 
         // Relaciones
         [ForeignKey("OwnerId")]
-        public virtual User Owner { get; set; } = new User();
+        public virtual User Owner { get; set; } = null!;
 
         public virtual PropertyLocation Location { get; set; } = new PropertyLocation();
         public virtual PropertyStatus Status { get; set; } = new PropertyStatus();

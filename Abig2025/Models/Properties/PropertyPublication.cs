@@ -29,12 +29,12 @@ namespace Abig2025.Models.Properties
         public string? Notes { get; set; }
 
         [ForeignKey("PropertyId")]
-        public virtual Property Property { get; set; } = new Property();
+        public virtual Property Property { get; set; } = null!;
 
         [ForeignKey("UserId")]
-        public virtual Users.User User { get; set; } = new Users.User();
+        public virtual Users.User User { get; set; } = null!;
 
         [ForeignKey("PlanId")]
-        public virtual Subscriptions.SubscriptionPlan Plan { get; set; } = new Subscriptions.SubscriptionPlan();
+        public virtual Subscriptions.SubscriptionPlan Plan { get; set; } = null!;
     }
 }

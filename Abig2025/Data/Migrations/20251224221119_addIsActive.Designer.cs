@@ -4,6 +4,7 @@ using Abig2025.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Abig2025.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251224221119_addIsActive")]
+    partial class addIsActive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace Abig2025.Data.Migrations
                     b.HasIndex("Name", "ProvinceId")
                         .IsUnique();
 
-                    b.ToTable("Cities", (string)null);
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Location.Country", b =>
@@ -77,7 +80,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasKey("CountryId");
 
-                    b.ToTable("Countries", (string)null);
+                    b.ToTable("Countries");
 
                     b.HasData(
                         new
@@ -132,7 +135,7 @@ namespace Abig2025.Data.Migrations
                     b.HasIndex("Name", "CityId")
                         .IsUnique();
 
-                    b.ToTable("Neighborhoods", (string)null);
+                    b.ToTable("Neighborhoods");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Location.Province", b =>
@@ -165,7 +168,7 @@ namespace Abig2025.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Provinces", (string)null);
+                    b.ToTable("Provinces");
 
                     b.HasData(
                         new
@@ -378,7 +381,7 @@ namespace Abig2025.Data.Migrations
                     b.HasIndex("UserId", "PropertyId")
                         .IsUnique();
 
-                    b.ToTable("Favorites", (string)null);
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.FeatureDefinition", b =>
@@ -418,7 +421,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasKey("FeatureDefinitionId");
 
-                    b.ToTable("FeatureDefinitions", (string)null);
+                    b.ToTable("FeatureDefinitions");
 
                     b.HasData(
                         new
@@ -957,7 +960,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Properties", (string)null);
+                    b.ToTable("Properties");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyDraft", b =>
@@ -981,7 +984,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasKey("DraftId");
 
-                    b.ToTable("PropertyDrafts", (string)null);
+                    b.ToTable("PropertyDrafts");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyFeature", b =>
@@ -1008,7 +1011,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("PropertyFeatures", (string)null);
+                    b.ToTable("PropertyFeatures");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyImage", b =>
@@ -1051,7 +1054,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("PropertyImages", (string)null);
+                    b.ToTable("PropertyImages");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyLocation", b =>
@@ -1115,7 +1118,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasIndex("ProvinceId");
 
-                    b.ToTable("PropertyLocations", (string)null);
+                    b.ToTable("PropertyLocations");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyPublication", b =>
@@ -1163,7 +1166,7 @@ namespace Abig2025.Data.Migrations
                     b.HasIndex("PropertyId", "UserId", "PlanId", "PublishedAt")
                         .IsUnique();
 
-                    b.ToTable("PropertyPublications", (string)null);
+                    b.ToTable("PropertyPublications");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Properties.PropertyStatus", b =>
@@ -1192,7 +1195,7 @@ namespace Abig2025.Data.Migrations
                     b.HasIndex("PropertyId")
                         .IsUnique();
 
-                    b.ToTable("PropertyStatuses", (string)null);
+                    b.ToTable("PropertyStatuses");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Subscriptions.SubscriptionPlan", b =>
@@ -1225,7 +1228,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasKey("PlanId");
 
-                    b.ToTable("SubscriptionPlans", (string)null);
+                    b.ToTable("SubscriptionPlans");
 
                     b.HasData(
                         new
@@ -1289,7 +1292,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSubscriptions", (string)null);
+                    b.ToTable("UserSubscriptions");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Users.LoginAttempt", b =>
@@ -1328,7 +1331,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LoginAttempts", (string)null);
+                    b.ToTable("LoginAttempts");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Users.Role", b =>
@@ -1351,7 +1354,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -1437,7 +1440,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Users.UserProfile", b =>
@@ -1484,7 +1487,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserProfiles", (string)null);
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Users.UserReview", b =>
@@ -1518,7 +1521,7 @@ namespace Abig2025.Data.Migrations
 
                     b.HasIndex("ReviewerId");
 
-                    b.ToTable("UserReviews", (string)null);
+                    b.ToTable("UserReviews");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Users.UserRole", b =>
@@ -1545,7 +1548,7 @@ namespace Abig2025.Data.Migrations
                     b.HasIndex("UserId", "RoleId")
                         .IsUnique();
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Abig2025.Models.Location.City", b =>

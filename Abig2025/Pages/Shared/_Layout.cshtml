@@ -69,7 +69,7 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li><a asp-page="/Post/Post">Publicar</a></li>
+                            <li><a asp-page="/Post/CheckPlan">Publicar</a></li>
                             <li><a asp-page="/About">Sobre nosotros</a></li>
 
                             @if (User.Identity.IsAuthenticated)
@@ -81,6 +81,7 @@
                                     <ul class="dropdown">
                                         <li><a asp-page="/Profile/Index">Ver Perfil</a></li>
                                         <li><a asp-page="/MyProperties">Mis Propiedades</a></li>
+                                        <li><a asp-page="/Post/Plans">Mis Planes</a></li>
                                         <li><a asp-page="/Favorites">Favoritos</a></li>
                                         <li>
                                             <form asp-page="/Login/Logout" method="post" id="logoutForm" class="d-inline w-100">

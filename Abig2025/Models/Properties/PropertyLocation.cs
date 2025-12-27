@@ -33,7 +33,7 @@ namespace Abig2025.Models.Properties
         public double? Longitude { get; set; }
 
         [ForeignKey("PropertyId")]
-        public virtual Property Property { get; set; } = new Property();
+        public virtual Property Property { get; set; } = null!;
 
         // Navegación
         [ForeignKey("ProvinceId")]

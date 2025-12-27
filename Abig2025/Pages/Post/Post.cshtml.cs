@@ -1,17 +1,20 @@
 ﻿using Abig2025.Data;
+using Abig2025.Helpers;
 using Abig2025.Models.DTO;
 using Abig2025.Models.Properties;
 using Abig2025.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text.Json;
-using Abig2025.Helpers;
 
 
 namespace Abig2025.Pages.Post
 {
-    public class PostModel : PageModel
+    [Authorize]
+    public class PostModel : PostPageBase
     {
         private readonly IDraftService _draftService;
         private readonly AppDbContext _context;
@@ -27,12 +30,15 @@ namespace Abig2025.Pages.Post
         [BindProperty]
         public PropertyTempData Data { get; set; } = new();
 
-        // El draftId viene opcional como parámetro en la URL
         [BindProperty(SupportsGet = true)]
         public Guid? DraftId { get; set; }
 
         public async Task<IActionResult> OnGet()
         {
+
+            var loginError = RedirectToLoginIfNotAuthenticated();
+            if (loginError != null) return loginError;
+
             // Si estoy editando un borrador, cargo la data
             if (DraftId.HasValue)
             {
@@ -76,7 +82,7 @@ namespace Abig2025.Pages.Post
                 return Page();
             }
 
-            var userId = 1;
+            var userId = GetAuthenticatedUserIdOrThrow();
 
             var jsonOptions = new JsonSerializerOptions
             {
@@ -180,6 +186,10 @@ namespace Abig2025.Pages.Post
 
             return RedirectToPage("/Post/PostStep2", new { draftId = DraftId });
         }
+
+
+
+
     }
 }
 

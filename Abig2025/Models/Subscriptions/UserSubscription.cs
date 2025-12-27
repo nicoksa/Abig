@@ -25,6 +25,9 @@ namespace Abig2025.Models.Subscriptions
 
         [ForeignKey("PlanId")]
         public virtual SubscriptionPlan Plan { get; set; }
+
+
+        public bool IsActive { get; set; } = true;
     }
 
 }

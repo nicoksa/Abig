@@ -1,4 +1,6 @@
 ﻿using Abig2025.Data;
+using Abig2025.Helpers;
+using Abig2025.Models.Properties;
 using Abig2025.Models.Subscriptions;
 using Abig2025.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -55,45 +57,11 @@ namespace Abig2025.Services
 
         public async Task<bool> CanUserPublishAsync(int userId)
         {
-            try
-            {
-                // Obtener suscripción activa
-                var subscription = await GetActiveUserSubscriptionAsync(userId);
-                if (subscription == null)
-                {
-                    // Usuario sin suscripción activa
-                    _logger.LogWarning("Usuario {UserId} no tiene suscripción activa", userId);
-                    return false;
-                }
-
-                // Verificar si el plan permite publicaciones
-                if (subscription.Plan.MaxPublications == 0)
-                {
-                    _logger.LogWarning("Plan {PlanId} no permite publicaciones", subscription.PlanId);
-                    return false;
-                }
-
-                // Si es ilimitado (-1), siempre puede publicar
-                if (subscription.Plan.MaxPublications == -1)
-                {
-                    return true;
-                }
-
-                // Contar publicaciones activas del usuario en el período de suscripción
-                var publicationsCount = await _context.PropertyPublications
-                    .Where(pp => pp.UserId == userId &&
-                                pp.PublishedAt >= subscription.StartDate &&
-                                pp.PublishedAt <= subscription.EndDate)
-                    .CountAsync();
-
-                return publicationsCount < subscription.Plan.MaxPublications;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al verificar si usuario {UserId} puede publicar", userId);
-                return false;
-            }
+            var remaining = await GetRemainingPublicationsAsync(userId);
+            return remaining > 0;
         }
+
+
 
         public async Task<bool> DecrementPublicationCountAsync(int userId)
         {
@@ -124,28 +92,47 @@ namespace Abig2025.Services
             try
             {
                 var subscription = await GetActiveUserSubscriptionAsync(userId);
-                if (subscription == null || subscription.Plan.MaxPublications == 0)
-                {
+                if (subscription == null)
                     return 0;
-                }
 
-                // Si es ilimitado
-                if (subscription.Plan.MaxPublications == -1)
-                {
-                    return int.MaxValue; // Representar ilimitado
-                }
+                var used = await GetUsedPublicationsAsync(userId);
+                var max = subscription.Plan.MaxPublications;
 
-                var publicationsCount = await _context.PropertyPublications
-                    .Where(pp => pp.UserId == userId &&
-                                pp.PublishedAt >= subscription.StartDate &&
-                                pp.PublishedAt <= subscription.EndDate)
-                    .CountAsync();
+                // Si es ilimitado, retornar un número grande o -1
+                if (max == -1)
+                    return int.MaxValue;
 
-                return Math.Max(0, subscription.Plan.MaxPublications - publicationsCount);
+                return Math.Max(0, max - used);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener publicaciones restantes para usuario {UserId}", userId);
+                _logger.LogError(ex, "Error al obtener publicaciones restantes para el usuario {UserId}", userId);
+                return 0;
+            }
+        }
+
+        public async Task<int> GetUsedPublicationsAsync(int userId)
+        {
+            try
+            {
+                // Buscar suscripción activa
+                var subscription = await GetActiveUserSubscriptionAsync(userId);
+                if (subscription == null)
+                    return 0;
+
+                // Contar publicaciones activas en este período de suscripción
+                var usedPublications = await _context.PropertyPublications
+                    .Where(pp => pp.UserId == userId
+                        && pp.IsActive
+                        && pp.PublishedAt >= subscription.StartDate
+                        && pp.PublishedAt <= subscription.EndDate)
+                    .CountAsync();
+
+                return usedPublications;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener publicaciones usadas para el usuario {UserId}", userId);
                 return 0;
             }
         }
@@ -161,6 +148,65 @@ namespace Abig2025.Services
             {
                 _logger.LogError(ex, "Error al obtener plan con id {PlanId}", planId);
                 return null;
+            }
+        }
+
+
+        public async Task<bool> RegisterPublicationAsync(int userId, int propertyId, int planId)
+        {
+            try
+            {
+                _logger.LogInformation("Registrando publicación: User={UserId}, Property={PropertyId}, Plan={PlanId}",
+                    userId, propertyId, planId);
+
+                // 1. Verificar que existan las entidades (pero NO cargarlas)
+                var userExists = await _context.Users.AnyAsync(u => u.UserId == userId);
+                var propertyExists = await _context.Properties.AnyAsync(p => p.PropertyId == propertyId);
+                var planExists = await _context.SubscriptionPlans.AnyAsync(p => p.PlanId == planId);
+
+                if (!userExists || !propertyExists || !planExists)
+                {
+                    _logger.LogError("Validación falló: UserExists={UserExists}, PropertyExists={PropertyExists}, PlanExists={PlanExists}",
+                        userExists, propertyExists, planExists);
+                    return false;
+                }
+
+                // 2. Obtener el plan (solo para DurationDays)
+                var plan = await _context.SubscriptionPlans
+                    .AsNoTracking() // ¡IMPORTANTE: No tracking!
+                    .FirstOrDefaultAsync(p => p.PlanId == planId);
+
+                if (plan == null) return false;
+
+                // 3. Crear publicación - SOLO con IDs
+                var publication = new PropertyPublication
+                {
+                    PropertyId = propertyId,
+                    UserId = userId,
+                    PlanId = planId,
+                    PublishedAt = HoraArgentina.Now,
+                    ExpiresAt = plan.DurationDays > 0
+                        ? HoraArgentina.Now.AddDays(plan.DurationDays)
+                        : null,
+                    IsActive = true,
+                    Notes = "Publicación registrada automáticamente"
+                };
+
+                // 4. IMPORTANTE: Asegurarse de que no hay navegaciones
+                publication.Property = null!;
+                publication.User = null!;
+                publication.Plan = null!;
+
+                _context.PropertyPublications.Add(publication);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Publicación registrada exitosamente");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al registrar publicación");
+                return false;
             }
         }
     }

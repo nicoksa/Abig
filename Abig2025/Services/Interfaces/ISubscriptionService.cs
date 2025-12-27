@@ -11,5 +11,8 @@ namespace Abig2025.Services.Interfaces
         Task<bool> HasPublicationQuotaAsync(int userId);
         Task<int> GetRemainingPublicationsAsync(int userId);
         Task<SubscriptionPlan?> GetPlanByIdAsync(int planId);
+
+        Task<int> GetUsedPublicationsAsync(int userId);
+        Task<bool> RegisterPublicationAsync(int userId, int propertyId, int planId);
     }
 }

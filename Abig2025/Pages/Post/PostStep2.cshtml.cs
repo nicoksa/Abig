@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace Abig2025.Pages.Post
 {
-    public class PostStep2Model : PageModel
+    public class PostStep2Model : PostPageBase
     {
         private readonly IDraftService _draftService;
         private readonly ITempFileService _tempFileService;
@@ -43,10 +43,13 @@ namespace Abig2025.Pages.Post
         =========================== */
         public async Task<IActionResult> OnGet()
         {
+            var (error, draft) = await GetAndValidateDraftAsync(DraftId, _draftService, _logger);
+            if (error != null) return error;
+
             if (!DraftId.HasValue)
                 return RedirectToPage("/Post/Post");
 
-            var draft = await _draftService.GetDraftAsync(DraftId.Value);
+            //var draft = await _draftService.GetDraftAsync(DraftId.Value);
             if (draft == null)
                 return RedirectToPage("/Post/Post");
 
