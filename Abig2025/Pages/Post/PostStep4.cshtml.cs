@@ -28,6 +28,7 @@ namespace Abig2025.Pages.Post
         public UserSubscription? CurrentSubscription { get; set; }
         public int RemainingPublications { get; set; }
         public bool CanPublish { get; set; }
+        public List<FeatureDefinition> SelectedFeatureDefinitions { get; set; } = new();
 
         public PostStep4Model(
             IDraftService draftService,
@@ -70,7 +71,9 @@ namespace Abig2025.Pages.Post
                 RemainingPublications = await _subscriptionService.GetRemainingPublicationsAsync(userId);
                 CanPublish = await _subscriptionService.CanUserPublishAsync(userId);
 
-                // 5. VALIDACIÓN CRÍTICA: Redirigir si no puede publicar
+                await LoadSelectedFeatureDefinitionsAsync(DraftData);
+
+                //  Redirigir si no puede publicar
                 if (!CanPublish || RemainingPublications <= 0)
                 {
                     _logger.LogWarning(
@@ -140,9 +143,6 @@ namespace Abig2025.Pages.Post
 
                 // 6. Mover imágenes temporales
                 await MoveTempImagesToPermanentAsync(propertyData.TempImages, propertyId);
-
-                // 7. Registrar publicación
-                await RecordPublicationAsync(userId, propertyId, subscription.PlanId);
 
                 // 8. Eliminar draft
                 await _draftService.DeleteDraftAsync(DraftId.Value);
@@ -224,31 +224,38 @@ namespace Abig2025.Pages.Post
             }
         }
 
-        private async Task RecordPublicationAsync(int userId, int propertyId, int planId)
+
+
+        private async Task LoadSelectedFeatureDefinitionsAsync(PropertyTempData data)
         {
-            var plan = await _subscriptionService.GetPlanByIdAsync(planId);
-            if (plan == null)
-                throw new ArgumentException($"Plan {planId} no encontrado");
-
-            var publication = new PropertyPublication
+            try
             {
-                PropertyId = propertyId,
-                UserId = userId,
-                PlanId = planId,
-                PublishedAt = HoraArgentina.Now,
-                ExpiresAt = plan.DurationDays > 0
-                    ? HoraArgentina.Now.AddDays(plan.DurationDays)
-                    : null,
-                IsActive = true,
-                Notes = $"Publicación desde borrador {DraftId}"
-            };
+                SelectedFeatureDefinitions.Clear();
 
-            _context.PropertyPublications.Add(publication);
-            await _context.SaveChangesAsync();
+                if (data.Features?.Any(f => f.Value == "true") == true)
+                {
+                    var selectedFeatureIds = data.Features
+                        .Where(f => f.Value == "true")
+                        .Select(f => f.FeatureDefinitionId)
+                        .ToList();
 
-            _logger.LogInformation(
-                "Publicación registrada: Property={PropertyId}, User={UserId}, Plan={PlanId}",
-                propertyId, userId, planId);
+                    if (selectedFeatureIds.Any())
+                    {
+                        // Obtener las definiciones de características desde la base de datos
+                        SelectedFeatureDefinitions = await _context.FeatureDefinitions
+                            .Where(fd => selectedFeatureIds.Contains(fd.FeatureDefinitionId) && fd.IsActive)
+                            .OrderBy(fd => fd.Group)
+                            .ThenBy(fd => fd.DisplayOrder)
+                            .ToListAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al cargar definiciones de características");
+                SelectedFeatureDefinitions = new List<FeatureDefinition>();
+            }
         }
+
     }
 }

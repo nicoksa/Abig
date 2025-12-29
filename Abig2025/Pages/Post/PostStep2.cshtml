@@ -6,41 +6,70 @@
 
 <link rel="stylesheet" href="~/css/stylePost.css" />
 
+<style>
+    .image-preview-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: move;
+    }
+
+    .image-preview-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .image-preview-card.dragging {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+
+    .image-preview-card.drag-over {
+        border: 2px dashed #0d6efd;
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+
+    .main-image-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        z-index: 10;
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    .image-number-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 10;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        font-weight: bold;
+    }
+</style>
+
+<br />
+<br />
+<br />
+<br />
 <div class="container mt-4 pt-5">
-    <!-- Campo oculto para draft -->
     <input type="hidden" asp-for="DraftId" />
     
-    <!-- Barra de progreso -->
-    <div class="progress-container mb-5">
-        <div class="progress-steps-wrapper">
-            <div class="progress-steps step-2">
-                <div class="step completed">
-                    <div class="step-circle bg-primary text-white">1</div>
-                    <div class="step-label fw-bold">Principales</div>
-                </div>
-                <div class="step-connector active"></div>
-                <div class="step active">
-                    <div class="step-circle bg-primary text-white">2</div>
-                    <div class="step-label fw-bold">Multimedia</div>
-                </div>
-                <div class="step-connector"></div>
-                <div class="step">
-                    <div class="step-circle">3</div>
-                    <div class="step-label">Extras</div>
-                </div>
-                <div class="step-connector"></div>
-                <div class="step">
-                    <div class="step-circle">4</div>
-                    <div class="step-label">Publicar</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Encabezado -->
-
     <div class="row justify-content-center" style="padding-top:35px">
         <div class="col-lg-10">
-            <!-- Encabezado -->
             <div class="d-flex align-items-center mb-5 p-4 bg-white rounded-3 shadow-sm border-start border-4 border-primary">
                 <div class="flex-shrink-0 me-4">
                     <i class="bi bi-camera-video fs-1 text-primary"></i>
@@ -51,7 +80,6 @@
                 </div>
             </div>
 
-            <!-- Mostrar errores de validación -->
             @if (!ViewData.ModelState.IsValid)
             {
                 <div class="alert alert-danger">
@@ -78,9 +106,10 @@
                 </div>
             }
 
-            <!-- Formulario de multimedia -->
             <form method="post" enctype="multipart/form-data" style="padding-top:15px">
-                <!-- Sección para subir imágenes mejorada -->
+                <!-- Campo oculto para el orden de imágenes -->
+                <input type="hidden" id="ImageOrder" name="ImageOrder" value="" />
+
                 <div class="card mb-4 border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom-0 py-3">
                         <h5 class="mb-0 fw-bold text-primary">
@@ -104,15 +133,26 @@
                             </div>
                         </div>
 
-                        <!-- vista previa de imágenes -->
+                        <!-- Vista previa con drag and drop -->
                         <div id="preview-container" class="row g-3 mt-3" style="min-height: 150px;">
                             @if (Model.Data.TempImages?.Count > 0)
                             {
-                                @foreach (var image in Model.Data.TempImages)
+                                @for (int i = 0; i < Model.Data.TempImages.Count; i++)
                                 {
-                                    <div class="col-6 col-md-4 col-lg-3" data-image-id="@image.FileName">
+                                    var image = Model.Data.TempImages[i];
+                                    <div class="col-6 col-md-4 col-lg-3 image-item" 
+                                         data-image-id="@image.FileName"
+                                         data-is-server="true"
+                                         draggable="true">
                                         <div class="card h-100 border-0 shadow-sm image-preview-card">
-                                            <div class="ratio ratio-1x1">
+                                            <div class="ratio ratio-1x1 position-relative">
+                                                @if (i == 0)
+                                                {
+                                                    <span class="main-image-badge">
+                                                        <i class="bi bi-star-fill"></i> Principal
+                                                    </span>
+                                                }
+                                                <span class="image-number-badge">@(i + 1)</span>
                                                 <img src="~/uploads/temp/@image.FileName"
                                                      class="card-img-top object-fit-cover"
                                                      alt="@image.OriginalName"
@@ -130,14 +170,19 @@
                                                             title="Eliminar">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
-                                            
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 }
 
-                                <!-- Mostrar contador -->
+                                <div class="col-12 mt-3">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-hand-index-thumb me-2"></i>
+                                        <strong>Tip:</strong> Arrastrá las imágenes para cambiar su orden. La primera imagen será la principal.
+                                    </div>
+                                </div>
+
                                 <div class="col-12 mt-2">
                                     <div id="image-counter" class="badge @(Model.Data.TempImages.Count >= 5 ? "bg-success" : "bg-warning")">
                                         @Model.Data.TempImages.Count imágenes subidas
@@ -153,20 +198,18 @@
                             }
                         </div>
 
-                        <!-- Consejos para fotos -->
                         <div class="alert alert-info mt-4">
                             <h5 class="alert-heading"><i class="bi bi-lightbulb me-2"></i>Consejos para mejores fotos:</h5>
                             <ul class="mb-0">
                                 <li>Usa buena iluminación natural</li>
                                 <li>Muestra todos los ambientes importantes</li>
                                 <li>Evita fotos oscuras o borrosas</li>
-                                <li>Comienza con la foto más atractiva</li>
+                                <li>La primera foto es la más importante - será la imagen principal</li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
-                <!-- Sección para video  -->
                 <div class="card mb-4 border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom-0 py-3">
                         <h5 class="mb-0 fw-bold text-primary">
@@ -184,7 +227,6 @@
                             <small class="text-muted">Pegá el enlace completo de tu video. Los videos aumentan un 30% las consultas.</small>
                         </div>
 
-                        <!-- Vista previa del video (aparece cuando se ingresa URL) -->
                         <div id="video-preview" class="ratio ratio-16x9 mt-3 @(string.IsNullOrEmpty(Model.Data.VideoUrl) ? "d-none" : "")">
                             @if (!string.IsNullOrEmpty(Model.Data.VideoUrl))
                             {
@@ -198,15 +240,12 @@
                     </div>
                 </div>
 
-                <!-- Botones de navegación mejorados -->
                 <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                    <!-- Volver al paso 1 -->
                     <button type="submit" asp-page-handler="Back"
                             class="btn btn-outline-secondary px-4 py-2">
                         <i class="bi bi-arrow-left me-2"></i>Anterior
                     </button>
 
-                    <!-- Ir al paso 3 -->
                     <button type="submit" class="btn btn-primary px-4 py-2">
                         Siguiente <i class="bi bi-arrow-right ms-2"></i>
                     </button>
@@ -218,89 +257,90 @@
 
 @section Scripts {
     <script>
-        // Usar DataTransfer para acumular archivos
         document.addEventListener('DOMContentLoaded', function() {
             const fileInput = document.getElementById('Imagenes');
             const previewContainer = document.getElementById('preview-container');
             const emptyMessage = document.getElementById('empty-message');
             const form = document.querySelector('form');
+            const imageOrderInput = document.getElementById('ImageOrder');
 
-            // Array para mantener TODAS las imágenes seleccionadas por el usuario
             let allClientFiles = [];
+            let draggedElement = null;
 
-            // Mostrar imágenes existentes del servidor al cargar la página
+            // Inicializar drag and drop para imágenes existentes
+            initializeDragAndDrop();
+
+            // Actualizar contador inicial
             updateImageCounter();
+
+            // Guardar orden inicial
+            updateImageOrderInput();
 
             fileInput.addEventListener('change', function(event) {
                 if (this.files.length > 0) {
-                    // Agregar nuevos archivos al array
                     Array.from(this.files).forEach(file => {
-                        // Verificar si ya existe (por nombre y tamaño)
                         const exists = allClientFiles.some(f =>
                             f.name === file.name && f.size === file.size
                         );
 
-                        if (!exists && allClientFiles.length < 20) {
+                        if (!exists && (getTotalImageCount() < 20)) {
                             allClientFiles.push(file);
                         }
                     });
 
-                    // Actualizar el input con TODOS los archivos
                     updateFileInputWithAllFiles();
-
-                    // Actualizar vista previa
                     updatePreview();
                 }
             });
 
             function updateFileInputWithAllFiles() {
                 const dataTransfer = new DataTransfer();
-
-                // Agregar todos los archivos al DataTransfer
                 allClientFiles.forEach(file => {
                     dataTransfer.items.add(file);
                 });
-
-                // Actualizar el input de archivos
                 fileInput.files = dataTransfer.files;
-
-                // Log para debug
-                console.log('Archivos en input:', fileInput.files.length);
             }
 
             function updatePreview() {
-                // Ocultar mensaje de vacío si hay imágenes
                 if (emptyMessage && (allClientFiles.length > 0 ||
-                    document.querySelectorAll('[data-image-id]').length > 0)) {
+                    document.querySelectorAll('.image-item[data-is-server="true"]').length > 0)) {
                     emptyMessage.style.display = 'none';
                 }
 
-                // Crear contenedor para nuevas imágenes
-                const newImagesRow = document.createElement('div');
-                newImagesRow.className = 'row g-3';
-                newImagesRow.id = 'client-images-row';
+                const existingClientImages = document.querySelectorAll('.image-item[data-is-server="false"]');
+                existingClientImages.forEach(el => el.remove());
 
-                // Limpiar solo las imágenes del cliente (no las del servidor)
-                const existingClientRow = document.getElementById('client-images-row');
-                if (existingClientRow) {
-                    existingClientRow.remove();
-                }
-
-                // Agregar nuevas imágenes del cliente
                 allClientFiles.forEach((file, index) => {
                     const reader = new FileReader();
 
                     reader.onload = function(e) {
+                        const serverImagesCount = document.querySelectorAll('.image-item[data-is-server="true"]').length;
+                        const totalIndex = serverImagesCount + index;
+                        
                         const col = document.createElement('div');
-                        col.className = 'col-6 col-md-4 col-lg-3';
-                        col.dataset.clientImage = 'true';
+                        col.className = 'col-6 col-md-4 col-lg-3 image-item';
+                        col.dataset.imageId = 'client_' + index;
+                        col.dataset.isServer = 'false';
                         col.dataset.fileIndex = index;
+                        col.draggable = true;
 
                         const card = document.createElement('div');
                         card.className = 'card h-100 border-0 shadow-sm image-preview-card';
 
                         const imgContainer = document.createElement('div');
-                        imgContainer.className = 'ratio ratio-1x1';
+                        imgContainer.className = 'ratio ratio-1x1 position-relative';
+
+                        if (totalIndex === 0) {
+                            const mainBadge = document.createElement('span');
+                            mainBadge.className = 'main-image-badge';
+                            mainBadge.innerHTML = '<i class="bi bi-star-fill"></i> Principal';
+                            imgContainer.appendChild(mainBadge);
+                        }
+
+                        const numberBadge = document.createElement('span');
+                        numberBadge.className = 'image-number-badge';
+                        numberBadge.textContent = totalIndex + 1;
+                        imgContainer.appendChild(numberBadge);
 
                         const img = document.createElement('img');
                         img.src = e.target.result;
@@ -326,40 +366,189 @@
                         card.appendChild(imgContainer);
                         card.appendChild(cardFooter);
                         col.appendChild(card);
-                        newImagesRow.appendChild(col);
+                        previewContainer.appendChild(col);
+
+                        // Inicializar drag and drop para la nueva imagen
+                        setupDragAndDropForElement(col);
+
+                        updateImageCounter();
+                        updateNumberBadges();
+                        updateImageOrderInput();
                     };
 
                     reader.readAsDataURL(file);
                 });
-
-                // Agregar al contenedor principal
-                previewContainer.appendChild(newImagesRow);
-
-                updateImageCounter();
             }
 
-            // Manejar eliminación de imágenes del cliente
+            function initializeDragAndDrop() {
+                const imageItems = document.querySelectorAll('.image-item');
+                imageItems.forEach(item => {
+                    setupDragAndDropForElement(item);
+                });
+            }
+
+            function setupDragAndDropForElement(element) {
+                element.addEventListener('dragstart', handleDragStart);
+                element.addEventListener('dragend', handleDragEnd);
+                element.addEventListener('dragover', handleDragOver);
+                element.addEventListener('drop', handleDrop);
+                element.addEventListener('dragenter', handleDragEnter);
+                element.addEventListener('dragleave', handleDragLeave);
+            }
+
+            function handleDragStart(e) {
+                draggedElement = this;
+                this.querySelector('.image-preview-card').classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', this.innerHTML);
+            }
+
+            function handleDragEnd(e) {
+                this.querySelector('.image-preview-card').classList.remove('dragging');
+                
+                document.querySelectorAll('.image-item').forEach(item => {
+                    item.querySelector('.image-preview-card').classList.remove('drag-over');
+                });
+
+                updateNumberBadges();
+                updateImageOrderInput();
+            }
+
+            function handleDragOver(e) {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+                e.dataTransfer.dropEffect = 'move';
+                return false;
+            }
+
+            function handleDragEnter(e) {
+                if (this !== draggedElement) {
+                    this.querySelector('.image-preview-card').classList.add('drag-over');
+                }
+            }
+
+            function handleDragLeave(e) {
+                this.querySelector('.image-preview-card').classList.remove('drag-over');
+            }
+
+            function handleDrop(e) {
+                if (e.stopPropagation) {
+                    e.stopPropagation();
+                }
+
+                if (draggedElement !== this) {
+                    const allItems = Array.from(previewContainer.querySelectorAll('.image-item'));
+                    const draggedIndex = allItems.indexOf(draggedElement);
+                    const targetIndex = allItems.indexOf(this);
+
+                    if (draggedIndex < targetIndex) {
+                        this.parentNode.insertBefore(draggedElement, this.nextSibling);
+                    } else {
+                        this.parentNode.insertBefore(draggedElement, this);
+                    }
+
+                    // Si se movieron imágenes del cliente, actualizar el array
+                    const isClientImage = draggedElement.dataset.isServer === 'false';
+                    if (isClientImage) {
+                        reorganizeClientFiles();
+                    }
+                }
+
+                return false;
+            }
+
+            function reorganizeClientFiles() {
+                const newClientFiles = [];
+                const clientItems = document.querySelectorAll('.image-item[data-is-server="false"]');
+                
+                clientItems.forEach(item => {
+                    const index = parseInt(item.dataset.fileIndex);
+                    if (!isNaN(index) && allClientFiles[index]) {
+                        newClientFiles.push(allClientFiles[index]);
+                    }
+                });
+
+                // Actualizar índices
+                clientItems.forEach((item, newIndex) => {
+                    item.dataset.fileIndex = newIndex;
+                    const deleteButton = item.querySelector('.remove-client-image');
+                    if (deleteButton) {
+                        deleteButton.dataset.index = newIndex;
+                    }
+                });
+
+                allClientFiles = newClientFiles;
+                updateFileInputWithAllFiles();
+            }
+
+            function updateNumberBadges() {
+                const allItems = previewContainer.querySelectorAll('.image-item');
+                allItems.forEach((item, index) => {
+                    const badge = item.querySelector('.image-number-badge');
+                    if (badge) {
+                        badge.textContent = index + 1;
+                    }
+
+                    const mainBadge = item.querySelector('.main-image-badge');
+                    if (mainBadge) {
+                        mainBadge.remove();
+                    }
+
+                    if (index === 0) {
+                        const imgContainer = item.querySelector('.ratio');
+                        const newMainBadge = document.createElement('span');
+                        newMainBadge.className = 'main-image-badge';
+                        newMainBadge.innerHTML = '<i class="bi bi-star-fill"></i> Principal';
+                        imgContainer.insertBefore(newMainBadge, imgContainer.firstChild);
+                    }
+                });
+            }
+
+            function updateImageOrderInput() {
+                const allItems = previewContainer.querySelectorAll('.image-item');
+                const order = Array.from(allItems).map((item, index) => {
+                    if (item.dataset.isServer === 'true') {
+                        // Imagen del servidor: usar su fileName
+                        return item.dataset.imageId;
+                    } else {
+                        // Imagen del cliente: marcar su posición con un marcador especial
+                        const fileIndex = parseInt(item.dataset.fileIndex);
+                        if (!isNaN(fileIndex)) {
+                            return `CLIENT_NEW_${fileIndex}`;
+                        }
+                    }
+                    return null;
+                }).filter(Boolean);
+
+                imageOrderInput.value = order.join(',');
+                console.log('Orden completo actualizado:', imageOrderInput.value);
+                console.log('Total items:', allItems.length);
+            }
+
             previewContainer.addEventListener('click', function(e) {
                 if (e.target.closest('.remove-client-image')) {
                     const button = e.target.closest('.remove-client-image');
                     const index = parseInt(button.dataset.index);
 
-                    // Eliminar del array
                     allClientFiles.splice(index, 1);
 
-                    // Actualizar vista y input
                     updatePreview();
                     updateFileInputWithAllFiles();
+                    updateImageOrderInput();
 
-                    // Mostrar notificación
                     showToast('Imagen eliminada de la selección', 'info');
+                }
+
+                if (e.target.closest('.delete-server-image')) {
+                    const button = e.target.closest('.delete-server-image');
+                    const fileName = button.dataset.filename;
+                    deleteServerImage(fileName);
                 }
             });
 
             function getTotalImageCount() {
-                // Imágenes del servidor
-                const serverImages = document.querySelectorAll('[data-image-id]').length;
-                // Imágenes del cliente (nuevas)
+                const serverImages = document.querySelectorAll('.image-item[data-is-server="true"]').length;
                 const clientImages = allClientFiles.length;
                 return serverImages + clientImages;
             }
@@ -374,13 +563,12 @@
                 }
             }
 
-            // Configurar drag and drop
+            // Drag and drop para el área de carga
             const fileUploadLabel = document.querySelector('.file-upload-label');
 
             if (fileUploadLabel) {
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                     fileUploadLabel.addEventListener(eventName, preventDefaults, false);
-                    document.body.addEventListener(eventName, preventDefaults, false);
                 });
 
                 ['dragenter', 'dragover'].forEach(eventName => {
@@ -391,7 +579,7 @@
                     fileUploadLabel.addEventListener(eventName, unhighlight, false);
                 });
 
-                fileUploadLabel.addEventListener('drop', handleDrop, false);
+                fileUploadLabel.addEventListener('drop', handleFileDrop, false);
             }
 
             function preventDefaults(e) {
@@ -409,42 +597,33 @@
                 fileUploadLabel.style.backgroundColor = '';
             }
 
-            function handleDrop(e) {
+            function handleFileDrop(e) {
                 const dt = e.dataTransfer;
                 const files = dt.files;
 
                 if (files.length > 0) {
-                    // Simular cambio en el input
                     const dataTransfer = new DataTransfer();
                     Array.from(files).forEach(file => {
                         dataTransfer.items.add(file);
                     });
                     fileInput.files = dataTransfer.files;
 
-                    // Disparar evento change
                     const event = new Event('change', { bubbles: true });
                     fileInput.dispatchEvent(event);
                 }
             }
 
-            // Validación antes de enviar el formulario - VERSIÓN MEJORADA
             form.addEventListener('submit', function(e) {
-                // Asegurar que el input tenga todos los archivos acumulados
                 updateFileInputWithAllFiles();
+                updateImageOrderInput();
 
                 const totalImages = getTotalImageCount();
-
-                // Detectar qué botón se presionó
                 const submitter = e.submitter;
                 const isBackButton = submitter &&
                     (submitter.textContent.includes('Anterior') ||
                      submitter.classList.contains('btn-outline-secondary'));
 
-                console.log('Botón presionado:', isBackButton ? 'Anterior' : 'Siguiente');
-
-                // Validación solo para el botón "Siguiente"
                 if (!isBackButton) {
-                    // Solo validar mínimo de imágenes para "Siguiente"
                     if (totalImages < 1) {
                         if (!confirm('¿Estás seguro de continuar sin subir imágenes? Las propiedades con fotos reciben más consultas.')) {
                             e.preventDefault();
@@ -453,44 +632,22 @@
                     }
                 }
 
-                // Validar máximo de imágenes (para ambos botones)
                 if (totalImages > 20) {
                     alert('El límite máximo es 20 imágenes. Por favor, elimina algunas imágenes antes de continuar.');
                     e.preventDefault();
                     return false;
                 }
 
-                console.log('Enviando formulario con', allClientFiles.length, 'imágenes del cliente');
+                console.log('Enviando con orden:', imageOrderInput.value);
                 return true;
             });
 
-            // Función para forzar la actualización del input antes de enviar (seguridad adicional)
-            function forceUpdateBeforeSubmit() {
-                updateFileInputWithAllFiles();
-                console.log('Forzando actualización de archivos antes del submit');
-            }
-
-            // Agregar event listener adicional para asegurar que se actualicen los archivos
-            const backButton = document.querySelector('button[type="submit"][asp-page-handler="Back"]');
-            const nextButton = document.querySelector('button[type="submit"]:not([asp-page-handler])');
-
-            if (backButton) {
-                backButton.addEventListener('click', forceUpdateBeforeSubmit);
-            }
-            if (nextButton) {
-                nextButton.addEventListener('click', forceUpdateBeforeSubmit);
-            }
-        });
-
-        // Vista previa del video (mantener igual)
-        document.addEventListener('DOMContentLoaded', function() {
+            // Vista previa del video
             const videoUrlInput = document.getElementById('VideoUrl');
             const videoPreview = document.getElementById('video-preview');
 
             if (videoUrlInput && videoPreview) {
                 const iframe = videoPreview.querySelector('iframe');
-
-                // Configurar vista previa inicial si ya hay un video
                 updateVideoPreview(videoUrlInput.value);
 
                 videoUrlInput.addEventListener('input', function() {
@@ -500,7 +657,6 @@
                 function updateVideoPreview(videoUrl) {
                     if (videoUrl && isValidVideoUrl(videoUrl)) {
                         const embedUrl = getEmbedUrl(videoUrl);
-
                         if (embedUrl && iframe) {
                             iframe.src = embedUrl;
                             videoPreview.classList.remove('d-none');
@@ -527,39 +683,35 @@
                         }
 
                         if (videoId) {
-                            // Limpiar parámetros adicionales
                             const ampersandPosition = videoId.indexOf('&');
                             if (ampersandPosition !== -1) {
                                 videoId = videoId.substring(0, ampersandPosition);
                             }
-
                             return `https://www.youtube.com/embed/${videoId}`;
                         }
                     } else if (url.includes('vimeo.com')) {
                         const videoId = url.split('vimeo.com/')[1];
                         if (videoId) {
-                            // Limpiar parámetros adicionales
                             const questionMarkPosition = videoId.indexOf('?');
                             const cleanVideoId = questionMarkPosition !== -1
                                 ? videoId.substring(0, questionMarkPosition)
                                 : videoId;
-
                             return `https://player.vimeo.com/video/${cleanVideoId}`;
                         }
                     }
-
                     return null;
                 }
             }
+
+            window.allClientFiles = allClientFiles;
+            window.updateImageCounter = updateImageCounter;
         });
 
-        //  Función para eliminar imágenes del servidor usando AJAX
         function deleteServerImage(fileName) {
             if (!confirm('¿Eliminar imagen?')) {
                 return;
             }
 
-            // Obtener el draftId
             const draftIdInput = document.querySelector('input[name="DraftId"]');
             const draftId = draftIdInput ? draftIdInput.value : null;
 
@@ -568,19 +720,16 @@
                 return;
             }
 
-            // Mostrar loading
             const deleteButton = document.querySelector(`[data-filename="${fileName}"]`);
             if (deleteButton) {
                 deleteButton.innerHTML = '<i class="bi bi-hourglass-split"></i>';
                 deleteButton.disabled = true;
             }
 
-            // Crear formulario dinámico para la solicitud
             const formData = new FormData();
             formData.append('fileName', fileName);
             formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
 
-            // Enviar solicitud AJAX
             fetch(`?handler=DeleteImage&draftId=${draftId}`, {
                 method: 'POST',
                 body: formData,
@@ -590,25 +739,24 @@
             })
             .then(response => {
                 if (response.ok) {
-                    // Eliminar el elemento de la vista con animación
-                    const imageElement = document.querySelector(`[data-image-id="${fileName}"]`);
+                    const imageElement = document.querySelector(`.image-item[data-image-id="${fileName}"]`);
                     if (imageElement) {
-                        // Agregar animación de desvanecimiento
                         imageElement.style.transition = 'opacity 0.3s';
                         imageElement.style.opacity = '0';
 
-                        // Eliminar después de la animación
                         setTimeout(() => {
                             imageElement.remove();
 
-                            // Actualizar contador
-                            updateImageCounter();
+                            const imageOrderInput = document.getElementById('ImageOrder');
+                            const allItems = document.querySelectorAll('.image-item');
+                            const order = Array.from(allItems).map(item => item.dataset.imageId).filter(Boolean);
+                            imageOrderInput.value = order.join(',');
 
-                            // Mostrar mensaje de éxito
+                            updateNumberBadges();
+                            updateImageCounter();
                             showToast('Imagen eliminada correctamente', 'success');
 
-                            // Si no quedan imágenes del servidor, mostrar mensaje de vacío
-                            const serverImages = document.querySelectorAll('[data-image-id]').length;
+                            const serverImages = document.querySelectorAll('.image-item[data-is-server="true"]').length;
                             const clientImages = window.allClientFiles ? window.allClientFiles.length : 0;
 
                             if (serverImages === 0 && clientImages === 0) {
@@ -626,30 +774,41 @@
             .catch(error => {
                 console.error('Error:', error);
                 showToast('Error al eliminar la imagen', 'danger');
-                // Restaurar botón
                 if (deleteButton) {
                     deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
                     deleteButton.disabled = false;
                 }
-            })
-            .finally(() => {
-                // Restaurar botón si aún existe (por si acaso)
-                setTimeout(() => {
-                    if (deleteButton && deleteButton.innerHTML.includes('hourglass')) {
-                        deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
-                        deleteButton.disabled = false;
-                    }
-                }, 1000);
             });
         }
 
-        //  Función para mostrar notificaciones
+        function updateNumberBadges() {
+            const allItems = document.querySelectorAll('.image-item');
+            allItems.forEach((item, index) => {
+                const badge = item.querySelector('.image-number-badge');
+                if (badge) {
+                    badge.textContent = index + 1;
+                }
+
+                const mainBadge = item.querySelector('.main-image-badge');
+                if (mainBadge) {
+                    mainBadge.remove();
+                }
+
+                if (index === 0) {
+                    const imgContainer = item.querySelector('.ratio');
+                    const newMainBadge = document.createElement('span');
+                    newMainBadge.className = 'main-image-badge';
+                    newMainBadge.innerHTML = '<i class="bi bi-star-fill"></i> Principal';
+                    imgContainer.insertBefore(newMainBadge, imgContainer.firstChild);
+                }
+            });
+        }
+
         function showToast(message, type = 'info') {
             const toastContainer = document.getElementById('toast-container');
             let container;
 
             if (!toastContainer) {
-                // Crear contenedor si no existe
                 container = document.createElement('div');
                 container.id = 'toast-container';
                 container.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
@@ -660,7 +819,7 @@
 
             const toast = document.createElement('div');
             toast.className = `alert alert-${type} alert-dismissible fade show`;
-            toast.style.cssText = 'min-width: 250px; margin-bottom: 10px; animation: slideIn 0.3s ease-out;';
+            toast.style.cssText = 'min-width: 250px; margin-bottom: 10px;';
             toast.innerHTML = `
                 ${message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
@@ -668,7 +827,6 @@
 
             container.appendChild(toast);
 
-            // Auto-eliminar después de 3 segundos
             setTimeout(() => {
                 if (toast.parentNode) {
                     toast.style.opacity = '0';
@@ -681,47 +839,5 @@
                 }
             }, 3000);
         }
-
-        // Estilos CSS para animaciones
-        const style = document.createElement('style');
-        style.textContent = `
-  
-
-            .image-preview-card {
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
-
-            .image-preview-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Event listener para botones de eliminar imágenes del servidor
-        document.addEventListener('DOMContentLoaded', function() {
-            // Para imágenes del servidor
-            document.addEventListener('click', function(e) {
-                if (e.target.closest('.delete-server-image')) {
-                    const button = e.target.closest('.delete-server-image');
-                    const fileName = button.dataset.filename;
-                    deleteServerImage(fileName);
-                }
-            });
-
-            //  Prevenir el comportamiento por defecto del botón de eliminar antiguo
-            document.addEventListener('submit', function(e) {
-                // Si el submit viene de un botón dentro de una imagen, prevenirlo
-                if (e.target.matches('button[formaction*="DeleteImage"]')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return false;
-                }
-            });
-
-            //  allClientFiles global para que sea accesible desde otras funciones
-            window.allClientFiles = allClientFiles;
-            window.updateImageCounter = updateImageCounter;
-        });
     </script>
 }

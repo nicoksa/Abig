@@ -157,5 +157,10 @@ namespace Abig2025.Models.DTO
 
         [JsonPropertyName("uploadedAt")]
         public DateTime UploadedAt { get; set; } = HoraArgentina.Now;
+
+        [JsonPropertyName("isMain")]
+        public bool IsMain { get; set; } = false;
+
+
     }
 }
