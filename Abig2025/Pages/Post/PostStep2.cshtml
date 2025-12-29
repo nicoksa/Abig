@@ -27,21 +27,28 @@
         background-color: rgba(13, 110, 253, 0.05);
     }
 
-    .main-image-badge {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        z-index: 10;
-        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-        color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.7rem;
-        font-weight: bold;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        white-space: nowrap;
-        pointer-events: none;
-    }
+.main-image-badge {
+    position: absolute !important;
+    top: 6px !important;
+    left: 4px !important;
+    z-index: 11 !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    color: #2c3e50 !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    max-width: 90px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: auto !important;
+    height: auto !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
 
     .image-number-badge {
         position: absolute;
@@ -218,7 +225,7 @@
                     </div>
                     <div class="card-body pt-0">
                         <div class="mb-3">
-                            <label for="VideoUrl" class="form-label fw-bold">Enlace de YouTube o Vimeo</label>
+                            <label for="VideoUrl" class="form-label fw-bold">Enlace de YouTube </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-link-45deg"></i></span>
                                 <input type="url" class="form-control" id="VideoUrl" name="Step2.VideoUrl" 
