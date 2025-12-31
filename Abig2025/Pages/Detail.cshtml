@@ -1,241 +1,464 @@
-﻿@page
+﻿@page "{id:int}"
 @model DetailModel
+@using Abig2025.Helpers
 @{
-    ViewData["Title"] = "Detalles";
+    ViewData["Title"] = Model.Propiedad?.Title ?? "Detalles";
     Layout = "_Layout";
     var p = Model.Propiedad;
 }
 
-<link rel="stylesheet" href="~/css/styleDetail.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger m-4">@Model.ErrorMessage</div>
+}
 
-<div class="container py-5" >
-    <div class="row g-4 align-items-start">
-        <!-- Columna izquierda (70%) -->
-        <div class="col-lg-7">
-            <!-- Galería con carrusel -->
-            <div id="carouselGaleria" class="carousel slide" data-bs-ride="carousel" >
-                <div class="carousel-inner" >
-                    @for (int i = 0; i < p.Galeria.Count; i++)
-                    {
-                        <div class="carousel-item @(i == 0 ? "active" : "")">
-                            <img src="@p.Galeria[i]" class="d-block w-100 img-fluid rounded" alt="Imagen @(i + 1)" data-bs-toggle="modal" onclick="expandirImagen(this)">
+@if (p != null)
+{
+    <link rel="stylesheet" href="~/css/styleDetail.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <div class="container py-5">
+        <div class="row g-4 align-items-start">
+            <!-- Columna izquierda (70%) -->
+            <div class="col-lg-7">
+                <!-- Galería con carrusel -->
+                @if (p.Images != null && p.Images.Any())
+                {
+                    var imageList = p.Images.OrderBy(i => i.DisplayOrder).ToList();
+                    <div id="carouselGaleria" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < imageList.Count; i++)
+                            {
+                                var image = imageList[i];
+                                var imageUrl = image.ImageUrl;
+                                
+                                <!-- CORRECCIÓN: Solo agregar / si no empieza con / -->
+                                @if (!imageUrl.StartsWith("/") && !imageUrl.StartsWith("http"))
+                                {
+                                    // Si ya tiene uploads/properties/, no agregar nada más
+                                    if (!imageUrl.StartsWith("uploads/"))
+                                    {
+                                        imageUrl = "/" + imageUrl;
+                                    }
+                                    else
+                                    {
+                                        imageUrl = "/" + imageUrl;
+                                    }
+                                }
+                                
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <img src="@imageUrl"
+                                         class="d-block w-100 img-fluid rounded"
+                                         alt="@image.FileName"
+                                         onclick="expandirImagen(this)"
+                                         onerror="this.onerror=null; this.src='/images/placeholder.jpg'; this.alt='Imagen no disponible';"
+                                         style="max-height: 500px; object-fit: cover; cursor: pointer;">
+                                </div>
+                            }
                         </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselGaleria" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselGaleria" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                    <!-- Debug info -->
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            @imageList.Count imagen@(imageList.Count != 1 ? "es" : "")
+                  
+                        </small>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-image me-2"></i>
+                        No hay imágenes disponibles para esta propiedad
+                    </div>
+                }
+
+                <!-- Descripción -->
+                @if (!string.IsNullOrWhiteSpace(p.Description))
+                {
+                    <div class="card mt-5 shadow-sm border-0">
+                        <div class="card-body">
+                            <h4 class="card-title"><i class="bi bi-file-text text-primary me-2"></i>Descripción</h4>
+                            <p class="card-text">@p.Description</p>
+                        </div>
+                    </div>
+                }
+
+                @if (p.Location.Latitude.HasValue && p.Location.Longitude.HasValue)
+                {
+                    var lat = p.Location.Latitude.Value;
+                    var lng = p.Location.Longitude.Value;
+                    var latFormatted = lat.ToString("F6", System.Globalization.CultureInfo.InvariantCulture);
+                    var lngFormatted = lng.ToString("F6", System.Globalization.CultureInfo.InvariantCulture);
+
+                    <!-- URL simplificada para Google Maps -->
+                    var googleMapsUrl = $"https://www.google.com/maps?q={latFormatted},{lngFormatted}&z=15";
+                    var googleEmbedUrl = $"https://maps.google.com/maps?q={latFormatted},{lngFormatted}&hl=es&z=15&output=embed";
+
+                    <div class="card mt-4 shadow-sm border-0">
+                        <div class="card-body">
+                            <h4><i class="bi bi-geo-alt-fill text-danger me-2"></i>Ubicación</h4>
+                            <p class="text-muted">
+                                @if (!string.IsNullOrEmpty(p.Location.Street))
+                                {
+                                    @p.Location.Street
+                                    @if (!string.IsNullOrEmpty(p.Location.Number))
+                                    {
+                                        @(" " + p.Location.Number)
+                                    }
+                                    @(", ")
+                                }
+                                @(p.Location.CityName ?? p.Location.City?.Name), @(p.Location.ProvinceName ?? p.Location.Province?.Name)
+                            </p>
+
+                            <!-- Mapa Google  -->
+                            <div class="mb-3">
+                                <iframe class="rounded shadow"
+                                        src="@googleEmbedUrl"
+                                        width="100%"
+                                        height="300"
+                                        style="border:0;"
+                                        allowfullscreen
+                                        loading="lazy"
+                                        title="Mapa de la propiedad">
+                                </iframe>
+                            </div>
+
+                            <div class="mt-2">
+                                <a href="@googleMapsUrl"
+                                   target="_blank"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-map me-1"></i>Abrir en Google Maps
+                                </a>
+                                <a href="https://www.openstreetmap.org/?mlat=@latFormatted&mlon=@lngFormatted#map=15/@latFormatted/@lngFormatted"
+                                   target="_blank"
+                                   class="btn btn-sm btn-outline-secondary ms-2">
+                                    <i class="bi bi-globe me-1"></i>Abrir en OpenStreetMap
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Acordeón de detalles -->
+                <div class="accordion mt-4" id="accordionDetalles">
+                    <!-- Características Principales -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCaracteristicas">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaracteristicas" aria-expanded="true">
+                                <i class="bi bi-info-circle-fill me-2"></i> Características Principales
+                            </button>
+                        </h2>
+                        <div id="collapseCaracteristicas" class="accordion-collapse collapse show" data-bs-parent="#accordionDetalles">
+                            <div class="accordion-body">
+                                <ul class="list-group list-group-flush">
+                                    @if (p.Bathrooms.HasValue && p.Bathrooms > 0)
+                                    {
+                                        <li class="list-group-item"><i class="bi bi-bucket text-primary me-2"></i>@p.Bathrooms baño@(p.Bathrooms > 1 ? "s" : "")</li>
+                                    }
+                                    @if (p.Bedrooms.HasValue && p.Bedrooms > 0)
+                                    {
+                                        <li class="list-group-item"><i class="bi bi-house text-info me-2"></i>@p.Bedrooms dormitorio@(p.Bedrooms > 1 ? "s" : "")</li>
+                                    }
+                                    @if (p.MainRooms.HasValue && p.MainRooms > 0)
+                                    {
+                                        <li class="list-group-item"><i class="bi bi-door-open text-secondary me-2"></i>@p.MainRooms ambiente@(p.MainRooms > 1 ? "s" : "")</li>
+                                    }
+                                    @if (p.ParkingSpaces.HasValue && p.ParkingSpaces > 0)
+                                    {
+                                        <li class="list-group-item"><i class="bi bi-car-front-fill text-dark me-2"></i>@p.ParkingSpaces cochera@(p.ParkingSpaces > 1 ? "s" : "")</li>
+                                    }
+                                    @if (p.Age.HasValue)
+                                    {
+                                        <li class="list-group-item"><i class="bi bi-calendar-check text-muted me-2"></i>@p.Age años de antigüedad</li>
+                                    }
+                                    @if (p.IsNew)
+                                    {
+                                        <li class="list-group-item"><i class="bi bi-star-fill text-warning me-2"></i>A estrenar</li>
+                                    }
+                                    @if (p.IsUnderConstruction)
+                                    {
+                                        <li class="list-group-item"><i class="bi bi-hammer text-warning me-2"></i>En construcción</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features dinámicas agrupadas -->
+                    @if (p.Features != null && p.Features.Any())
+                    {
+                        var featureGroups = p.Features
+                        .Where(f => f.FeatureDefinition != null && f.FeatureDefinition.IsActive)
+                        .GroupBy(f => f.FeatureDefinition.Group)
+                        .OrderBy(g => g.Key);
+
+                        foreach (var group in featureGroups)
+                        {
+                            var groupKey = string.IsNullOrEmpty(group.Key) ? "Otros" : group.Key;
+                            var accordionId = $"collapse{groupKey.Replace(" ", "")}";
+                            var headingId = $"heading{groupKey.Replace(" ", "")}";
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="@headingId">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@accordionId">
+                                        <i class="bi bi-check-circle-fill text-success me-2"></i> @groupKey
+                                    </button>
+                                </h2>
+                                <div id="@accordionId" class="accordion-collapse collapse" data-bs-parent="#accordionDetalles">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            @foreach (var feature in group.OrderBy(f => f.FeatureDefinition.DisplayOrder))
+                                            {
+                                                <li class="list-group-item">
+                                                    @if (!string.IsNullOrEmpty(feature.FeatureDefinition.Icon))
+                                                    {
+                                                        <i class="@feature.FeatureDefinition.Icon me-2"></i>
+                                                    }
+                                                    @feature.FeatureDefinition.DisplayName
+                                                    @if (!string.IsNullOrEmpty(feature.Value) && feature.Value != "true")
+                                                    {
+                                                        <span class="text-muted">: @feature.Value</span>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     }
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselGaleria" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselGaleria" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
             </div>
 
-            <!-- Descripción -->
-            <div class="card mt-5 shadow-sm border-0">
-                <div class="card-body">
-                    <h4 class="card-title"><i class="bi bi-file-text text-primary me-2"></i>Descripción</h4>
-                    <p class="card-text">@p.Descripcion</p>
-                </div>
-            </div>
+            <!-- Columna derecha (30%) - Información y Contacto -->
+            <div class="col-lg-5">
+                <h2 class="display-6 fw-bold">@p.Title</h2>
 
-            <!-- Mapa -->
-            <div class="card mt-4 shadow-sm border-0">
-                <div class="card-body">
-                    <h4><i class="bi bi-geo-alt-fill text-danger me-2"></i>Ubicación</h4>
-                    <iframe class="rounded shadow" src="@p.UrlMapa" width="100%" height="300" style="border:0;" allowfullscreen loading="lazy"></iframe>
-                </div>
-            </div>
+                @if (p.Location != null)
+                {
+                    <p class="text-muted">
+                        <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                        @if (!string.IsNullOrEmpty(p.Location.Street))
+                        {
+                            @p.Location.Street
+                            @if (!string.IsNullOrEmpty(p.Location.Number))
+                            {
+                                @(" " + p.Location.Number)
+                            }
+                            @(", ")
+                        }
+                        @(p.Location.CityName ?? p.Location.City?.Name), @(p.Location.ProvinceName ?? p.Location.Province?.Name)
+                    </p>
+                }
 
-            <!-- Acordeón de detalles -->
-            <div class="accordion mt-4" id="accordionDetalles" >
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingCaracteristicas">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCaracteristicas" aria-expanded="true" aria-controls="collapseCaracteristicas">
-                            <i class="bi bi-info-circle-fill me-2"></i> Características
-                        </button>
-                    </h2>
-                    <div id="collapseCaracteristicas" class="accordion-collapse collapse show" aria-labelledby="headingCaracteristicas" data-bs-parent="#accordionDetalles">
-                        <div class="accordion-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><i class="bi bi-bucket text-primary me-2"></i>1 baño</li>
-                                <li class="list-group-item"><i class="bi bi-house text-info me-2"></i>2 dormitorios</li>
-                                <li class="list-group-item"><i class="bi bi-door-open text-secondary me-2"></i>4 ambientes</li>
-                                <li class="list-group-item"><i class="bi bi-car-front-fill text-dark me-2"></i>Cochera</li>
-                                <li class="list-group-item"><i class="bi bi-calendar-check text-muted me-2"></i>5 años de Antiguedad</li>
-                            </ul>
+                <h3 class="text-success fw-bold">
+                    <i class="bi bi-tag-fill me-2"></i>
+                    @p.Currency @p.Price.ToString("N0")
+                </h3>
+
+                @if (p.Expenses.HasValue && p.Expenses > 0)
+                {
+                    <p class="text-muted">
+                        Expensas: @p.ExpensesCurrency @p.Expenses.Value.ToString("N0")
+                    </p>
+                }
+
+                <ul class="list-group list-group-flush mt-3" style="background-color: floralwhite">
+                    @if (p.MainRooms.HasValue)
+                    {
+                        <li class="list-group-item"><i class="bi bi-door-open text-secondary me-2"></i><strong>Ambientes:</strong> @p.MainRooms</li>
+                    }
+                    @if (p.Bedrooms.HasValue)
+                    {
+                        <li class="list-group-item"><i class="bi bi-house text-info me-2"></i><strong>Dormitorios:</strong> @p.Bedrooms</li>
+                    }
+                    @if (p.Bathrooms.HasValue)
+                    {
+                        <li class="list-group-item"><i class="bi bi-bucket text-primary me-2"></i><strong>Baños:</strong> @p.Bathrooms</li>
+                    }
+                    @if (p.TotalArea.HasValue)
+                    {
+                        <li class="list-group-item"><i class="bi bi-arrows-angle-expand text-warning me-2"></i><strong>Superficie total:</strong> @p.TotalArea.Value.ToString("N0") m²</li>
+                    }
+                    @if (p.CoveredArea.HasValue)
+                    {
+                        <li class="list-group-item"><i class="bi bi-house-fill text-info me-2"></i><strong>Superficie cubierta:</strong> @p.CoveredArea.Value.ToString("N0") m²</li>
+                    }
+                    <li class="list-group-item"><i class="bi bi-building text-success me-2"></i><strong>Tipo:</strong> @p.PropertyType</li>
+                    @if (!string.IsNullOrEmpty(p.Subtype))
+                    {
+                        <li class="list-group-item"><i class="bi bi-tag text-secondary me-2"></i><strong>Subtipo:</strong> @p.Subtype</li>
+                    }
+                    @if (p.Age.HasValue)
+                    {
+                        <li class="list-group-item"><i class="bi bi-calendar-check text-muted me-2"></i><strong>Antigüedad:</strong> @p.Age años</li>
+                    }
+                    <li class="list-group-item"><i class="bi bi-repeat text-primary me-2"></i><strong>Operación:</strong> @p.OperationType</li>
+                </ul>
+
+                <!-- Contacto en forma de tarjeta -->
+                <div class="card shadow-sm p-4 mt-4 contact-form-container">
+                    <h5 class="fw-bold mb-3">Contactá con el Propietario</h5>
+
+                    @if (p.Owner != null)
+                    {
+                        <div class="mb-3">
+                            <p class="mb-1 fw-semibold">@p.Owner.FirstName @p.Owner.LastName</p>
+                            <a href="mailto:@p.Owner.Email" class="d-block mb-2 text-decoration-none text-primary">
+                                <i class="bi bi-envelope-fill me-2"></i>@p.Owner.Email
+                            </a>
                         </div>
-                    </div>
-                </div>
+                    }
 
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingAmbientes">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAmbientes" aria-expanded="true" aria-controls="collapseAmbientes">
-                            <i class="bi bi-grid-1x2-fill text-success me-2"></i>Ambientes
-                        </button>
-                    </h2>
-                    <div id="collapseAmbientes" class="accordion-collapse collapse show" aria-labelledby="headingAmbientes" data-bs-parent="#accordionDetalles">
-                        <div class="accordion-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><i class="bi bi-house-heart me-2 text-secondary"></i>Living-comedor</li>
-                                <li class="list-group-item"><i class="bi bi-cup-hot me-2 text-danger"></i>Cocina</li>
-                                <li class="list-group-item"><i class="bi bi-house-door me-2 text-success"></i>Terraza</li>
-                                <li class="list-group-item"><i class="bi bi-droplet me-2 text-info"></i>Lavadero</li>
-                            </ul>
+                    <!-- Formulario de contacto -->
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="emailContacto" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="emailContacto" name="emailContacto" placeholder="Tu email" required>
                         </div>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingInstalaciones">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInstalaciones" aria-expanded="false" aria-controls="collapseInstalaciones">
-                            <i class="bi bi-tools text-warning me-2"></i> Instalaciones
-                        </button>
-                    </h2>
-                    <div id="collapseInstalaciones" class="accordion-collapse collapse" aria-labelledby="headingInstalaciones" data-bs-parent="#accordionDetalles">
-                        <div class="accordion-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><i class="bi bi-arrow-up-square me-2 text-primary"></i>Ascensor</li>
-                                <li class="list-group-item"><i class="bi bi-person-fill-gear me-2 text-warning"></i>Encargado con vivienda</li>
-                                <li class="list-group-item"><i class="bi bi-camera-video-fill me-2 text-danger"></i>Cámaras de seguridad</li>
-                            </ul>
+                        <div class="mb-3">
+                            <label for="telefonoContacto" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefonoContacto" name="telefonoContacto" placeholder="Tu número">
                         </div>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingServicios">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseServicios" aria-expanded="false" aria-controls="collapseServicios">
-                            <i class="bi bi-wrench-adjustable-circle text-info me-2"></i> Servicios
-                        </button>
-                    </h2>
-                    <div id="collapseServicios" class="accordion-collapse collapse" aria-labelledby="headingServicios" data-bs-parent="#accordionDetalles">
-                        <div class="accordion-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><i class="bi bi-lightning-charge me-2 text-warning"></i>Electricidad </li>
-                                <li class="list-group-item"><i class="bi bi-water me-2 text-primary"></i>Agua corriente</li>
-                                <li class="list-group-item"><i class="bi bi-thermometer-half me-2 text-danger"></i>Calefaccion</li>
-                            </ul>
+                        <div class="mb-3">
+                            <label for="mensajeContacto" class="form-label">Mensaje</label>
+                            <textarea class="form-control" id="mensajeContacto" name="mensajeContacto" rows="4" placeholder="Escribí tu consulta..." required></textarea>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <button type="submit" class="btn w-100 mt-3 mb-2" style="background-color: #2a5caa; color: white;">
+                            <i class="bi bi-envelope-fill me-2"></i>Contactar
+                        </button>
 
-        <!-- Columna derecha (30%) - Formulario de contacto -->
-        <div class="col-lg-5" >
-            <h2 class="display-6 fw-bold">@p.Titulo</h2>
-            <p class="text-muted"><i class="bi bi-geo-alt-fill text-danger me-2"></i>@p.Ubicacion</p>
-            <h3 class="text-success fw-bold"><i class="bi bi-tag-fill me-2"></i>USD @p.Precio.ToString("N0")</h3>
-
-            <ul class="list-group list-group-flush mt-3" style="background-color: floralwhite">
-                <li class="list-group-item"><i class="bi bi-door-open text-secondary me-2"></i><strong>Ambientes:</strong> @p.Ambientes</li>
-                <li class="list-group-item"><i class="bi bi-house text-info me-2"></i><strong>Dormitorios:</strong> @p.Dormitorios</li>
-                <li class="list-group-item"><i class="bi bi-bucket text-primary me-2"></i><strong>Baños:</strong> @p.Banios</li>
-                <li class="list-group-item"><i class="bi bi-arrows-angle-expand text-warning me-2"></i><strong>Superficie total:</strong> @p.SuperficieTotal m²</li>
-                <li class="list-group-item"><i class="bi bi-building text-success me-2"></i><strong>Tipo:</strong> @p.Tipo</li>
-                <li class="list-group-item"><i class="bi bi-calendar-check text-muted me-2"></i><strong>Antigüedad:</strong> @p.Antiguedad años</li>
-            </ul>
-
-            <!-- Contacto en forma de tarjeta -->
-            <div class="card shadow-sm p-4 mt-4 contact-form-container">
-                <h5 class="fw-bold mb-3">Contactá con el Dueño</h5>
-
-                <div class="mb-3">
-                    <p class="mb-1 fw-semibold">Jorge Almiron</p>
-                   
-                    <a href="tel:000000000" class="d-block mb-3 text-decoration-none text-primary">📞 Ver teléfono</a>
+                        <a href="https://wa.me/549XXXXXXXXXX?text=Hola, estoy interesado en la propiedad: @Uri.EscapeDataString(p.Title)"
+                           target="_blank" class="btn w-100 mb-3" style="background-color: #25D366; color: white;">
+                            <i class="bi bi-whatsapp me-2"></i>Contactar por WhatsApp
+                        </a>
+                    </form>
                 </div>
 
-                <!-- Formulario de contacto -->
-                <form>
-                    <div class="mb-3">
-                        <label for="emailContacto" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="emailContacto" placeholder="Tu email">
-                    </div>
-                    <div class="mb-3">
-                        <label for="telefonoContacto" class="form-label">Teléfono</label>
-                        <input type="tel" class="form-control" id="telefonoContacto" placeholder="Tu número">
-                    </div>
-                    <div class="mb-3">
-                        <label for="mensajeContacto" class="form-label">Mensaje</label>
-                        <textarea class="form-control" id="mensajeContacto" rows="4" placeholder="Escribí tu consulta..."></textarea>
-                    </div>
-                    <!-- Botón Contactar - Azul personalizado -->
-                    <button type="submit" class="btn w-100 mt-3 mb-2" style="background-color: #2a5caa; color: white;">
-                        <i class="bi bi-envelope-fill me-2"></i>Contactar
-                    </button>
+                @if (!string.IsNullOrEmpty(p.VideoUrl))
+                {
+                    var videoEmbedUrl = VideoHelper.GetEmbedUrl(p.VideoUrl);
+                    var hasValidVideo = VideoHelper.IsValidVideoUrl(p.VideoUrl);
 
-                    <!-- Botón WhatsApp - -->
-                    <a href="https://wa.me/549XXXXXXXXXX" target="_blank" class="btn w-100 mb-3" style="background-color: #25D366; color: white;">
-                        <i class="bi bi-whatsapp me-2"></i>Contactar por WhatsApp
-                    </a>
-                </form>
+                    <div class="card shadow-sm p-4 mt-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-play-circle me-2"></i>Video
+                            @if (!hasValidVideo)
+                            {
+                                <span class="badge bg-warning text-dark ms-2">URL no reconocida</span>
+                            }
+                        </h5>
+
+                        @if (hasValidVideo)
+                        {
+                            <div class="ratio ratio-16x9">
+                                <iframe src="@videoEmbedUrl"
+                                        title="Video de la propiedad"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen
+                                        class="rounded">
+                                </iframe>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <a href="@p.VideoUrl" target="_blank" class="text-decoration-none">
+                                        <i class="bi bi-link-45deg me-1"></i>Ver en sitio original
+                                    </a>
+                                </small>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Enlace de video no reconocido.
+                                <a href="@p.VideoUrl" target="_blank" class="alert-link">Abrir enlace</a>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal para imagen ampliada -->
-<!-- Modal para imagen ampliada con carrusel -->
-<div class="modal fade" id="imagenModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content bg-transparent border-0">
-            <div id="modalCarousel" class="carousel slide">
-                <div class="carousel-inner" id="modalCarouselInner">
-                    @for (int i = 0; i < p.Galeria.Count; i++)
-                    {
-                        <div class="carousel-item @(i == 0 ? "active" : "")">
-                            <img src="@p.Galeria[i]" class="d-block w-100 img-fluid rounded shadow" alt="Imagen @(i + 1)">
+    <!-- Modal para imagen ampliada con carrusel -->
+    @if (p.Images != null && p.Images.Any())
+    {
+        var imageList = p.Images.OrderBy(i => i.DisplayOrder).ToList();
+        <div class="modal fade" id="imagenModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content bg-transparent border-0">
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1050;"></button>
+                    <div id="modalCarousel" class="carousel slide">
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < imageList.Count; i++)
+                            {
+                                var modalImage = imageList[i];
+                                var modalImageUrl = modalImage.ImageUrl;
+                                @if (!modalImageUrl.StartsWith("/") && !modalImageUrl.StartsWith("http"))
+                                {
+                                    modalImageUrl = "/" + modalImageUrl;
+                                }
+                                
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <img src="@modalImageUrl"
+                                         class="d-block w-100 img-fluid rounded shadow"
+                                         alt="@modalImage.FileName"
+                                         onerror="this.onerror=null; this.src='/images/placeholder.jpg';"
+                                         style="max-height: 90vh; object-fit: contain;">
+                                </div>
+                            }
                         </div>
-                    }
+                        <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
             </div>
         </div>
-    </div>
-</div>
-
-<script>
-    // Función para abrir el modal en la imagen correcta
-    function expandirImagen(imgElement) {
-        // Obtener el índice de la imagen clickeada
-        const carouselItems = document.querySelectorAll('#carouselGaleria .carousel-item');
-        let index = 0;
-
-        for (let i = 0; i < carouselItems.length; i++) {
-            if (carouselItems[i].contains(imgElement)) {
-                index = i;
-                break;
-            }
-        }
-
-        // Activar el item correspondiente en el modal
-        const modalCarousel = new bootstrap.Carousel(document.getElementById('modalCarousel'));
-        modalCarousel.to(index);
-
-        // Mostrar el modal
-        const modal = new bootstrap.Modal(document.getElementById('imagenModal'));
-        modal.show();
     }
 
-    // Modificar los eventos de clic en las imágenes del carrusel principal
-    document.addEventListener('DOMContentLoaded', function() {
-        const carouselImages = document.querySelectorAll('#carouselGaleria .carousel-item img');
+    <script>
+        function expandirImagen(imgElement) {
+            const carouselItems = document.querySelectorAll('#carouselGaleria .carousel-item');
+            let index = 0;
 
-        carouselImages.forEach(img => {
-            img.onclick = function() {
-                expandirImagen(this);
-            };
+            for (let i = 0; i < carouselItems.length; i++) {
+                if (carouselItems[i].contains(imgElement)) {
+                    index = i;
+                    break;
+                }
+            }
+
+            const modalCarousel = new bootstrap.Carousel(document.getElementById('modalCarousel'));
+            modalCarousel.to(index);
+
+            const modal = new bootstrap.Modal(document.getElementById('imagenModal'));
+            modal.show();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselImages = document.querySelectorAll('#carouselGaleria .carousel-item img');
+            carouselImages.forEach(img => {
+                img.onclick = function() {
+                    expandirImagen(this);
+                };
+            });
         });
-    });
-</script>
+    </script>
+    
+}

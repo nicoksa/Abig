@@ -1,5 +1,6 @@
 ﻿@page
 @model Abig2025.Pages.Results2Model
+@using System.Linq
 @{
     ViewData["Title"] = "Propiedades";
 }
@@ -190,96 +191,132 @@
 
         <!-- RESULTADOS -->
         <div class="resultados">
-            @* Simulación de 3 propiedades *@
-            @for (int i = 0; i < 4; i++)
+            @if (Model.Properties != null && Model.Properties.Any())
             {
-                <div class="property-item">
-                    <a asp-page="/Detail" class="img">
-                        <img src="images/prop2.jpg" alt="Image" class="img-fluid" />
-                    </a>
-
-                    <div class="property-content">
-                        <div class="price mb-2"><span>$1.500.000</span></div>
-                        <div>
-                            <span class="d-block mb-2 text-black-50">Avenida San Martín 1143 </span>
-                            <span class="city d-block mb-3">Buenos Aires - Tigre</span>
-
-                            <div class="specs d-flex mb-4">
-                                <span class="d-block d-flex align-items-center me-3">
-                                    <span class="icon-bed me-2"></span>
-                                    <span class="caption">3 habitaciones</span>
-                                </span>
-                                <span class="d-block d-flex align-items-center">
-                                    <span class="icon-bath me-2"></span>
-                                    <span class="caption">2 baños</span>
-                                </span>
-                            </div>
-
-                            <a asp-page="/Detail"
-                               class="btn btn-primary py-2 px-3">Ver detalles</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- .item -->
-                 <div class="property-item">
-                            <a asp-page="/Detail" class="img">
-                                <img src="images/prop9.jpg" alt="Image" class="img-fluid" />
-                            </a>
-
-                            <div class="property-content">
-                                <div class="price mb-2"><span>$400.000</span></div>
-                                <div>
-                                    <span class="d-block mb-2 text-black-50">Calle Congreso 151</span>
-                                    <span class="city d-block mb-3">Buenos Aires - Cañuelas </span>
-
-                                    <div class="specs d-flex mb-4">
-                                        <span class="d-block d-flex align-items-center me-3">
-                                            <span class="icon-bed me-2"></span>
-                                            <span class="caption">3 habitaciones</span>
-                                        </span>
-                                        <span class="d-block d-flex align-items-center">
-                                            <span class="icon-bath me-2"></span>
-                                            <span class="caption">1 baño</span>
-                                        </span>
-                                    </div>
-
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
-                                </div>
-                            </div>
-                        </div>
-
-                          <!-- .item -->
-
+                <!-- En el archivo Results2.cshtml -->
+                <!-- ... código anterior ... -->
+                @foreach (var property in Model.Properties)
+                {
+                    <a asp-page="/Detail" asp-route-id="@property.PropertyId" class="property-item-link">
                         <div class="property-item">
-                            <a asp-page="/Detail" class="img">
-                                <img src="images/prop3.jpg" alt="Image" class="img-fluid" />
-                            </a>
+                            <div class="img position-relative">
+                                @{
+                                    var mainImage = property.Images?.FirstOrDefault(img => img.IsMain)
+                                    ?? property.Images?.FirstOrDefault();
+                                    var imageUrl = mainImage?.ImageUrl ?? "~/images/default-property.jpg";
+                                }
+                                <img src="@Url.Content(imageUrl)" alt="@property.Title" class="img-fluid" />
 
-                            <div class="property-content">
-                                <div class="price mb-2"><span>$350.000</span></div>
-                                <div>
-                                    <span class="d-block mb-2 text-black-50">Avenida de Mayo 575 </span>
-                                    <span class="city d-block mb-3">CABA - San isidro</span>
+                                <!-- Badge para precio -->
+                                <div class="price-badge position-absolute top-0 end-0 m-2 bg-primary text-white p-2 rounded">
+                                    @if (property.Currency == Abig2025.Models.Properties.Enums.CurrencyType.USD)
+                                    {
+                                        @($"USD${property.Price:N0}")
+                                    }
+                                    else
+                                    {
+                                        @($"${property.Price:N0}")
+                                    }
+                                    @if (property.Expenses > 0)
+                                    {
+                                        <small class="d-block">+$@property.Expenses exp.</small>
+                                    }
+                                </div>
+                            </div>
 
-                                    <div class="specs d-flex mb-4">
-                                        <span class="d-block d-flex align-items-center me-3">
-                                            <span class="icon-bed me-2"></span>
-                                            <span class="caption">3 habitaciones</span>
-                                        </span>
-                                        <span class="d-block d-flex align-items-center">
-                                            <span class="icon-bath me-2"></span>
-                                            <span class="caption">2 baños</span>
-                                        </span>
-                                    </div>
+                            <div class="property-content p-3">
+                                <!-- Título -->
+                                <h5 class="property-title mb-2">@property.Title</h5>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                <!-- Ubicación -->
+                                @{
+                                    var locationText = "";
+                                    if (!string.IsNullOrEmpty(property.Location?.Street))
+                                    {
+                                        locationText = $"{property.Location.Street} {property.Location.Number}";
+                                    }
+
+                                    var cityProvince = "";
+                                    if (property.Location?.City != null)
+                                    {
+                                        cityProvince = property.Location.City.Name;
+                                        if (property.Location.Province != null)
+                                        {
+                                            cityProvince += $" - {property.Location.Province.Name}";
+                                        }
+                                    }
+                                }
+
+                                @if (!string.IsNullOrEmpty(locationText))
+                                {
+                                    <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> @locationText</p>
+                                }
+                                @if (!string.IsNullOrEmpty(cityProvince))
+                                {
+                                    <p class="text-muted mb-3"><small>@cityProvince</small></p>
+                                }
+
+                                <!-- Características principales -->
+                                <div class="property-specs d-flex flex-wrap gap-3 mb-3">
+                                    @if (property.Bedrooms.HasValue && property.Bedrooms > 0)
+                                    {
+                                        <div class="spec-item">
+                                            <i class="bi bi-door-closed"></i>
+                                            <span>@property.Bedrooms dorm.</span>
+                                        </div>
+                                    }
+
+                                    @if (property.Bathrooms.HasValue && property.Bathrooms > 0)
+                                    {
+                                        <div class="spec-item">
+                                            <i class="bi bi-water"></i>
+                                            <span>@property.Bathrooms baños</span>
+                                        </div>
+                                    }
+
+                                    @if (property.MainRooms.HasValue && property.MainRooms > 0)
+                                    {
+                                        <div class="spec-item">
+                                            <i class="bi bi-house-door"></i>
+                                            <span>@property.MainRooms amb.</span>
+                                        </div>
+                                    }
+
+                                    @if (property.TotalArea.HasValue && property.TotalArea > 0)
+                                    {
+                                        <div class="spec-item">
+                                            <i class="bi bi-arrows-fullscreen"></i>
+                                            <span>
+                                                @property.TotalArea.Value.ToString("N0")
+                                                @(property.PropertyType.ToString() == "Campo" ? "ha" : "m²")
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Tags adicionales -->
+                                <div class="property-tags d-flex flex-wrap gap-2">
+                                    <span class="badge bg-secondary">@property.PropertyType</span>
+                                    <span class="badge bg-primary">@property.OperationType</span>
+
+                                    @if (property.IsNew)
+                                    {
+                                        <span class="badge bg-success">A estrenar</span>
+                                    }
+
                                 </div>
                             </div>
                         </div>
-
+                    </a>
+                }
+             
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <h3>No hay propiedades disponibles en este momento</h3>
+                    <p>Intenta más tarde o ajusta tus criterios de búsqueda.</p>
+                </div>
             }
         </div>
     </div>

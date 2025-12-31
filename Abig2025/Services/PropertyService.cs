@@ -214,6 +214,23 @@ namespace Abig2025.Services
                     Currency = draftData.Currency,
                     OperationType = draftData.OperationType,
                     PropertyType = draftData.PropertyType,
+
+
+                    // NUEVOS CAMPOS A AGREGAR:
+                    MainRooms = draftData.MainRooms,
+                    Bedrooms = draftData.Bedrooms,
+                    Bathrooms = draftData.Bathrooms,
+                    ParkingSpaces = draftData.ParkingSpaces,
+                    CoveredArea = draftData.CoveredArea,
+                    TotalArea = draftData.TotalArea,
+                    Age = draftData.Age,
+                    IsNew = draftData.IsNew,
+                    IsUnderConstruction = draftData.IsUnderConstruction,
+                    VideoUrl = draftData.VideoUrl,
+                    Expenses = draftData.Expenses,
+                    ExpensesCurrency = draftData.ExpensesCurrency,
+                    Subtype = draftData.Subtype,
+
                     CreatedAt = HoraArgentina.Now,
                     IsActive = true,
                     Location = null, // No asignar aquí

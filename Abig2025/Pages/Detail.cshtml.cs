@@ -1,59 +1,53 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Abig2025.Services.Interfaces;
+using Abig2025.Models.Properties;
 
 namespace Abig2025.Pages
 {
     public class DetailModel : PageModel
     {
-        public Propiedad Propiedad { get; set; }
+        private readonly IPropertyService _propertyService;
+        private readonly ILogger<DetailModel> _logger;
 
-        public void OnGet(int id)
+        public DetailModel(IPropertyService propertyService, ILogger<DetailModel> logger)
         {
-            // Datos de ejemplo
-            Propiedad = new Propiedad
-            {
-                Id = id,
-                Titulo = "Casa en alquiler 3 ambientes con cochera",
-                Ubicacion = "9 de Julio al 900, San Fernando",
-                Precio = 1500,
-                Ambientes = 3,
-                Banios = 1,
-                Dormitorios = 2,
-                SuperficieTotal = 90,
-                Tipo = "Casa",
-                Antiguedad = 10,
-                ImagenPrincipal = "/images/prop3.jpg",
-                Galeria = new List<string>
-            {
-                "/images/prop5.jpg",
-                "/images/prop6.jpg",
-                "/images/prop7.jpg"
-            },
-                
-                UrlMapa = "https://www.google.com/maps/embed?...",
-                Descripcion = "Casa en San Fernando, luminoso, con jardín y cochera. Excelente ubicación, " + 
-                "a 5 cuadras del centro. "
-
-            };
+            _propertyService = propertyService;
+            _logger = logger;
         }
-    }
 
-    public class Propiedad
-    {
-        public int Id { get; set; }
-        public string Titulo { get; set; }
-        public string Ubicacion { get; set; }
-        public decimal Precio { get; set; }
-        public int Ambientes { get; set; }
-        public int Banios { get; set; }
-        public int Dormitorios { get; set; }
-        public int SuperficieTotal { get; set; }
-        public string Tipo { get; set; }
-        public int Antiguedad { get; set; }
-        public string ImagenPrincipal { get; set; }
-        public List<string> Galeria { get; set; }
-        
-        public string UrlMapa { get; set; }
-        public string Descripcion { get; set; }
+        public Property? Propiedad { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
+
+        public async Task<IActionResult> OnGetAsync(int id)
+        {
+            try
+            {
+                Propiedad = await _propertyService.GetPropertyByIdAsync(id);
+
+                if (Propiedad == null)
+                {
+                    ErrorMessage = "Propiedad no encontrada";
+                    _logger.LogWarning("Propiedad con ID {PropertyId} no encontrada", id);
+                    return NotFound();
+                }
+
+                // Verificar que la propiedad esté activa y publicada
+                if (!Propiedad.IsActive || Propiedad.Status?.State != PropertyState.Publicado)
+                {
+                    ErrorMessage = "Esta propiedad no está disponible";
+                    _logger.LogWarning("Intento de acceso a propiedad inactiva o no publicada {PropertyId}", id);
+                    return NotFound();
+                }
+
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al cargar detalles de propiedad {PropertyId}", id);
+                ErrorMessage = "Error al cargar los detalles de la propiedad";
+                return Page();
+            }
+        }
     }
 }

@@ -1,0 +1,393 @@
+﻿@page
+@model Abig2025.Pages.Profile.MyPropertiesModel
+@{
+    ViewData["Title"] = "Mis Propiedades";
+    Layout = "_Layout";
+}
+
+<div class="hero page-inner overlay" style="background-image: url('/images/img33.jpg')">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-9 text-center mt-5">
+                <h1 class="heading" data-aos="fade-up">Mis Propiedades</h1>
+                <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="200">
+                    <ol class="breadcrumb text-center justify-content-center">
+                        <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                        <li class="breadcrumb-item"><a asp-page="/Profile/Index">Mi Perfil</a></li>
+                        <li class="breadcrumb-item active text-white-50" aria-current="page">
+                            Mis Propiedades
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-10 fw-bold text-primary mb-2">
+                        <i class="bi bi-houses me-2"></i>Mis Propiedades
+                    </h2>
+                    <p class="text-muted mb-0">Administra todas tus publicaciones</p>
+                </div>
+                <a href="/Post/Post" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Nueva Propiedad
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Guide -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-light shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="mb-3 text-primary"><i class="bi bi-lightning-charge me-2"></i>Acciones Rápidas Disponibles</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
+                                    <i class="bi bi-eye text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Ver</h6>
+                                    <p class="text-muted small mb-0">Ver tu propiedad publicada</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-warning bg-opacity-10 p-2 rounded me-3">
+                                    <i class="bi bi-pencil text-warning fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Editar</h6>
+                                    <p class="text-muted small mb-0">Modificar datos e imágenes</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                                    <i class="bi bi-check-lg text-success fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Publicar</h6>
+                                    <p class="text-muted small mb-0">Hacer visible tu propiedad</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-secondary bg-opacity-10 p-2 rounded me-3">
+                                    <i class="bi bi-pause text-secondary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Pausar</h6>
+                                    <p class="text-muted small mb-0">Ocultar temporalmente</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-danger bg-opacity-10 p-2 rounded me-3">
+                                    <i class="bi bi-trash text-danger fs-4"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Eliminar</h6>
+                                    <p class="text-muted small mb-0">Remover permanentemente</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Propiedades -->
+    @if (Model.Properties.Any())
+    {
+        <!-- Contadores -->
+        <div class="row mb-4">
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body text-center">
+                        <h3 class="text-primary fw-bold">@Model.TotalProperties</h3>
+                        <p class="text-muted mb-0">Total</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body text-center">
+                        <h3 class="text-success fw-bold">@Model.PublishedCount</h3>
+                        <p class="text-muted mb-0">Activas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body text-center">
+                        <h3 class="text-warning fw-bold">@Model.DraftCount</h3>
+                        <p class="text-muted mb-0">Borradores</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body text-center">
+                        <h3 class="text-secondary fw-bold">@Model.PausedCount</h3>
+                        <p class="text-muted mb-0">Pausadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de propiedades -->
+        <div class="row g-4">
+            @foreach (var property in Model.Properties)
+            {
+                var mainImage = property.Images?.FirstOrDefault();
+                var status = Model.PropertyStatus.GetValueOrDefault(property.PropertyId, "Desconocido");
+                var statusColor = status switch
+                {
+                    "Publicado" => "success",
+                    "Borrador" => "warning",
+                    "Pausado" => "secondary",
+                    "Pendiente" => "info",
+                    "Rechazado" => "danger",
+                    _ => "light"
+                };
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card property-card h-100 border-0 shadow-sm">
+                        <!-- Estado -->
+                        <div class="card-header bg-transparent border-0 pt-3 px-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-@statusColor">@status</span>
+                                <span class="text-primary fw-bold">@property.Currency @property.Price.ToString("N0")</span>
+                            </div>
+                        </div>
+
+                        <!-- Imagen -->
+                        <div class="position-relative overflow-hidden" style="height: 180px;">
+                            @if (mainImage != null)
+                            {
+                                <img src="@(mainImage.ImageUrl.StartsWith("/") ? mainImage.ImageUrl : "/" + mainImage.ImageUrl)"
+                                     class="w-100 h-100 object-fit-cover"
+                                     alt="@property.Title"
+                                     onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
+                            }
+                            else
+                            {
+                                <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-image text-muted fs-1"></i>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate mb-2">@property.Title</h5>
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                @if (!string.IsNullOrEmpty(property.Location?.Street))
+                                {
+                                    @property.Location.Street
+                                    @if (!string.IsNullOrEmpty(property.Location?.Number))
+                                    {
+                                        @(property.Location.Number + ", ")
+                                    }
+                                }
+                                @(property.Location?.CityName ?? property.Location?.City?.Name ?? "Ubicación no especificada")
+                            </p>
+                            
+                            <!-- Características -->
+                            <div class="d-flex gap-2 mb-3 flex-wrap">
+                                @if (property.MainRooms.HasValue)
+                                {
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-door-open me-1"></i>@property.MainRooms
+                                    </span>
+                                }
+                                @if (property.Bedrooms.HasValue)
+                                {
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-house me-1"></i>@property.Bedrooms
+                                    </span>
+                                }
+                                @if (property.Bathrooms.HasValue)
+                                {
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-bucket me-1"></i>@property.Bathrooms
+                                    </span>
+                                }
+                                @if (property.TotalArea.HasValue)
+                                {
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-arrows-angle-expand me-1"></i>@property.TotalArea m²
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- Fecha -->
+                            <div class="text-muted small">
+                                <i class="bi bi-calendar me-1"></i>
+                                Publicada: @property.CreatedAt.ToString("dd/MM/yyyy")
+                            </div>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                            <div class="d-flex gap-2">
+                                <a href="/Detail/@property.PropertyId" 
+                                   class="btn btn-sm btn-outline-primary flex-fill"
+                                   target="_blank"
+                                   title="Ver en el sitio">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                
+                                <a href="/Properties/Edit/@property.PropertyId" 
+                                   class="btn btn-sm btn-outline-warning flex-fill"
+                                   title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                @if (status == "Borrador" || status == "Pausado")
+                                {
+                                    <form method="post" asp-page-handler="ToggleStatus" class="flex-fill">
+                                        <input type="hidden" name="id" value="@property.PropertyId" />
+                                        <input type="hidden" name="action" value="publish" />
+                                        <button type="submit" class="btn btn-sm btn-outline-success w-100"
+                                                title="Publicar">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                }
+                                else if (status == "Publicado")
+                                {
+                                    <form method="post" asp-page-handler="ToggleStatus" class="flex-fill">
+                                        <input type="hidden" name="id" value="@property.PropertyId" />
+                                        <input type="hidden" name="action" value="pause" />
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary w-100"
+                                                title="Pausar">
+                                            <i class="bi bi-pause"></i>
+                                        </button>
+                                    </form>
+                                }
+
+                                <form method="post" asp-page-handler="Delete" class="flex-fill"
+                                      onsubmit="return confirm('¿Eliminar esta propiedad?');">
+                                    <input type="hidden" name="id" value="@property.PropertyId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100"
+                                            title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Estado vacío -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="bi bi-houses text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h3 class="text-muted mb-3">No tienes propiedades aún</h3>
+            <p class="text-muted mb-4">Comienza publicando tu primera propiedad para aparecer en nuestros listados</p>
+            <a href="/Properties/Create" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-plus-circle me-2"></i>Publicar Propiedad
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .property-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .property-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+
+    .card-body {
+        padding-top: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .badge.bg-light {
+        background-color: rgba(248, 249, 250, 0.9) !important;
+        border: 1px solid #dee2e6;
+    }
+
+    .btn-outline-primary, 
+    .btn-outline-warning, 
+    .btn-outline-success, 
+    .btn-outline-secondary, 
+    .btn-outline-danger {
+        border-width: 1.5px;
+        font-weight: 500;
+    }
+
+    /* Grid de acciones rápidas */
+    .bg-primary.bg-opacity-10 {
+        background-color: rgba(42, 92, 170, 0.1) !important;
+    }
+    
+    .bg-warning.bg-opacity-10 {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+    }
+    
+    .bg-success.bg-opacity-10 {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+    }
+    
+    .bg-secondary.bg-opacity-10 {
+        background-color: rgba(108, 117, 125, 0.1) !important;
+    }
+    
+    .bg-danger.bg-opacity-10 {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+    }
+</style>

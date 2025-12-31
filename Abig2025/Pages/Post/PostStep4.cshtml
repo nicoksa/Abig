@@ -142,7 +142,9 @@
                                                 <i class="bi bi-arrows-fullscreen fs-3"></i>
                                             </div>
                                             <h4 class="fw-bold mb-1">@Model.DraftData.TotalArea</h4>
-                                            <p class="text-muted small mb-0">m² totales</p>
+                                            <p class="text-muted small mb-0">
+                                                @(Model.DraftData.PropertyType.ToString() == "Campo" ? "Hectáreas" : "m² totales")
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -477,14 +479,10 @@
                                        asp-route-draftId="@Model.DraftId"
                                        class="btn btn-outline-secondary py-2">
                                         <i class="bi bi-pencil-square me-2"></i>
-                                        Editar detalles
+                                        Editar 
                                     </a>
 
-                                    <a asp-page="/Post/Plans"
-                                       class="btn btn-outline-primary py-2">
-                                        <i class="bi bi-rocket-takeoff me-2"></i>
-                                        Cambiar plan
-                                    </a>
+
                                 </div>
                             </div>
                         </form>
@@ -500,7 +498,7 @@
                             <ul class="small text-muted mb-0 ps-3">
                                 <li class="mb-1">Tu propiedad será revisada por nuestro equipo</li>
                                 <li class="mb-1">Recibirás notificaciones de interés</li>
-                                <li>Podrás gestionarla desde tu panel</li>
+                                <li>Podrás gestionar la propiedad desde tu perfil</li>
                             </ul>
                         </div>
                     </div>

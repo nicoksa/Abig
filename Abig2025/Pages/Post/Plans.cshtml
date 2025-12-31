@@ -4,6 +4,30 @@
     ViewData["Title"] = "Seleccionar Plan";
 }
 
+<style>
+
+    .stats-card-body {
+        min-height: 90px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .stats-number {
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .zero-number {
+        font-size: 2.0rem !important; 
+        line-height: 1;
+    }
+</style>
+
 <link rel="stylesheet" href="~/css/stylePost.css" />
 
 <div class="container mt-5 pt-5">
@@ -72,8 +96,9 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <div class="card border-0 bg-light">
-                                    <div class="card-body text-center py-3">
-                                        <h2 class="fw-bold @(Model.RemainingPublications <= 0 ? "text-danger" : "text-success") mb-1">
+                                    <div class="card-body text-center py-3 stats-card-body">
+                                        <h2 class="fw-bold @(Model.RemainingPublications <= 0 ? "text-danger display-3" : "text-success") mb-1
+                    @(Model.RemainingPublications == 0 ? "zero-number" : "")">
                                             @Model.RemainingPublications
                                         </h2>
                                         <p class="text-muted small mb-0">Disponibles</p>
@@ -82,7 +107,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="card border-0 bg-light">
-                                    <div class="card-body text-center py-3">
+                                    <div class="card-body text-center py-3 stats-card-body">
                                         <h2 class="fw-bold text-secondary mb-1">
                                             @Model.UsedPublications
                                         </h2>
@@ -92,7 +117,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="card border-0 bg-light">
-                                    <div class="card-body text-center py-3">
+                                    <div class="card-body text-center py-3 stats-card-body">
                                         <h2 class="fw-bold text-primary mb-1">
                                             @(Model.CurrentSubscription.Plan?.MaxPublications == -1 ? "∞" : Model.CurrentSubscription.Plan?.MaxPublications.ToString())
                                         </h2>
@@ -420,52 +445,3 @@
     }
 </div>
 
-<style>
-    /* Estilos personalizados para las cards */
-    .hover-shadow {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .hover-shadow:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
-    }
-
-    .transition-all {
-        transition: all 0.3s ease;
-    }
-
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
-    }
-
-    .bg-gradient-info {
-        background: linear-gradient(135deg, #36b9cc 0%, #1cc3d8 100%) !important;
-    }
-
-    .bg-gradient-warning {
-        background: linear-gradient(135deg, #f6c23e 0%, #e4a72c 100%) !important;
-    }
-
-    .premium-card {
-        border-top: 4px solid #f6c23e !important;
-    }
-
-    .standard-card {
-        border-top: 4px solid #36b9cc !important;
-    }
-
-    .card-header {
-        border-radius: 0 !important;
-    }
-
-    .btn-info {
-        background-color: #36b9cc;
-        border-color: #36b9cc;
-    }
-
-    .btn-info:hover {
-        background-color: #2c9faf;
-        border-color: #2c9faf;
-    }
-</style>

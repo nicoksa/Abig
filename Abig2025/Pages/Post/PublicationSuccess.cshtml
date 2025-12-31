@@ -1,20 +1,246 @@
 ﻿@page "{propertyId:int}"
 @model Abig2025.Pages.Post.PublicationSuccessModel
 
+@{
+    ViewData["Title"] = "¡Publicación Exitosa!";
+    Layout = "_Layout";
+}
+<br />
+<br />
+<br />
+<br />
 
-<br />
-<br />
-<br />
-<br />
-<div class="container text-center py-5">
-    <div class="card border-success shadow">
-        <div class="card-body">
-            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
-            <h1 class="mt-3">¡Propiedad publicada exitosamente!</h1>
-            <p class="lead">Tu propiedad ya está visible para los interesados.</p>
-            
-     
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <!-- Card de éxito principal -->
+            <div class="card border-success shadow-lg mb-5">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <div class="success-icon mb-3">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                        </div>
+                        <h1 class="display-6 fw-bold text-success mb-3">¡Propiedad publicada exitosamente!</h1>
+                        <p class="lead text-muted mb-4">
+                            Tu propiedad ya está visible para potenciales interesados.
+                        </p>
+                    </div>
+
+                    <!-- Resumen de la publicación -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary mb-3">
+                                        <i class="bi bi-info-circle me-2"></i>Detalles de la Publicación
+                                    </h5>
+                                    <div class="text-start">
+                                        <p class="mb-2">
+                                            <strong>Propiedad:</strong> @Model.PropertyTitle
+                                        </p>
+                                        <p class="mb-2">
+                                            <strong>Precio:</strong> @Model.Currency @Model.Price.ToString("N0")
+                                        </p>
+                                        <p class="mb-2">
+                                            <strong>Fecha de publicación:</strong> @Model.PublishedDate.ToString("dd/MM/yyyy HH:mm")
+                                        </p>
+                                        <p class="mb-2">
+                                            <strong>Código de publicación:</strong>
+                                            <span class="badge bg-info">@Model.PublicationCode</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary mb-3">
+                                        <i class="bi bi-lightbulb me-2"></i>Próximos Pasos
+                                    </h5>
+                                    <ul class="list-unstyled text-start">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Revisa que todos los datos sean correctos
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-share text-primary me-2"></i>
+                                            Comparte en redes sociales
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-chat-dots text-info me-2"></i>
+                                            Prepárate para responder consultas
+                                        </li>
+                                        <li>
+                                            <i class="bi bi-bar-chart text-warning me-2"></i>
+                                            Monitorea tu publicación
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a href="/Detail/@(Model.Property?.PropertyId)"
+                               class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center"
+                               target="_blank">
+                                <i class="bi bi-eye me-2"></i> Ver Publicación
+                            </a>
+                        </div>
+
+                        <div class="col-md-4">
+                            <a asp-page="/Profile/MyProperties"
+                               class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-houses me-2"></i> Ver Todas Mis Propiedades
+                            </a>
+                        </div>
+
+                        <div class="col-md-4">
+                            <a href="/Post/Post"
+                               class="btn btn-success w-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-plus-circle me-2"></i> Publicar Otra Propiedad
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de compartir -->
+            <div class="card border-0 shadow-sm mb-5">
+                <div class="card-body p-4">
+                    <h4 class="mb-3 text-center">
+                        <i class="bi bi-share me-2 text-primary"></i>¡Compartí tu publicación!
+                    </h4>
+                    <p class="text-center text-muted mb-4">
+                        Ayudá a que más personas vean tu propiedad compartiéndola en redes sociales.
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <button class="btn btn-social btn-facebook" onclick="shareOnFacebook()">
+                            <i class="bi bi-facebook me-2"></i> Facebook
+                        </button>
+                        <button class="btn btn-social btn-twitter" onclick="shareOnTwitter()">
+                            <i class="bi bi-twitter me-2"></i> Twitter
+                        </button>
+                        <button class="btn btn-social btn-whatsapp" onclick="shareOnWhatsApp()">
+                            <i class="bi bi-whatsapp me-2"></i> WhatsApp
+                        </button>
+                        <button class="btn btn-social btn-linkedin" onclick="shareOnLinkedIn()">
+                            <i class="bi bi-linkedin me-2"></i> LinkedIn
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de consejos -->
+            <div class="alert alert-info border-0 shadow-sm">
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="bi bi-info-circle-fill fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="alert-heading mb-2">Consejos para una buena experiencia</h5>
+                        <ul class="mb-0">
+                            <li>Responde rápido a las consultas de interesados</li>
+                            <li>Mantén actualizadas las fotos y precios</li>
+                            <li>Considera habilitar visitas </li>
+                            <li>Revisa regularmente tu publicación</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Script para compartir -->
+<script>
+    function shareOnFacebook() {
+        const url = window.location.origin + '/Detail/@(Model.Property?.PropertyId)';
+        const text = '¡Mirá esta propiedad que publiqué!';
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function shareOnTwitter() {
+        const url = window.location.origin + '/Detail/@(Model.Property?.PropertyId)';
+        const text = '¡Mirá esta propiedad que publiqué! #BienesRaices #Propiedades';
+        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function shareOnWhatsApp() {
+        const url = window.location.origin + '/Detail/@(Model.Property?.PropertyId)';
+        const text = '¡Mirá esta propiedad que publiqué! ' + url;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function shareOnLinkedIn() {
+        const url = window.location.origin + '/Detail/@(Model.Property?.PropertyId)';
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+    }
+</script>
+
+<style>
+    .success-icon {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .btn-social {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-facebook {
+        background-color: #1877F2;
+        color: white;
+        border: none;
+    }
+
+    .btn-twitter {
+        background-color: #1DA1F2;
+        color: white;
+        border: none;
+    }
+
+    .btn-whatsapp {
+        background-color: #25D366;
+        color: white;
+        border: none;
+    }
+
+    .btn-linkedin {
+        background-color: #0A66C2;
+        color: white;
+        border: none;
+    }
+
+    .btn-social:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        opacity: 0.9;
+    }
+
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>
