@@ -194,7 +194,7 @@
             @if (Model.Properties != null && Model.Properties.Any())
             {
                 <!-- En el archivo Results2.cshtml -->
-                <!-- ... código anterior ... -->
+
                 @foreach (var property in Model.Properties)
                 {
                     <a asp-page="/Detail" asp-route-id="@property.PropertyId" class="property-item-link">
@@ -205,7 +205,7 @@
                                     ?? property.Images?.FirstOrDefault();
                                     var imageUrl = mainImage?.ImageUrl ?? "~/images/default-property.jpg";
                                 }
-                                <img src="@Url.Content(imageUrl)" alt="@property.Title" class="img-fluid" />
+                                <img src="@Url.Content(imageUrl)" alt="@property.Title"  />
 
                                 <!-- Badge para precio -->
                                 <div class="price-badge position-absolute top-0 end-0 m-2 bg-primary text-white p-2 rounded">
@@ -224,7 +224,7 @@
                                 </div>
                             </div>
 
-                            <div class="property-content p-3">
+                            <div class="property-content">
                                 <!-- Título -->
                                 <h5 class="property-title mb-2">@property.Title</h5>
 
@@ -257,7 +257,7 @@
                                 }
 
                                 <!-- Características principales -->
-                                <div class="property-specs d-flex flex-wrap gap-3 mb-3">
+                                <div class="property-specs">
                                     @if (property.Bedrooms.HasValue && property.Bedrooms > 0)
                                     {
                                         <div class="spec-item">
@@ -295,7 +295,7 @@
                                 </div>
 
                                 <!-- Tags adicionales -->
-                                <div class="property-tags d-flex flex-wrap gap-2">
+                                <div class="property-tags ">
                                     <span class="badge bg-secondary">@property.PropertyType</span>
                                     <span class="badge bg-primary">@property.OperationType</span>
 
