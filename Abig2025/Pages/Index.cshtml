@@ -19,25 +19,25 @@
         <div class="row justify-content-center align-items-center">
             <div class="col-lg-9 text-center">
                 <h1 class="heading" data-aos="fade-up">Busca tu vivienda ideal</h1>
-                <form action="/Results2" class="narrow-w form-search d-flex align-items-stretch mb-3 flex-wrap gap-2" data-aos="fade-up" data-aos-delay="200">
-                    <select class="form-select px-3" name="tipo_operacion">  
-                        <option value="tipo_operacion">Tipo de Operación</option>
-                        <option value="alquiler">Alquiler</option>
-                        <option value="alquiler_temporal">Alquiler Temporal</option>
+                <form method="get" action="/Results2" class="narrow-w form-search d-flex align-items-stretch mb-3 flex-wrap gap-2" data-aos="fade-up" data-aos-delay="200">
+
+                    <select class="form-select px-3" name="operacion">
+                        <option value="">Tipo de Operación</option>
+                        <option value="Alquiler">Alquiler</option>
+                        <option value="AlquilerTemporal">Alquiler Temporal</option>
                     </select>
 
-					<select class="form-select px-3" name="categoria">
-                        <option value="tipo_propiedad">Tipo de Propiedad</option>
-						<option value="departamento">Departamento</option>
-						<option value="casa">Casa</option>
-						<option value="ph">PH</option>
-						<option value="local">Local</option>
-						<option value="terreno">Terreno</option>
-						<option value="quinta">Quinta</option>
-						<option value="cochera">Cochera</option>
-						<option value="oficina">Oficina</option>
-                        <option value="campo">Campo</option>
-					</select>
+                    <select class="form-select px-3" name="tipo">
+                        <option value="">Tipo de Propiedad</option>
+                        <option value="Departamento">Departamento</option>
+                        <option value="Casa">Casa</option>
+                        <option value="PH">PH</option>
+                        <option value="Local">Local</option>
+                        <option value="Terreno">Terreno</option>
+                        <option value="Quinta">Quinta</option>
+                        <option value="Cochera">Cochera</option>
+                        <option value="Oficina">Oficina</option>
+                    </select>
 
                     <select class="form-select px-3" name="dormitorios">
                         <option value="">Dormitorios</option>
@@ -45,12 +45,20 @@
                         <option value="2">2 dormitorios</option>
                         <option value="3">3 dormitorios</option>
                         <option value="4">4 dormitorios</option>
-                        <option value="5">+5 dormitorios</option>
+                        <option value="5">5+ dormitorios</option>
                     </select>
 
- 
+                    <select class="form-select px-3" name="provincia" id="select-provincia">
+                        <option value="">Provincia</option>
+                        @foreach (var provincia in Model.Provinces)
+                        {
+                            <option value="@provincia.ProvinceId">@provincia.Name</option>
+                        }
+                    </select>
 
-                    <input type="text" class="form-control px-4" name="ubicacion" placeholder="Ingresar provincia o ciudad" />
+                    <select class="form-select px-3" name="ciudad" id="select-ciudad" disabled>
+                        <option value="">Primero selecciona provincia</option>
+                    </select>
 
                     <button type="submit" class="btn btn-primary">Buscar</button>
                 </form>
@@ -64,14 +72,12 @@
         <div class="row mb-5 align-items-center">
             <div class="col-lg-6">
                 <h2 class="font-weight-bold text-primary heading">
-                    Ùltimas Propiedades
+                    Últimas Propiedades
                 </h2>
             </div>
             <div class="col-lg-6 text-lg-end">
                 <p>
-                    <a asp-page="/Results2"
-                       
-                       class="btn btn-primary text-white py-3 px-4">Ver todas las propiedades</a>
+                    <a asp-page="/Results2" class="btn btn-primary text-white py-3 px-4">Ver todas las propiedades</a>
                 </p>
             </div>
         </div>
@@ -102,8 +108,7 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -131,8 +136,7 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +151,7 @@
                                 <div class="price mb-2"><span>$400.000</span></div>
                                 <div>
                                     <span class="d-block mb-2 text-black-50">Avenida de Mayo 575 </span>
-                                    <span class="city d-block mb-3">CABA – San isidro</span>
+                                    <span class="city d-block mb-3">CABA – San Isidro</span>
 
                                     <div class="specs d-flex mb-4">
                                         <span class="d-block d-flex align-items-center me-3">
@@ -160,8 +164,7 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -189,15 +192,14 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
                         <!-- .item -->
 
                         <div class="property-item">
-                            <a href="property-single.html" class="img">
+                            <a asp-page="/Detail" class="img">
                                 <img src="images/prop5.jpg" alt="Image" class="img-fluid" />
                             </a>
 
@@ -218,8 +220,7 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -247,8 +248,7 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -276,8 +276,7 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -305,8 +304,7 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
@@ -334,26 +332,16 @@
                                         </span>
                                     </div>
 
-                                    <a asp-page="/Detail"
-                                       class="btn btn-primary py-2 px-3">Ver detalles</a>
+                                    <a asp-page="/Detail" class="btn btn-primary py-2 px-3">Ver detalles</a>
                                 </div>
                             </div>
                         </div>
                         <!-- .item -->
                     </div>
 
-                    <div id="property-nav"
-                         class="controls"
-                         tabindex="0"
-                         aria-label="Carousel Navigation">
-                        <span class="prev"
-                              data-controls="prev"
-                              aria-controls="property"
-                              tabindex="-1">Anterior</span>
-                        <span class="next"
-                              data-controls="next"
-                              aria-controls="property"
-                              tabindex="-1">Siguiente</span>
+                    <div id="property-nav" class="controls" tabindex="0" aria-label="Carousel Navigation">
+                        <span class="prev" data-controls="prev" aria-controls="property" tabindex="-1">Anterior</span>
+                        <span class="next" data-controls="next" aria-controls="property" tabindex="-1">Siguiente</span>
                     </div>
                 </div>
             </div>
@@ -368,9 +356,7 @@
                 <div class="box-feature">
                     <span class="flaticon-house"></span>
                     <h3 class="mb-3">Publica tu inmueble</h3>
-                    <p>
-                        En Abig te ayudamos a que concretes tus sueños
-                    </p>
+                    <p>En Abig te ayudamos a que concretes tus sueños</p>
                     <p><a asp-page="/Post" class="learn-more">Ver más</a></p>
                 </div>
             </div>
@@ -378,9 +364,7 @@
                 <div class="box-feature">
                     <span class="flaticon-house-4"></span>
                     <h3 class="mb-3">Contacto</h3>
-                    <p>
-                        ¿Tienes preguntas? Escríbenos, estamos para ayudarte
-                    </p>
+                    <p>¿Tienes preguntas? Escríbenos, estamos para ayudarte</p>
                     <p><a asp-page="/Contact" class="learn-more">Ver más</a></p>
                 </div>
             </div>
@@ -388,9 +372,7 @@
                 <div class="box-feature">
                     <span class="flaticon-house-3"></span>
                     <h3 class="mb-3">¡Somos Abig!</h3>
-                    <p>
-                        ¿Quienos somos? Te invitamos a conocernos
-                    </p>
+                    <p>¿Quiénes somos? Te invitamos a conocernos</p>
                     <p><a asp-page="/About" class="learn-more">Ver más</a></p>
                 </div>
             </div>
@@ -398,9 +380,7 @@
                 <div class="box-feature">
                     <span class="flaticon-house-1"></span>
                     <h3 class="mb-3">Propiedades en alquiler</h3>
-                    <p>
-                        Con anunciantes de todo el pais y contacto directo con los dueños
-                    </p>
+                    <p>Con anunciantes de todo el país y contacto directo con los dueños</p>
                     <p><a asp-page="/Results2" class="learn-more">Ver más</a></p>
                 </div>
             </div>
@@ -408,5 +388,42 @@
     </div>
 </section>
 
+@section Scripts {
+    <script>
+        // Carga dinámica de ciudades según provincia seleccionada
+        document.getElementById('select-provincia').addEventListener('change', async function() {
+            const provinciaId = this.value;
+            const selectCiudad = document.getElementById('select-ciudad');
 
+            if (!provinciaId) {
+                selectCiudad.disabled = true;
+                selectCiudad.innerHTML = '<option value="">Primero selecciona provincia</option>';
+                return;
+            }
 
+            try {
+                const response = await fetch(`/Index?handler=CitiesByProvince&provinceId=${provinciaId}`);
+
+                if (!response.ok) {
+                    throw new Error('Error al cargar ciudades');
+                }
+
+                const cities = await response.json();
+
+                selectCiudad.disabled = false;
+                selectCiudad.innerHTML = '<option value="">Todas las ciudades</option>';
+
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.cityId;
+                    option.textContent = city.name;
+                    selectCiudad.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando ciudades:', error);
+                selectCiudad.innerHTML = '<option value="">Error cargando ciudades</option>';
+                selectCiudad.disabled = true;
+            }
+        });
+    </script>
+}

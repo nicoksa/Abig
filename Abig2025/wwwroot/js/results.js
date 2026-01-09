@@ -1,290 +1,446 @@
-﻿// Objeto global para los filtros aplicados
-const filtrosAplicados = {};
+﻿// results2.js - Funcionalidad completa de filtros
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Configuración inicial para los filtros de checkbox
-    document.querySelectorAll('.grupo-filtro input[type="checkbox"]').forEach(input => {
-        input.addEventListener('change', function () {
-            const grupo = this.closest('.grupo-filtro');
-            const tipo = grupo.dataset.tipo;
-            const permiteMultiples = grupo.dataset.multiples === 'true';
-            let valor;
-            if (tipo === "precio") {
-                // Tomamos el texto del <span> dentro del label padre del checkbox
-                valor = this.parentElement.querySelector("span").textContent.trim();
-            } else {
-                const label = document.querySelector(`label[for="${this.id}"] span`);
-                valor = label ? label.textContent.trim() : this.value;
-            }
+document.addEventListener('DOMContentLoaded', function () {
+    // Estado de filtros
+    const filtrosEstado = {
+        tipo: [],
+        operacion: [],
+        precio: [],
+        ubicacion: [],
+        ambientes: [],
+        dormitorios: [],
+        banos: [],
+        superficieTotal: [],
+        superficieCubierta: [],
+        antiguedad: [],
+        caracteristicas: []
+    };
 
-            if (this.checked) {
-                if (permiteMultiples) {
-                    // Para grupos con múltiples selecciones
-                    if (!filtrosAplicados[tipo]) {
-                        filtrosAplicados[tipo] = [];
-                    }
-                    filtrosAplicados[tipo].push(valor);
-                } else {
-                    // Para grupos con selección única
-                    filtrosAplicados[tipo] = valor;
-                    ocultarOtrasOpciones(tipo);
-                }
-            } else {
-                if (permiteMultiples) {
-                    // Eliminar solo este valor del array
-                    if (filtrosAplicados[tipo]) {
-                        const index = filtrosAplicados[tipo].indexOf(valor);
-                        if (index > -1) {
-                            filtrosAplicados[tipo].splice(index, 1);
+    // Inicialización
+    initAcordeon();
+    initFiltros();
+    initPrecioMoneda();
+    initUbicacionBusqueda();
+    initRangos();
+    cargarFiltrosDesdeURL();
+    actualizarContadorFiltros();
+
+    // ========== FUNCIONALIDAD ACORDEÓN ==========
+    function initAcordeon() {
+        const acordeones = document.querySelectorAll('.acordeon-titulo');
+
+        acordeones.forEach(titulo => {
+            titulo.addEventListener('click', function () {
+                this.classList.toggle('active');
+                const contenido = this.nextElementSibling;
+                const isOpen = contenido.style.display === 'block';
+
+                // Cerrar todos los demás acordeones
+                if (!isOpen) {
+                    acordeones.forEach(otherTitulo => {
+                        if (otherTitulo !== this) {
+                            otherTitulo.classList.remove('active');
+                            otherTitulo.nextElementSibling.style.display = 'none';
                         }
-                        // Eliminar el array si está vacío
-                        if (filtrosAplicados[tipo].length === 0) {
-                            delete filtrosAplicados[tipo];
-                        }
-                    }
-                } else {
-                    // Eliminar el filtro para selección única
-                    delete filtrosAplicados[tipo];
-                    mostrarOpciones(tipo);
+                    });
                 }
-            }
 
-            renderizarEtiquetas();
+                // Toggle current
+                contenido.style.display = isOpen ? 'none' : 'block';
+
+                // Animar
+                if (!isOpen) {
+                    contenido.style.animation = 'slideDown 0.3s ease';
+                }
+            });
+
+            // Abrir el primer acordeón por defecto
+            if (titulo.parentElement.dataset.tipo === 'tipo') {
+                titulo.click();
+            }
         });
-    });
+    }
 
-    // Configuración para el filtro de precio
-    document.getElementById('btn-aplicar-precio').addEventListener('click', () => {
-        const min = document.getElementById('precio-min').value;
-        const max = document.getElementById('precio-max').value;
+    // ========== FUNCIONALIDAD FILTROS ==========
+    function initFiltros() {
+        // Event listeners para todos los checkboxes
+        document.querySelectorAll('.acordeon-contenido input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const grupo = this.closest('.grupo-filtro');
+                const tipo = grupo.dataset.tipo;
+                const valor = this.value;
+                const multiples = grupo.dataset.multiples === 'true';
 
-        if (min || max) {
+                if (this.checked) {
+                    if (multiples) {
+                        if (!filtrosEstado[tipo].includes(valor)) {
+                            filtrosEstado[tipo].push(valor);
+                        }
+                    } else {
+                        // Para filtros single-select (solo uno activo)
+                        document.querySelectorAll(`[data-tipo="${tipo}"] input[type="checkbox"]`).forEach(cb => {
+                            cb.checked = false;
+                        });
+                        this.checked = true;
+                        filtrosEstado[tipo] = [valor];
+                    }
+                } else {
+                    if (multiples) {
+                        filtrosEstado[tipo] = filtrosEstado[tipo].filter(v => v !== valor);
+                    } else {
+                        filtrosEstado[tipo] = [];
+                    }
+                }
+
+                actualizarFiltrosAplicados();
+                actualizarContadorFiltros();
+                aplicarFiltros();
+            });
+        });
+    }
+
+    // ========== FILTROS POR PRECIO Y MONEDA ==========
+    function initPrecioMoneda() {
+        const selectorMoneda = document.getElementById('selector-moneda');
+        const precioOpciones = document.querySelectorAll('.precio-opcion');
+
+        selectorMoneda?.addEventListener('change', function () {
+            const moneda = this.value;
+
+            precioOpciones.forEach(opcion => {
+                const span = opcion.querySelector('span');
+                if (span) {
+                    span.textContent = moneda === 'USD'
+                        ? opcion.dataset.usd
+                        : opcion.dataset.ars;
+
+                    const input = opcion.querySelector('input');
+                    if (input) {
+                        input.value = span.textContent;
+                    }
+                }
+            });
+        });
+
+        // Botón aplicar precio rango
+        document.getElementById('btn-aplicar-precio')?.addEventListener('click', function () {
+            const min = document.getElementById('precio-min').value;
+            const max = document.getElementById('precio-max').value;
             const moneda = document.getElementById('selector-moneda').value;
-            const simbolo = moneda === 'USD' ? 'USD$' : '$';
-            filtrosAplicados['precio'] = `Entre ${simbolo}${min || 0} y ${simbolo}${max || '∞'}`;
-            ocultarOtrasOpciones('precio');
-            renderizarEtiquetas();
-        }
-    });
 
-    // Configuración para el selector de moneda
-    const selectorMoneda = document.getElementById('selector-moneda');
-    selectorMoneda.addEventListener('change', () => {
-        const moneda = selectorMoneda.value;
-        document.querySelectorAll('.precio-opcion').forEach(label => {
-            const texto = moneda === 'USD'
-                ? label.getAttribute('data-usd')
-                : label.getAttribute('data-ars');
-            label.querySelector('span').textContent = texto;
-        });
+            if (min || max) {
+                const valor = `Rango: ${moneda === 'USD' ? 'USD' : '$'}${min || '0'} - ${moneda === 'USD' ? 'USD' : '$'}${max || '∞'}`;
 
-        const min = document.getElementById('precio-min');
-        const max = document.getElementById('precio-max');
-        min.placeholder = moneda === 'USD' ? 'Mín USD' : 'Mín $';
-        max.placeholder = moneda === 'USD' ? 'Máx USD' : 'Máx $';
-    });
-
-    // Configuración para el buscador de ubicación
-    const inputUbicacion = document.getElementById('input-ubicacion');
-    const sugerenciasUbicacion = document.getElementById('sugerencias-ubicacion');
-    const grupoUbicacion = document.querySelector('.grupo-filtro[data-tipo="ubicacion"]');
-
-    // Datos de ejemplo (reemplazar con API real si es necesario)
-    const ubicacionesDisponibles = [
-        "Saladillo", "Roque Perez", "25 de Mayo", "Las Flores", "Pehuajo",
-        "Palermo", "Recoleta", "Belgrano", "Caballito", "San Telmo",
-        "La Plata", "Mar del Plata", "Córdoba", "Rosario", "Mendoza"
-    ];
-
-    // Manejar entrada de búsqueda
-    inputUbicacion.addEventListener('input', function () {
-        const query = this.value.toLowerCase();
-        sugerenciasUbicacion.innerHTML = '';
-
-        if (query.length < 2) {
-            sugerenciasUbicacion.style.display = 'none';
-            return;
-        }
-
-        const resultados = ubicacionesDisponibles.filter(ubicacion =>
-            ubicacion.toLowerCase().includes(query)
-        );
-
-        if (resultados.length > 0) {
-            resultados.forEach(ubicacion => {
-                const div = document.createElement('div');
-                div.className = 'sugerencia-item';
-                div.textContent = ubicacion;
-                div.addEventListener('click', function () {
-                    seleccionarUbicacion(ubicacion);
+                // Limpiar otras opciones de precio
+                document.querySelectorAll('[data-tipo="precio"] input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
                 });
-                sugerenciasUbicacion.appendChild(div);
-            });
-            sugerenciasUbicacion.style.display = 'block';
-        } else {
-            sugerenciasUbicacion.style.display = 'none';
-        }
-    });
 
-    // Cerrar sugerencias al hacer clic fuera
-    document.addEventListener('click', function (e) {
-        if (e.target !== inputUbicacion) {
-            sugerenciasUbicacion.style.display = 'none';
-        }
-    });
-
-    // Función para manejar la selección de ubicación
-    function seleccionarUbicacion(ubicacion) {
-        inputUbicacion.value = '';
-        sugerenciasUbicacion.style.display = 'none';
-
-        // Agregar al objeto de filtros aplicados
-        filtrosAplicados['ubicacion'] = ubicacion;
-
-        // Ocultar el grupo de ubicación
-        ocultarOtrasOpciones('ubicacion');
-
-        // Renderizar las etiquetas
-        renderizarEtiquetas();
-    }
-});
-
-// Función para renderizar todas las etiquetas de filtros aplicados
-function renderizarEtiquetas() {
-    const contenedor = document.getElementById('filtros-aplicados');
-    contenedor.innerHTML = '';
-
-    for (const [tipo, valor] of Object.entries(filtrosAplicados)) {
-        if (Array.isArray(valor)) {
-            // Para filtros con múltiples valores
-            valor.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'etiqueta-filtro';
-                div.innerHTML = `${item} <span class="quitar" data-tipo="${tipo}" data-valor="${item}">✖</span>`;
-                contenedor.appendChild(div);
-            });
-        } else {
-            // Para filtros con un solo valor
-            const div = document.createElement('div');
-            div.className = 'etiqueta-filtro';
-            div.innerHTML = `${valor} <span class="quitar" data-tipo="${tipo}">✖</span>`;
-            contenedor.appendChild(div);
-        }
+                filtrosEstado.precio = [valor];
+                actualizarFiltrosAplicados();
+                aplicarFiltros();
+            }
+        });
     }
 
-    // Configurar eventos para los botones de quitar
- document.querySelectorAll('.quitar').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const tipo = this.dataset.tipo;
-            const valorEspecifico = this.dataset.valor;
+    // ========== BÚSQUEDA DE UBICACIÓN ==========
+    function initUbicacionBusqueda() {
+        const inputUbicacion = document.getElementById('input-ubicacion');
+        const sugerenciasDiv = document.getElementById('sugerencias-ubicacion');
 
-            if (valorEspecifico) {
-                // Para filtros con múltiples valores
-                const index = filtrosAplicados[tipo].indexOf(valorEspecifico);
-                if (index > -1) {
-                    filtrosAplicados[tipo].splice(index, 1);
-                }
-                if (filtrosAplicados[tipo].length === 0) {
-                    delete filtrosAplicados[tipo];
-                }
-                
-                // Desmarcar el checkbox correspondiente
-                const grupo = document.querySelector(`.grupo-filtro[data-tipo="${tipo}"]`);
-                const checkbox = grupo.querySelector(`input[value="${valorEspecifico}"]`);
-                if (checkbox) checkbox.checked = false;
+        if (!inputUbicacion || !sugerenciasDiv) return;
+
+        // Datos de ejemplo (deberías cargarlos desde tu backend)
+        const ubicaciones = [
+            { id: 1, nombre: "Buenos Aires", tipo: "Ciudad" },
+            { id: 2, nombre: "Córdoba", tipo: "Ciudad" },
+            { id: 3, nombre: "Palermo", tipo: "Barrio" },
+            { id: 4, nombre: "Recoleta", tipo: "Barrio" },
+            { id: 5, nombre: "Belgrano", tipo: "Barrio" },
+            { id: 6, nombre: "Av. Corrientes 1234", tipo: "Dirección" }
+        ];
+
+        inputUbicacion.addEventListener('input', function () {
+            const query = this.value.toLowerCase().trim();
+            sugerenciasDiv.innerHTML = '';
+
+            if (query.length < 2) {
+                sugerenciasDiv.style.display = 'none';
+                return;
+            }
+
+            const resultados = ubicaciones.filter(ubicacion =>
+                ubicacion.nombre.toLowerCase().includes(query)
+            );
+
+            if (resultados.length > 0) {
+                resultados.forEach(ubicacion => {
+                    const div = document.createElement('div');
+                    div.className = 'sugerencia-item';
+                    div.innerHTML = `
+                        <strong>${ubicacion.nombre}</strong>
+                        <span class="text-muted" style="float: right; font-size: 0.8rem;">${ubicacion.tipo}</span>
+                    `;
+                    div.addEventListener('click', function () {
+                        inputUbicacion.value = ubicacion.nombre;
+                        filtrosEstado.ubicacion = [`${ubicacion.tipo}: ${ubicacion.nombre}`];
+                        sugerenciasDiv.style.display = 'none';
+                        actualizarFiltrosAplicados();
+                        aplicarFiltros();
+                    });
+                    sugerenciasDiv.appendChild(div);
+                });
+                sugerenciasDiv.style.display = 'block';
             } else {
-                // Para filtros con un solo valor
-                delete filtrosAplicados[tipo];
-                mostrarOpciones(tipo);
-                deseleccionar(tipo);
+                sugerenciasDiv.style.display = 'none';
             }
-
-            renderizarEtiquetas();
         });
-    });
-}
 
-
-// Función para ocultar las opciones de un filtro
-function ocultarOtrasOpciones(tipo) {
-    const grupo = document.querySelector(`.grupo-filtro[data-tipo="${tipo}"]`);
-    if (grupo) {
-        grupo.style.display = 'none';
-    }
-}
-
-// Función para mostrar las opciones de un filtro
-function mostrarOpciones(tipo) {
-    const grupo = document.querySelector(`.grupo-filtro[data-tipo="${tipo}"]`);
-    if (grupo) {
-        grupo.style.display = 'block';
-    }
-}
-
-// Función para deseleccionar los inputs de un filtro
-function deseleccionar(tipo) {
-    const grupo = document.querySelector(`.grupo-filtro[data-tipo="${tipo}"]`);
-    if (grupo) {
-        const inputs = grupo.querySelectorAll('input');
-        inputs.forEach(input => {
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else if (input.type === 'number') {
-                input.value = '';
-            } else if (input.type === 'text') {
-                input.value = '';
+        // Cerrar sugerencias al hacer clic fuera
+        document.addEventListener('click', function (e) {
+            if (!inputUbicacion.contains(e.target) && !sugerenciasDiv.contains(e.target)) {
+                sugerenciasDiv.style.display = 'none';
             }
         });
     }
-}
 
+    // ========== FILTROS POR RANGO ==========
+    function initRangos() {
+        // Superficie total
+        document.getElementById('btn-aplicar-superficie-total')?.addEventListener('click', function () {
+            const min = document.getElementById('superficie-total-min').value;
+            const max = document.getElementById('superficie-total-max').value;
 
+            if (min || max) {
+                const valor = `Superficie Total: ${min || '0'} - ${max || '∞'} m²`;
 
+                // Limpiar otras opciones
+                document.querySelectorAll('[data-tipo="superficie-total"] input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
 
+                filtrosEstado.superficieTotal = [valor];
+                actualizarFiltrosAplicados();
+                aplicarFiltros();
+            }
+        });
 
+        // Superficie cubierta
+        document.getElementById('btn-aplicar-superficie-cubierta')?.addEventListener('click', function () {
+            const min = document.getElementById('superficie-cubierta-min').value;
+            const max = document.getElementById('superficie-cubierta-max').value;
 
+            if (min || max) {
+                const valor = `Superficie Cubierta: ${min || '0'} - ${max || '∞'} m²`;
 
+                // Limpiar otras opciones
+                document.querySelectorAll('[data-tipo="superficie-cubierta"] input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
 
-
-
-// Configuración para el filtro de superficie total
-document.getElementById('btn-aplicar-superficie-total').addEventListener('click', () => {
-    const min = document.getElementById('superficie-total-min').value;
-    const max = document.getElementById('superficie-total-max').value;
-
-    if (min || max) {
-        filtrosAplicados['superficie-total'] = `Superf. total: ${min || 0} - ${max || '∞'} m²`;
-        ocultarOtrasOpciones('superficie-total');
-        renderizarEtiquetas();
+                filtrosEstado.superficieCubierta = [valor];
+                actualizarFiltrosAplicados();
+                aplicarFiltros();
+            }
+        });
     }
-});
 
-// Configuración para el filtro de superficie cubierta
-document.getElementById('btn-aplicar-superficie-cubierta').addEventListener('click', () => {
-    const min = document.getElementById('superficie-cubierta-min').value;
-    const max = document.getElementById('superficie-cubierta-max').value;
+    // ========== FILTROS APLICADOS UI ==========
+    function actualizarFiltrosAplicados() {
+        const contenedor = document.getElementById('filtros-aplicados');
+        if (!contenedor) return;
 
-    if (min || max) {
-        filtrosAplicados['superficie-cubierta'] = `Superf. cubierta: ${min || 0} - ${max || '∞'} m²`;
-        ocultarOtrasOpciones('superficie-cubierta');
-        renderizarEtiquetas();
-    }
-});
+        contenedor.innerHTML = '';
 
-// Actualiza el evento change para los checkboxes de superficie
-document.querySelectorAll('.grupo-filtro[data-tipo^="superficie"] input[type="checkbox"]').forEach(input => {
-    input.addEventListener('change', () => {
-        const tipo = input.closest('.grupo-filtro').dataset.tipo;
-        const texto = input.value;
+        let totalFiltros = 0;
 
-        if (input.checked) {
-            filtrosAplicados[tipo] = texto;
-            ocultarOtrasOpciones(tipo);
-        } else {
-            delete filtrosAplicados[tipo];
-            mostrarOpciones(tipo);
+        // Agregar cada filtro aplicado
+        for (const [tipo, valores] of Object.entries(filtrosEstado)) {
+            if (valores.length > 0) {
+                valores.forEach(valor => {
+                    totalFiltros++;
+                    const etiqueta = document.createElement('div');
+                    etiqueta.className = 'etiqueta-filtro';
+                    etiqueta.innerHTML = `
+                        <span class="nombre">${valor}</span>
+                        <span class="quitar" data-tipo="${tipo}" data-valor="${valor}">×</span>
+                    `;
+                    contenedor.appendChild(etiqueta);
+                });
+            }
         }
 
-        renderizarEtiquetas();
-    });
+        // Botón limpiar todos si hay filtros
+        if (totalFiltros > 0) {
+            const botonLimpiar = document.createElement('button');
+            botonLimpiar.className = 'btn btn-limpiar';
+            botonLimpiar.textContent = 'Limpiar todos';
+            botonLimpiar.addEventListener('click', limpiarTodosFiltros);
+            contenedor.appendChild(botonLimpiar);
+        } else {
+            contenedor.innerHTML = '<p class="text-muted" style="margin: 0;">No hay filtros aplicados</p>';
+        }
+
+        // Agregar eventos a botones quitar
+        document.querySelectorAll('.etiqueta-filtro .quitar').forEach(boton => {
+            boton.addEventListener('click', function () {
+                const tipo = this.dataset.tipo;
+                const valor = this.dataset.valor;
+
+                // Remover del estado
+                filtrosEstado[tipo] = filtrosEstado[tipo].filter(v => v !== valor);
+
+                // Desmarcar checkbox correspondiente
+                document.querySelectorAll(`[data-tipo="${tipo}"] input[type="checkbox"]`).forEach(cb => {
+                    if (cb.value === valor) {
+                        cb.checked = false;
+                    }
+                });
+
+                actualizarFiltrosAplicados();
+                actualizarContadorFiltros();
+                aplicarFiltros();
+            });
+        });
+    }
+
+    // ========== CONTADOR DE FILTROS ==========
+    function actualizarContadorFiltros() {
+        let total = 0;
+        for (const valores of Object.values(filtrosEstado)) {
+            total += valores.length;
+        }
+
+        // Actualizar título con contador
+        const titulo = document.querySelector('.acordeon-titulo[data-tipo="filtros"]');
+        if (titulo) {
+            let contador = titulo.querySelector('.contador-filtros');
+            if (!contador) {
+                contador = document.createElement('span');
+                contador.className = 'contador-filtros';
+                titulo.appendChild(contador);
+            }
+            contador.textContent = total;
+            contador.style.display = total > 0 ? 'inline-flex' : 'none';
+        }
+    }
+
+    // ========== LIMPIAR FILTROS ==========
+    function limpiarTodosFiltros() {
+        // Resetear estado
+        for (const key in filtrosEstado) {
+            filtrosEstado[key] = [];
+        }
+
+        // Desmarcar todos los checkboxes
+        document.querySelectorAll('.acordeon-contenido input[type="checkbox"]').forEach(cb => {
+            cb.checked = false;
+        });
+
+        // Limpiar inputs de rango
+        document.querySelectorAll('.precio-rango input[type="number"]').forEach(input => {
+            input.value = '';
+        });
+
+        actualizarFiltrosAplicados();
+        actualizarContadorFiltros();
+        aplicarFiltros();
+
+        // Redirigir a página sin filtros
+        window.location.href = window.location.pathname;
+    }
+
+    // ========== CARGAR FILTROS DESDE URL ==========
+    function cargarFiltrosDesdeURL() {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('Tipo')) {
+            const tipo = params.get('Tipo');
+            const checkbox = document.querySelector(`[data-tipo="tipo"] input[value="${tipo}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        }
+
+        if (params.get('Operacion')) {
+            const operacion = params.get('Operacion');
+            const checkbox = document.querySelector(`[data-tipo="operacion"] input[value="${operacion}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        }
+
+        if (params.get('Dormitorios')) {
+            const dormitorios = params.get('Dormitorios');
+            const texto = dormitorios === '5' ? '5+ dormitorios' : `${dormitorios} dormitorios`;
+            const checkbox = document.querySelector(`[data-tipo="dormitorios"] input[value="${texto}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        }
+    }
+
+    // ========== APLICAR FILTROS (AJAX) ==========
+    function aplicarFiltros() {
+        // Construir URL con filtros
+        const params = new URLSearchParams();
+
+        // Solo agregamos filtros si tienen valores
+        if (filtrosEstado.operacion.length > 0) {
+            params.append('Operacion', filtrosEstado.operacion[0]);
+        }
+
+        if (filtrosEstado.tipo.length > 0) {
+            params.append('Tipo', filtrosEstado.tipo[0]);
+        }
+
+        if (filtrosEstado.dormitorios.length > 0) {
+            const texto = filtrosEstado.dormitorios[0];
+            const numMatch = texto.match(/\d+/);
+            if (numMatch) {
+                params.append('Dormitorios', numMatch[0]);
+            }
+        }
+
+        // TODO: Implementar AJAX para Provincia y Ciudad cuando se seleccionen
+
+        const url = `${window.location.pathname}?${params.toString()}`;
+
+        // Usar AJAX para evitar recargar toda la página
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.text())
+            .then(html => {
+                // Extraer solo la parte de resultados del HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const nuevosResultados = doc.querySelector('.resultados');
+
+                if (nuevosResultados) {
+                    document.querySelector('.resultados').innerHTML = nuevosResultados.innerHTML;
+
+                    // Actualizar URL sin recargar la página
+                    window.history.pushState({}, '', url);
+                }
+            })
+            .catch(error => {
+                console.error('Error al aplicar filtros:', error);
+                // Fallback: recargar la página normalmente
+                window.location.href = url;
+            });
+    }
+
+    // ========== EXPORTAR FUNCIONES PARA DEBUG ==========
+    window.filtrosApp = {
+        estado: filtrosEstado,
+        aplicarFiltros: aplicarFiltros,
+        limpiarTodos: limpiarTodosFiltros,
+        actualizarUI: actualizarFiltrosAplicados
+    };
 });

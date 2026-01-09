@@ -7,16 +7,16 @@
 
 <link rel="stylesheet" href="~/css/styleResults.css" />
 
-<div class="resultados-wrapper" >
-	<!-- FILTROS SELECCIONADOS -->
-    
+<div class="resultados-wrapper">
     <div class="busqueda-contenedor">
-    <!-- FILTROS -->
+        <!-- COLUMNA DE FILTROS -->
         <div class="filtros-columna">
+            <!-- FILTROS APLICADOS -->
             <div id="filtros-aplicados" class="filtros-aplicados"></div>
 
             <!-- FILTROS DISPONIBLES -->
             <div class="filtros">
+                <!-- Tipo de Propiedad -->
                 <div class="grupo-filtro" data-tipo="tipo">
                     <button class="acordeon-titulo">Tipo de Propiedad</button>
                     <div class="acordeon-contenido">
@@ -28,24 +28,23 @@
                         <label><input type="checkbox" value="Cochera" /> Cochera</label><br />
                         <label><input type="checkbox" value="Oficina" /> Oficina</label><br />
                         <label><input type="checkbox" value="Quinta" /> Quinta</label><br />
+                        <label><input type="checkbox" value="Campo" /> Campo</label><br />
                     </div>
                 </div>
 
+                <!-- Tipo de Operación -->
                 <div class="grupo-filtro" data-tipo="operacion">
                     <button class="acordeon-titulo">Tipo de Operación</button>
-                    <div class="acordeon-contenido">                   
+                    <div class="acordeon-contenido">
                         <label><input type="checkbox" value="Alquiler" /> Alquiler</label><br />
-                        <label><input type="checkbox" value="Temporario" /> Temporario</label>
+                        <label><input type="checkbox" value="AlquilerTemporal" /> Alquiler Temporal</label>
                     </div>
                 </div>
 
-
-
+                <!-- Precio -->
                 <div class="grupo-filtro" data-tipo="precio">
-                    <button class="acordeon-titulo">Precio </button>
-
+                    <button class="acordeon-titulo">Precio</button>
                     <div class="acordeon-contenido">
-
                         <div class="mb-3">
                             <label for="selector-moneda" class="form-label">Moneda</label>
                             <select id="selector-moneda" class="form-select">
@@ -54,7 +53,6 @@
                             </select>
                         </div>
 
-                    
                         <label class="precio-opcion" data-ars="Menos de $250000" data-usd="Menos de USD$500">
                             <input type="checkbox" value="Menos de $250000" /> <span>Menos de $250000</span>
                         </label><br />
@@ -75,7 +73,7 @@
                     </div>
                 </div>
 
-
+                <!-- Ubicación -->
                 <div class="grupo-filtro" data-tipo="ubicacion">
                     <button class="acordeon-titulo">Ubicación</button>
                     <div class="acordeon-contenido">
@@ -86,7 +84,7 @@
                     </div>
                 </div>
 
-
+                <!-- Ambientes -->
                 <div class="grupo-filtro" data-tipo="ambientes">
                     <button class="acordeon-titulo">Ambientes</button>
                     <div class="acordeon-contenido">
@@ -97,11 +95,11 @@
                     </div>
                 </div>
 
-
+                <!-- Dormitorios -->
                 <div class="grupo-filtro" data-tipo="dormitorios">
                     <button class="acordeon-titulo">Dormitorios</button>
                     <div class="acordeon-contenido">
-                        <label><input type="checkbox" value="1 dromitorio" /> 1 dormitorio</label><br />
+                        <label><input type="checkbox" value="1 dormitorio" /> 1 dormitorio</label><br />
                         <label><input type="checkbox" value="2 dormitorios" /> 2 dormitorios</label><br />
                         <label><input type="checkbox" value="3 dormitorios" /> 3 dormitorios</label><br />
                         <label><input type="checkbox" value="4 dormitorios" /> 4 dormitorios</label><br />
@@ -109,7 +107,7 @@
                     </div>
                 </div>
 
-
+                <!-- Baños -->
                 <div class="grupo-filtro" data-tipo="banos">
                     <button class="acordeon-titulo">Baños</button>
                     <div class="acordeon-contenido">
@@ -121,14 +119,14 @@
                     </div>
                 </div>
 
-
+                <!-- Superficie Total -->
                 <div class="grupo-filtro" data-tipo="superficie-total">
-                    <button class="acordeon-titulo">Superficie Total </button>
+                    <button class="acordeon-titulo">Superficie Total</button>
                     <div class="acordeon-contenido">
-                        <label><input type="checkbox" value="Menos de 50 m² totales" /> Menos de 50 m² </label><br />
-                        <label><input type="checkbox" value="50 - 100 m² totales" /> 50 - 100 m² </label><br />
-                        <label><input type="checkbox" value="100 - 200 m² totales" /> 100 - 200 m² </label><br />
-                        <label><input type="checkbox" value="Más de 200 m² totales" /> Más de 200 m² </label><br />
+                        <label><input type="checkbox" value="Menos de 50 m² totales" /> Menos de 50 m²</label><br />
+                        <label><input type="checkbox" value="50 - 100 m² totales" /> 50 - 100 m²</label><br />
+                        <label><input type="checkbox" value="100 - 200 m² totales" /> 100 - 200 m²</label><br />
+                        <label><input type="checkbox" value="Más de 200 m² totales" /> Más de 200 m²</label><br />
 
                         <div class="precio-rango">
                             <input type="number" id="superficie-total-min" class="form-control" placeholder="Mín m²">
@@ -138,8 +136,9 @@
                     </div>
                 </div>
 
+                <!-- Superficie Cubierta -->
                 <div class="grupo-filtro" data-tipo="superficie-cubierta">
-                    <button class="acordeon-titulo">Superficie Cubierta </button>
+                    <button class="acordeon-titulo">Superficie Cubierta</button>
                     <div class="acordeon-contenido">
                         <label><input type="checkbox" value="Menos de 30 m² cubiertos" /> Menos de 30 m²</label><br />
                         <label><input type="checkbox" value="30 - 60 m² cubiertos" /> 30 - 60 m²</label><br />
@@ -154,9 +153,9 @@
                     </div>
                 </div>
 
-
+                <!-- Antigüedad -->
                 <div class="grupo-filtro" data-tipo="antiguedad">
-                    <button class="acordeon-titulo">Antiguedad</button>
+                    <button class="acordeon-titulo">Antigüedad</button>
                     <div class="acordeon-contenido">
                         <label><input type="checkbox" value="A estrenar" /> A estrenar</label><br />
                         <label><input type="checkbox" value="1 a 10 años" /> 1 a 10 años</label><br />
@@ -166,8 +165,7 @@
                     </div>
                 </div>
 
-
-
+                <!-- Características -->
                 <div class="grupo-filtro" data-tipo="caracteristicas" data-multiples="true">
                     <button class="acordeon-titulo">Otras Características</button>
                     <div class="acordeon-contenido">
@@ -178,23 +176,45 @@
                         <label><input type="checkbox" value="Seguridad" /> Seguridad</label><br />
                         <label><input type="checkbox" value="Amueblado" /> Amueblado</label><br />
                         <label><input type="checkbox" value="Aire acondicionado" /> Aire acondicionado</label><br />
-                        <label><input type="checkbox" value="Calefacción" /> Calefacción</label>
+                        <label><input type="checkbox" value="Calefacción" /> Calefacción</label><br />
                         <label><input type="checkbox" value="Mascotas" /> Permite Mascotas</label>
                     </div>
                 </div>
             </div>
-
-
-
-
         </div>
 
-        <!-- RESULTADOS -->
+        <!-- COLUMNA DE RESULTADOS -->
         <div class="resultados">
+            @if (Model.TieneFiltros)
+            {
+                <div class="alert alert-info" style="grid-column: 1 / -1;">
+                    <strong>Búsqueda activa:</strong>
+                    @if (!string.IsNullOrEmpty(Model.Tipo))
+                    {
+                        <span class="badge bg-primary me-1">@Model.Tipo</span>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Operacion))
+                    {
+                        <span class="badge bg-primary me-1">@Model.Operacion</span>
+                    }
+                    @if (Model.Dormitorios.HasValue)
+                    {
+                        <span class="badge bg-primary me-1">@Model.Dormitorios dormitorios</span>
+                    }
+                    @if (Model.Provincia.HasValue)
+                    {
+                        <span class="badge bg-primary me-1">Provincia ID: @Model.Provincia</span>
+                    }
+                    @if (Model.Ciudad.HasValue)
+                    {
+                        <span class="badge bg-primary me-1">Ciudad ID: @Model.Ciudad</span>
+                    }
+                    <small class="d-block mt-2">Mostrando @Model.Properties.Count de @Model.TotalPropiedades propiedades</small>
+                </div>
+            }
+
             @if (Model.Properties != null && Model.Properties.Any())
             {
-                <!-- En el archivo Results2.cshtml -->
-
                 @foreach (var property in Model.Properties)
                 {
                     <a asp-page="/Detail" asp-route-id="@property.PropertyId" class="property-item-link">
@@ -205,13 +225,13 @@
                                     ?? property.Images?.FirstOrDefault();
                                     var imageUrl = mainImage?.ImageUrl ?? "~/images/default-property.jpg";
                                 }
-                                <img src="@Url.Content(imageUrl)" alt="@property.Title"  />
+                                <img src="@Url.Content(imageUrl)" alt="@property.Title" />
 
                                 <!-- Badge para precio -->
                                 <div class="price-badge position-absolute top-0 end-0 m-2 bg-primary text-white p-2 rounded">
                                     @if (property.Currency == Abig2025.Models.Properties.Enums.CurrencyType.USD)
                                     {
-                                        @($"USD${property.Price:N0}")
+                                        @($"USD ${property.Price:N0}")
                                     }
                                     else
                                     {
@@ -219,7 +239,16 @@
                                     }
                                     @if (property.Expenses > 0)
                                     {
-                                        <small class="d-block">+$@property.Expenses exp.</small>
+                                        <small class="d-block">
+                                            @if (property.ExpensesCurrency == Abig2025.Models.Properties.Enums.CurrencyType.USD)
+                                            {
+                                                @($"+USD${property.Expenses:N0} exp.")
+                                            }
+                                            else
+                                            {
+                                                @($"+${property.Expenses:N0} exp.")
+                                            }
+                                        </small>
                                     }
                                 </div>
                             </div>
@@ -292,44 +321,65 @@
                                             </span>
                                         </div>
                                     }
+
+                                    @if (property.ParkingSpaces.HasValue && property.ParkingSpaces > 0)
+                                    {
+                                        <div class="spec-item">
+                                            <i class="bi bi-car-front"></i>
+                                            <span>@property.ParkingSpaces cochera@(property.ParkingSpaces > 1 ? "s" : "")</span>
+                                        </div>
+                                    }
                                 </div>
 
                                 <!-- Tags adicionales -->
-                                <div class="property-tags ">
+                                <div class="property-tags">
                                     <span class="badge bg-secondary">@property.PropertyType</span>
-                                    <span class="badge bg-primary">@property.OperationType</span>
+                                    <span class="badge bg-primary">@property.OperationType.ToString().Replace("AlquilerTemporal", "Temporario")</span>
 
                                     @if (property.IsNew)
                                     {
                                         <span class="badge bg-success">A estrenar</span>
                                     }
 
+                                    @if (property.IsUnderConstruction)
+                                    {
+                                        <span class="badge bg-warning text-dark">En construcción</span>
+                                    }
                                 </div>
                             </div>
                         </div>
                     </a>
                 }
-             
             }
             else
             {
-                <div class="col-12 text-center py-5">
-                    <h3>No hay propiedades disponibles en este momento</h3>
-                    <p>Intenta más tarde o ajusta tus criterios de búsqueda.</p>
+                <div class="col-12 text-center py-5" style="grid-column: 1 / -1;">
+                    <div class="alert alert-warning">
+                        <h3>No hay propiedades disponibles</h3>
+                        <p>
+                            @if (Model.TieneFiltros)
+                            {
+                                <span>No se encontraron propiedades con los filtros aplicados. Intenta ajustar tus criterios de búsqueda.</span>
+                            }
+                            else
+                            {
+                                <span>No hay propiedades publicadas en este momento. Intenta más tarde.</span>
+                            }
+                        </p>
+                        @if (Model.TieneFiltros)
+                        {
+                            <a href="/Results2" class="btn btn-primary mt-3">Ver todas las propiedades</a>
+                        }
+                    </div>
                 </div>
             }
         </div>
     </div>
+
+    @section Scripts {
+        <script src="~/js/results.js"></script>
+    }
+
+
 </div>
 
-@section Scripts {
-    <script>
-        document.querySelectorAll('.acordeon-titulo').forEach(btn => {
-            btn.addEventListener('click', () => {
-                btn.classList.toggle('acordeon-activo');
-            });
-        });
-    </script>
-
-    <script src="~/js/results.js"></script>
-}

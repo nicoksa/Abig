@@ -52,19 +52,18 @@
                             <li class="has-children">
                                 <a asp-page="/Results2">Categorias</a>
                                 <ul class="dropdown">
-                                    <li><a asp-page="/Results2">Casas</a></li>
-                                    <li><a asp-page="/Results2">Departamentos</a></li>
-                                    <li><a asp-page="/Results2">Terrenos</a></li>
-                                    <li><a asp-page="/Results2">Locales</a></li>
+                                    <li><a asp-page="/Results2" asp-route-tipo="Casa">Casa</a></li>
+                                    <li><a asp-page="/Results2" asp-route-tipo="Departamento">Departamento</a></li>
+                                    <li><a asp-page="/Results2" asp-route-tipo="Terreno">Terreno</a></li>
+                                    <li><a asp-page="/Results2" asp-route-tipo="Local">Local</a></li>
                                     <li class="has-children">
                                         <a asp-page="/Results2">Otros</a>
                                         <ul class="dropdown">
-                                            <li><a asp-page="/Results2">PH</a></li>
-                                            <li><a asp-page="/Results2">Campos</a></li>
-
-                                            <li><a asp-page="/Results2">Cocheras</a></li>
-                                            <li><a asp-page="/Results2">Oficinas</a></li>
-                                            <li><a asp-page="/Results2">Quintas</a></li>
+                                            <li><a asp-page="/Results2" asp-route-tipo="PH">PH</a></li>
+                                            <li><a asp-page="/Results2" asp-route-tipo="Campo">Campo</a></li>
+                                            <li><a asp-page="/Results2" asp-route-tipo="Cochera">Cochera</a></li>
+                                            <li><a asp-page="/Results2" asp-route-tipo="Oficina">Oficina</a></li>
+                                            <li><a asp-page="/Results2" asp-route-tipo="Quinta">Quinta</a></li>
                                         </ul>
                                     </li>
                                 </ul>
