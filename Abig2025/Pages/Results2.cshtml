@@ -165,19 +165,87 @@
                     </div>
                 </div>
 
-                <!-- Características -->
-                <div class="grupo-filtro" data-tipo="caracteristicas" data-multiples="true">
-                    <button class="acordeon-titulo">Otras Características</button>
+                <!-- OPCIÓN ALTERNATIVA: Todos los features en un solo grupo expandible -->
+                <div class="grupo-filtro" data-tipo="features" data-multiples="true">
+                    <button class="acordeon-titulo">Características</button>
                     <div class="acordeon-contenido">
-                        <label><input type="checkbox" value="Parrilla" /> Parrilla</label><br />
-                        <label><input type="checkbox" value="Jardín" /> Jardín</label><br />
-                        <label><input type="checkbox" value="Pileta" /> Pileta</label><br />
-                        <label><input type="checkbox" value="Cochera" /> Cochera</label><br />
-                        <label><input type="checkbox" value="Seguridad" /> Seguridad</label><br />
-                        <label><input type="checkbox" value="Amueblado" /> Amueblado</label><br />
-                        <label><input type="checkbox" value="Aire acondicionado" /> Aire acondicionado</label><br />
-                        <label><input type="checkbox" value="Calefacción" /> Calefacción</label><br />
-                        <label><input type="checkbox" value="Mascotas" /> Permite Mascotas</label>
+                        <!-- Mascotas -->
+                        <div class="subgrupo">
+                            <h6>Mascotas</h6>
+                            <label><input type="checkbox" value="PermiteMascotas" /> Permite mascotas</label><br />
+                        </div>
+
+                        <!-- Generales -->
+                        <div class="subgrupo">
+                            <h6>Generales</h6>
+                            <label><input type="checkbox" value="AccesoDiscapacitados" /> Acceso discapacitados</label><br />
+                            <label><input type="checkbox" value="AptoProfesional" /> Apto profesional</label><br />
+                            <label><input type="checkbox" value="UsoComercial" /> Uso comercial</label><br />
+                        </div>
+
+                        <!-- Amenities -->
+                        <div class="subgrupo">
+                            <h6>Amenities</h6>
+                            <label><input type="checkbox" value="Parrilla" /> Parrilla</label><br />
+                            <label><input type="checkbox" value="Quincho" /> Quincho</label><br />
+                            <label><input type="checkbox" value="Gimnasio" /> Gimnasio</label><br />
+                            <label><input type="checkbox" value="Solarium" /> Solarium</label><br />
+                            <label><input type="checkbox" value="Hidromasaje" /> Hidromasaje</label><br />
+                            <label><input type="checkbox" value="Sauna" /> Sauna</label><br />
+                            <label><input type="checkbox" value="PistaDeportiva" /> Pista deportiva</label><br />
+                            <label><input type="checkbox" value="SalaJuegos" /> Sala de juegos</label><br />
+                        </div>
+
+                        <!-- Confort -->
+                        <div class="subgrupo">
+                            <h6>Confort</h6>
+                            <label><input type="checkbox" value="AireAcondicionado" /> Aire acondicionado</label><br />
+                            <label><input type="checkbox" value="Caldera" /> Caldera</label><br />
+                            <label><input type="checkbox" value="Termotanque" /> Termotanque</label><br />
+                            <label><input type="checkbox" value="Lavavajillas" /> Lavavajillas</label><br />
+                            <label><input type="checkbox" value="Alarma" /> Alarma</label><br />
+                        </div>
+
+                        <!-- Interiores -->
+                        <div class="subgrupo">
+                            <h6>Interiores</h6>
+                            <label><input type="checkbox" value="Amueblado" /> Amueblado</label><br />
+                            <label><input type="checkbox" value="CocinaEquipada" /> Cocina equipada</label><br />
+                            <label><input type="checkbox" value="Lavadero" /> Lavadero</label><br />
+                            <label><input type="checkbox" value="Baulera" /> Baulera</label><br />
+                            <label><input type="checkbox" value="Toilette" /> Toilette</label><br />
+                            <label><input type="checkbox" value="Balcon" /> Balcón</label><br />
+                            <label><input type="checkbox" value="Terraza" /> Terraza</label><br />
+                            <label><input type="checkbox" value="Patio" /> Patio</label><br />
+                            <label><input type="checkbox" value="Jardin" /> Jardín</label><br />
+                        </div>
+
+                        <!-- Servicios -->
+                        <div class="subgrupo">
+                            <h6>Servicios</h6>
+                            <label><input type="checkbox" value="InternetWifi" /> Internet / WiFi</label><br />
+                            <label><input type="checkbox" value="Ascensor" /> Ascensor</label><br />
+                            <label><input type="checkbox" value="Vigilancia" /> Vigilancia</label><br />
+                            <label><input type="checkbox" value="Limpieza" /> Servicio de limpieza</label><br />
+                            <label><input type="checkbox" value="Agua" /> Agua</label><br />
+                            <label><input type="checkbox" value="Electricidad" /> Electricidad</label><br />
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="grupo-filtro" data-tipo="features-campo" data-multiples="true">
+                    <button class="acordeon-titulo">Campo</button>
+                    <div class="acordeon-contenido">
+                        <label><input type="checkbox" value="Campo_Molino" /> Molino</label><br />
+                        <label><input type="checkbox" value="Campo_Manga" /> Manga</label><br />
+                        <label><input type="checkbox" value="Campo_Cargador" /> Cargador</label><br />
+                        <label><input type="checkbox" value="Campo_Alambrado" /> Alambrado</label><br />
+                        <label><input type="checkbox" value="Campo_Galpon" /> Galpón</label><br />
+                        <label><input type="checkbox" value="Campo_SistemaRiego" /> Sistema de riego</label><br />
+                        <label><input type="checkbox" value="Campo_Agricola" /> Uso agrícola</label><br />
+                        <label><input type="checkbox" value="Campo_Ganadero" /> Uso ganadero</label><br />
+                        <label><input type="checkbox" value="Campo_Mixto" /> Uso mixto</label><br />
                     </div>
                 </div>
             </div>
@@ -189,26 +257,7 @@
             {
                 <div class="alert alert-info" style="grid-column: 1 / -1;">
                     <strong>Búsqueda activa:</strong>
-                    @if (!string.IsNullOrEmpty(Model.Tipo))
-                    {
-                        <span class="badge bg-primary me-1">@Model.Tipo</span>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.Operacion))
-                    {
-                        <span class="badge bg-primary me-1">@Model.Operacion</span>
-                    }
-                    @if (Model.Dormitorios.HasValue)
-                    {
-                        <span class="badge bg-primary me-1">@Model.Dormitorios dormitorios</span>
-                    }
-                    @if (Model.Provincia.HasValue)
-                    {
-                        <span class="badge bg-primary me-1">Provincia ID: @Model.Provincia</span>
-                    }
-                    @if (Model.Ciudad.HasValue)
-                    {
-                        <span class="badge bg-primary me-1">Ciudad ID: @Model.Ciudad</span>
-                    }
+
                     <small class="d-block mt-2">Mostrando @Model.Properties.Count de @Model.TotalPropiedades propiedades</small>
                 </div>
             }
@@ -377,7 +426,7 @@
     </div>
 
     @section Scripts {
-        <script src="~/js/results.js"></script>
+        <script src="~/js/results.js" type="module"></script>
     }
 
 

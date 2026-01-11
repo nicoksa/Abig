@@ -37,13 +37,61 @@ namespace Abig2025.Pages
         [BindProperty(SupportsGet = true)]
         public int? Ciudad { get; set; }
 
+        // Nuevos parámetros de filtro
+        [BindProperty(SupportsGet = true)]
+        public int? Ambientes { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? Banos { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public decimal? PrecioMin { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public decimal? PrecioMax { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? Moneda { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public double? SuperficieTotalMin { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public double? SuperficieTotalMax { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public double? SuperficieCubiertaMin { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public double? SuperficieCubiertaMax { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? Antiguedad { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? Caracteristicas { get; set; } // Lista separada por comas
+
+        [BindProperty(SupportsGet = true)]
+        public int? Barrio { get; set; }
+
         // Información adicional para la vista
         public int TotalPropiedades { get; set; }
         public bool TieneFiltros => !string.IsNullOrEmpty(Operacion) ||
                                      !string.IsNullOrEmpty(Tipo) ||
                                      Dormitorios.HasValue ||
                                      Provincia.HasValue ||
-                                     Ciudad.HasValue;
+                                     Ciudad.HasValue ||
+                                     Ambientes.HasValue ||
+                                     Banos.HasValue ||
+                                     PrecioMin.HasValue ||
+                                     PrecioMax.HasValue ||
+                                     SuperficieTotalMin.HasValue ||
+                                     SuperficieTotalMax.HasValue ||
+                                     SuperficieCubiertaMin.HasValue ||
+                                     SuperficieCubiertaMax.HasValue ||
+                                     !string.IsNullOrEmpty(Antiguedad) ||
+                                     !string.IsNullOrEmpty(Caracteristicas) ||
+                                     Barrio.HasValue;
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -63,10 +111,9 @@ namespace Abig2025.Pages
                 .Where(p => p.IsActive && p.Status.State == PropertyState.Publicado)
                 .AsQueryable();
 
-            // Aplicar filtros desde el Index
+            // === FILTRO: Tipo de Operación ===
             if (!string.IsNullOrEmpty(Operacion))
             {
-                // Normalizar el valor para comparar con el enum
                 if (Operacion.Equals("Alquiler", StringComparison.OrdinalIgnoreCase))
                 {
                     query = query.Where(p => p.OperationType == OperationType.Alquiler);
@@ -78,6 +125,7 @@ namespace Abig2025.Pages
                 }
             }
 
+            // === FILTRO: Tipo de Propiedad ===
             if (!string.IsNullOrEmpty(Tipo))
             {
                 if (Enum.TryParse<PropertyType>(Tipo, true, out var propertyType))
@@ -86,6 +134,7 @@ namespace Abig2025.Pages
                 }
             }
 
+            // === FILTRO: Dormitorios ===
             if (Dormitorios.HasValue)
             {
                 if (Dormitorios >= 5)
@@ -98,6 +147,60 @@ namespace Abig2025.Pages
                 }
             }
 
+            // === FILTRO: Ambientes ===
+            if (Ambientes.HasValue)
+            {
+                if (Ambientes >= 4)
+                {
+                    query = query.Where(p => p.MainRooms >= 4);
+                }
+                else
+                {
+                    query = query.Where(p => p.MainRooms == Ambientes);
+                }
+            }
+
+            // === FILTRO: Baños ===
+            if (Banos.HasValue)
+            {
+                if (Banos >= 5)
+                {
+                    query = query.Where(p => p.Bathrooms >= 5);
+                }
+                else
+                {
+                    query = query.Where(p => p.Bathrooms == Banos);
+                }
+            }
+
+            // === FILTRO: Precio ===
+            if (PrecioMin.HasValue || PrecioMax.HasValue)
+            {
+                // Filtrar por moneda si se especifica
+                if (!string.IsNullOrEmpty(Moneda))
+                {
+                    if (Moneda.Equals("USD", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.Where(p => p.Currency == CurrencyType.USD);
+                    }
+                    else
+                    {
+                        query = query.Where(p => p.Currency == CurrencyType.ARS);
+                    }
+                }
+
+                if (PrecioMin.HasValue)
+                {
+                    query = query.Where(p => p.Price >= PrecioMin.Value);
+                }
+
+                if (PrecioMax.HasValue)
+                {
+                    query = query.Where(p => p.Price <= PrecioMax.Value);
+                }
+            }
+
+            // === FILTRO: Ubicación ===
             if (Provincia.HasValue)
             {
                 query = query.Where(p => p.Location.ProvinceId == Provincia);
@@ -106,6 +209,75 @@ namespace Abig2025.Pages
             if (Ciudad.HasValue)
             {
                 query = query.Where(p => p.Location.CityId == Ciudad);
+            }
+
+            if (Barrio.HasValue)
+            {
+                query = query.Where(p => p.Location.NeighborhoodId == Barrio);
+            }
+
+            // === FILTRO: Superficie Total ===
+            if (SuperficieTotalMin.HasValue)
+            {
+                query = query.Where(p => p.TotalArea >= SuperficieTotalMin.Value);
+            }
+
+            if (SuperficieTotalMax.HasValue)
+            {
+                query = query.Where(p => p.TotalArea <= SuperficieTotalMax.Value);
+            }
+
+            // === FILTRO: Superficie Cubierta ===
+            if (SuperficieCubiertaMin.HasValue)
+            {
+                query = query.Where(p => p.CoveredArea >= SuperficieCubiertaMin.Value);
+            }
+
+            if (SuperficieCubiertaMax.HasValue)
+            {
+                query = query.Where(p => p.CoveredArea <= SuperficieCubiertaMax.Value);
+            }
+
+            // === FILTRO: Antigüedad ===
+            if (!string.IsNullOrEmpty(Antiguedad))
+            {
+                switch (Antiguedad.ToLower())
+                {
+                    case "a estrenar":
+                        query = query.Where(p => p.IsNew || p.Age == 0);
+                        break;
+                    case "1 a 10 años":
+                        query = query.Where(p => p.Age >= 1 && p.Age <= 10);
+                        break;
+                    case "10 a 25 años":
+                        query = query.Where(p => p.Age >= 10 && p.Age <= 25);
+                        break;
+                    case "25 a 50 años":
+                        query = query.Where(p => p.Age >= 25 && p.Age <= 50);
+                        break;
+                    case "50 años o más":
+                        query = query.Where(p => p.Age >= 50);
+                        break;
+                }
+            }
+
+            // === FILTRO: Características (Features) ===
+            if (!string.IsNullOrEmpty(Caracteristicas))
+            {
+                var caracteristicasList = Caracteristicas.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(c => c.Trim())
+                    .ToList();
+
+                if (caracteristicasList.Any())
+                {
+                    // Para cada característica en la lista, filtrar propiedades que la contengan
+                    foreach (var caracteristica in caracteristicasList)
+                    {
+                        query = query.Where(p => p.Features.Any(f =>
+                            f.FeatureDefinition.Key == caracteristica
+                        ));
+                    }
+                }
             }
 
             // Obtener total antes de ordenar
