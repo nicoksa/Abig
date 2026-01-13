@@ -36,14 +36,7 @@ export const ANTIGUEDAD_RANGOS = {
     '50 años o más': { min: 50, max: null }
 };
 
-export const UBICACIONES_MOCK = [
-    { id: 1, nombre: "Buenos Aires", tipo: "Provincia", tipoId: "provincia" },
-    { id: 2, nombre: "Córdoba", tipo: "Provincia", tipoId: "provincia" },
-    { id: 10, nombre: "La Plata", tipo: "Ciudad", tipoId: "ciudad", provinciaId: 1 },
-    { id: 11, nombre: "Mar del Plata", tipo: "Ciudad", tipoId: "ciudad", provinciaId: 1 },
-    { id: 20, nombre: "Palermo", tipo: "Barrio", tipoId: "barrio", ciudadId: 10 },
-    { id: 21, nombre: "Recoleta", tipo: "Barrio", tipoId: "barrio", ciudadId: 10 }
-];
+
 
 export const ESTADO_INICIAL = {
     tipo: [],

@@ -7,6 +7,8 @@
 
 <link rel="stylesheet" href="~/css/styleResults.css" />
 
+
+
 <div class="resultados-wrapper">
     <div class="busqueda-contenedor">
         <!-- COLUMNA DE FILTROS -->
@@ -78,8 +80,19 @@
                     <button class="acordeon-titulo">Ubicación</button>
                     <div class="acordeon-contenido">
                         <div class="ubicacion-buscador">
-                            <input type="text" id="input-ubicacion" class="form-control" placeholder="Buscar ciudad, barrio o dirección...">
+                            <div class="input-group">
+                                <input type="text"
+                                       id="input-ubicacion"
+                                       class="form-control"
+                                       placeholder="Buscar provincia, ciudad o barrio..."
+                                       autocomplete="off"
+                                       data-ubicacion-id=""
+                                       data-ubicacion-tipo=""
+                                       data-provincia-id=""
+                                       data-ciudad-id="">
+                            </div>
                             <div id="sugerencias-ubicacion" class="sugerencias-ubicacion"></div>
+
                         </div>
                     </div>
                 </div>

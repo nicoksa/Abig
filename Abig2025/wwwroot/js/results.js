@@ -102,11 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.AppFiltros = app;
     } catch (error) {
         console.error('💥 Error crítico:', error);
-        this._mostrarErrorFallback();
+        mostrarErrorFallback();
     }
 });
 
-function _mostrarErrorFallback() {
+function mostrarErrorFallback() {
     const resultadosDiv = document.querySelector('.resultados');
     if (resultadosDiv) {
         resultadosDiv.innerHTML = `
