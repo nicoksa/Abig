@@ -2,22 +2,113 @@
 class APIComunicacion {
     constructor(estadoManager) {
         this.estado = estadoManager;
+        this.cargaInicial = true; // NUEVA BANDERA
     }
 
     // ========== CARGAR FILTROS DESDE URL ==========
     cargarFiltrosDesdeURL() {
         const params = new URLSearchParams(window.location.search);
         if (params.toString()) {
-            this.estado.cargarDesdeParams(params);
+            console.log('📥 Cargando filtros desde URL (carga inicial)');
+            // SILENCIOSAMENTE cargar el estado sin disparar eventos
+            this._cargarSinEventos(params);
+            this.cargaInicial = false; // Marcar que ya pasó la carga inicial
+        } else {
+            // Si no hay parámetros, marcar carga inicial como completa
+            this.cargaInicial = false;
         }
+    }
+
+    // Cargar parámetros sin disparar eventos de aplicación
+    _cargarSinEventos(params) {
+        const estado = this.estado.estado; // Acceso directo al estado interno
+
+        // Operación
+        if (params.has('Operacion')) {
+            estado.operacion = [params.get('Operacion')];
+        }
+
+        // Tipo
+        if (params.has('Tipo')) {
+            estado.tipo = [params.get('Tipo')];
+        }
+
+        // Dormitorios
+        if (params.has('Dormitorios')) {
+            const num = parseInt(params.get('Dormitorios'));
+            estado.dormitorios = [`${num}${num >= 5 ? '+' : ''} dormitorio${num > 1 ? 's' : ''}`];
+        }
+
+        // Ambientes
+        if (params.has('Ambientes')) {
+            const num = parseInt(params.get('Ambientes'));
+            estado.ambientes = [`${num}${num >= 4 ? '+' : ''} ambiente${num > 1 ? 's' : ''}`];
+        }
+
+        // Baños
+        if (params.has('Banos')) {
+            const num = parseInt(params.get('Banos'));
+            estado.banos = [`${num}${num >= 5 ? '+' : ''} baño${num > 1 ? 's' : ''}`];
+        }
+
+        // Precio
+        if (params.has('PrecioMin') || params.has('PrecioMax')) {
+            estado.precio.min = params.has('PrecioMin') ? parseFloat(params.get('PrecioMin')) : null;
+            estado.precio.max = params.has('PrecioMax') ? parseFloat(params.get('PrecioMax')) : null;
+            estado.precio.moneda = params.get('Moneda') || 'ARS';
+        }
+
+        // Ubicación
+        if (params.has('Provincia') || params.has('Ciudad') || params.has('Barrio')) {
+            estado.ubicacion.provincia = params.has('Provincia') ? parseInt(params.get('Provincia')) : null;
+            estado.ubicacion.ciudad = params.has('Ciudad') ? parseInt(params.get('Ciudad')) : null;
+            estado.ubicacion.barrio = params.has('Barrio') ? parseInt(params.get('Barrio')) : null;
+        }
+
+        // Superficie Total
+        if (params.has('SuperficieTotalMin') || params.has('SuperficieTotalMax')) {
+            estado.superficieTotal.min = params.has('SuperficieTotalMin') ? parseFloat(params.get('SuperficieTotalMin')) : null;
+            estado.superficieTotal.max = params.has('SuperficieTotalMax') ? parseFloat(params.get('SuperficieTotalMax')) : null;
+        }
+
+        // Superficie Cubierta
+        if (params.has('SuperficieCubiertaMin') || params.has('SuperficieCubiertaMax')) {
+            estado.superficieCubierta.min = params.has('SuperficieCubiertaMin') ? parseFloat(params.get('SuperficieCubiertaMin')) : null;
+            estado.superficieCubierta.max = params.has('SuperficieCubiertaMax') ? parseFloat(params.get('SuperficieCubiertaMax')) : null;
+        }
+
+        // Antigüedad
+        if (params.has('Antiguedad')) {
+            estado.antiguedad = [params.get('Antiguedad')];
+        }
+
+        // Características
+        if (params.has('Caracteristicas')) {
+            const caracteristicas = params.get('Caracteristicas');
+            estado.caracteristicas = caracteristicas.split(',').map(c => c.trim()).filter(c => c);
+        }
+
+        console.log('✅ Estado cargado desde URL:', this.estado.getEstado());
+
+        // DESPUÉS de cargar silenciosamente, disparar UN SOLO evento para sincronizar UI
+        document.dispatchEvent(new CustomEvent('estadoCambiado', {
+            detail: { tipo: 'cargaInicial', silencioso: true }
+        }));
     }
 
     // ========== APLICAR FILTROS (AJAX) ==========
     aplicarFiltros() {
+        // PREVENIR aplicación en carga inicial
+        if (this.cargaInicial) {
+            console.log('⏭️ Saltando aplicación de filtros en carga inicial');
+            return;
+        }
+
         const params = this._construirParams();
         const url = `${window.location.pathname}?${params}`;
 
-        //  AJAX para evitar recargar toda la página
+        console.log('📡 Aplicando filtros vía AJAX:', url);
+
         fetch(url, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -31,7 +122,7 @@ class APIComunicacion {
             })
             .then(html => this._manejarRespuestaAJAX(html, url))
             .catch(error => {
-                console.error('Error al aplicar filtros:', error);
+                console.error('❌ Error al aplicar filtros:', error);
                 // Fallback: recargar la página normalmente
                 this._fallbackRecarga(url);
             });
@@ -147,15 +238,18 @@ class APIComunicacion {
 
                 // Disparar evento para notificar que los resultados se actualizaron
                 document.dispatchEvent(new CustomEvent('resultadosActualizados'));
+
+                console.log('✅ Resultados actualizados vía AJAX');
             }
         } else {
-            console.warn('No se encontró la sección de resultados en la respuesta AJAX');
+            console.warn('⚠️ No se encontró la sección de resultados en la respuesta AJAX');
             this._fallbackRecarga(url);
         }
     }
 
     // ========== FALLBACK PARA RECARGA COMPLETA ==========
     _fallbackRecarga(url) {
+        console.log('🔄 Recargando página completa...');
         window.location.href = url;
     }
 
@@ -168,6 +262,8 @@ class APIComunicacion {
     configurarHistoryAPI() {
         // Manejar el botón atrás/adelante del navegador
         window.addEventListener('popstate', () => {
+            console.log('⬅️ Navegación con botón atrás/adelante');
+            this.cargaInicial = false; // Ya no es carga inicial
             this.cargarFiltrosDesdeURL();
             this.aplicarFiltros();
         });

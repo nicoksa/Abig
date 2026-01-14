@@ -1,4 +1,4 @@
-﻿// results.js - Versión simplificada
+﻿// results.js - Versión corregida
 import { FiltrosEstado } from './modules/filtrosEstado.js';
 import { UIHandlers } from './modules/uiHandlers.js';
 import { FiltrosAplicadosUI } from './modules/filtrosAplicados.js';
@@ -25,21 +25,36 @@ class FiltrosApp {
         initAcordeon();
         this.uiHandlers.init();
         this.filtrosAplicadosUI.init();
+
+        // PRIMERO cargar filtros desde URL (sin aplicar)
         this.apiComunicacion.cargarFiltrosDesdeURL();
 
-        // Sincronizar checkboxes inicialmente
+        // DESPUÉS sincronizar checkboxes con el estado cargado
         setTimeout(() => {
             this.checkboxSync.sincronizarTodos();
+            this.filtrosAplicadosUI.actualizarUI();
+            this.filtrosAplicadosUI.actualizarContadorFiltros();
+            console.log('✅ Sistema de filtros listo');
         }, 100);
 
         this._exportarParaDebug();
-        console.log('✅ Sistema de filtros listo');
     }
 
     _setupEventListeners() {
         // ESCUCHAR CAMBIOS DE ESTADO PARA SINCRONIZAR
         document.addEventListener('estadoCambiado', (e) => {
-            console.log('🔄 Estado cambiado, sincronizando...', e.detail);
+            const detalle = e.detail || {};
+
+            // Si es carga inicial silenciosa, solo sincronizar UI
+            if (detalle.silencioso) {
+                console.log('🔄 Sincronización silenciosa de carga inicial');
+                this.checkboxSync.sincronizarTodos();
+                this.filtrosAplicadosUI.actualizarUI();
+                this.filtrosAplicadosUI.actualizarContadorFiltros();
+                return; // NO aplicar filtros
+            }
+
+            console.log('🔄 Estado cambiado, sincronizando...', detalle);
 
             // Sincronizar checkboxes con el estado actual
             this.checkboxSync.sincronizarTodos();
@@ -48,7 +63,7 @@ class FiltrosApp {
             this.filtrosAplicadosUI.actualizarUI();
             this.filtrosAplicadosUI.actualizarContadorFiltros();
 
-            // Aplicar filtros con debounce
+            // Aplicar filtros con debounce SOLO si no es carga inicial
             this._aplicarFiltrosConDebounce();
         });
 

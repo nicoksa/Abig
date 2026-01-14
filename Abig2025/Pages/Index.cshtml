@@ -4,6 +4,41 @@
     ViewData["Title"] = "Inicio";
 }
 
+<style>
+    /* Estilos para el autocompletado del index */
+.sugerencias-ubicacion-index {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 1px solid #dee2e6;
+}
+
+.sugerencia-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.sugerencia-item:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.sugerencia-item:last-child {
+    border-bottom: none;
+}
+
+/* Mejoras para el input del index */
+#input-ubicacion-index {
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z'/%3E%3Cpath d='M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'/%3E%3C/svg%3E");
+}
+
+#input-ubicacion-index:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230d6efd' viewBox='0 0 16 16'%3E%3Cpath d='M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z'/%3E%3Cpath d='M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'/%3E%3C/svg%3E");
+}
+</style>
+
 <div class="hero">
     <!-- Slider (fuera del contenedor limitado) -->
     <div class="hero-slide">
@@ -48,19 +83,30 @@
                         <option value="5">5+ dormitorios</option>
                     </select>
 
-                    <select class="form-select px-3" name="provincia" id="select-provincia">
-                        <option value="">Provincia</option>
-                        @foreach (var provincia in Model.Provinces)
-                        {
-                            <option value="@provincia.ProvinceId">@provincia.Name</option>
-                        }
-                    </select>
+                    <div class="position-relative flex-fill">
+                        <input type="text"
+                               name="ubicacion"
+                               id="input-ubicacion-index"
+                               class="form-select px-3"
+                               placeholder="Provincia, ciudad o barrio..."
+                               autocomplete="off"
+                               data-provincia-id=""
+                               data-ciudad-id=""
+                               data-barrio-id="">
 
-                    <select class="form-select px-3" name="ciudad" id="select-ciudad" disabled>
-                        <option value="">Primero selecciona provincia</option>
-                    </select>
+                        <!-- Hidden inputs para enviar los IDs al backend -->
+                        <input type="hidden" id="hidden-provincia-id" name="provincia" value="">
+                        <input type="hidden" id="hidden-ciudad-id" name="ciudad" value="">
+                        <input type="hidden" id="hidden-barrio-id" name="barrio" value="">
 
-                    <button type="submit" class="btn btn-primary">Buscar</button>
+                        <div id="sugerencias-ubicacion-index"
+                             class="sugerencias-ubicacion-index position-absolute w-100 bg-white border mt-1 rounded shadow"
+                             style="display: none; z-index: 1000; max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+
+                    <div class="w-100 text-center">
+                        <button type="submit" class="btn btn-primary px-5">Buscar</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -389,41 +435,7 @@
 </section>
 
 @section Scripts {
-    <script>
-        // Carga dinámica de ciudades según provincia seleccionada
-        document.getElementById('select-provincia').addEventListener('change', async function() {
-            const provinciaId = this.value;
-            const selectCiudad = document.getElementById('select-ciudad');
 
-            if (!provinciaId) {
-                selectCiudad.disabled = true;
-                selectCiudad.innerHTML = '<option value="">Primero selecciona provincia</option>';
-                return;
-            }
+    <script src="~/js/indexAutocomplete.js" defer></script>
 
-            try {
-                const response = await fetch(`/Index?handler=CitiesByProvince&provinceId=${provinciaId}`);
-
-                if (!response.ok) {
-                    throw new Error('Error al cargar ciudades');
-                }
-
-                const cities = await response.json();
-
-                selectCiudad.disabled = false;
-                selectCiudad.innerHTML = '<option value="">Todas las ciudades</option>';
-
-                cities.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city.cityId;
-                    option.textContent = city.name;
-                    selectCiudad.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error cargando ciudades:', error);
-                selectCiudad.innerHTML = '<option value="">Error cargando ciudades</option>';
-                selectCiudad.disabled = true;
-            }
-        });
-    </script>
 }
