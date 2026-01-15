@@ -5,6 +5,7 @@ import { FiltrosAplicadosUI } from './modules/filtrosAplicados.js';
 import { APIComunicacion } from './modules/apiComunicacion.js';
 import { CheckboxSync } from './modules/checkboxSync.js';
 import { initAcordeon } from './modules/utils.js';
+import { toggleCategoriaVisibilidad } from './modules/utils.js';
 
 class FiltrosApp {
     constructor() {
@@ -108,7 +109,7 @@ class FiltrosApp {
     _convertirParametrosIndex(params) {
         const estado = this.estado.estado;
 
-        // Operación (solo si tiene valor)
+        // Operación
         if (params.has('operacion')) {
             const operacion = params.get('operacion');
             if (operacion && operacion.trim() !== '') {
@@ -117,48 +118,51 @@ class FiltrosApp {
                     operacionFormateada = 'Alquiler Temporal';
                 }
                 estado.operacion = [operacionFormateada];
+                toggleCategoriaVisibilidad('operacion', true); 
             }
         }
 
-        // Tipo (solo si tiene valor)
+        // Tipo
         if (params.has('tipo')) {
             const tipo = params.get('tipo');
             if (tipo && tipo.trim() !== '') {
                 estado.tipo = [tipo];
+                toggleCategoriaVisibilidad('tipo', true); 
             }
         }
 
-        // Dormitorios (solo si tiene valor)
+        // Dormitorios
         if (params.has('dormitorios')) {
             const dormitoriosValue = params.get('dormitorios');
             if (dormitoriosValue && dormitoriosValue.trim() !== '') {
                 const num = parseInt(dormitoriosValue);
                 if (!isNaN(num) && num > 0) {
                     estado.dormitorios = [`${num}${num >= 5 ? '+' : ''} dormitorio${num > 1 ? 's' : ''}`];
+                    toggleCategoriaVisibilidad('dormitorios', true);
                 }
             }
         }
 
-        // Ambientes (solo si tiene valor)
+        // Ambientes
         if (params.has('ambientes')) {
             const ambientesValue = params.get('ambientes');
             if (ambientesValue && ambientesValue.trim() !== '') {
                 const num = parseInt(ambientesValue);
                 if (!isNaN(num) && num > 0) {
                     estado.ambientes = [`${num}${num >= 4 ? '+' : ''} ambiente${num > 1 ? 's' : ''}`];
-                    console.log(`📥 Ambientes desde Index: ${num}`);
+                    toggleCategoriaVisibilidad('ambientes', true);
                 }
             }
         }
 
-        // Baños (solo si tiene valor)
+        // Baños
         if (params.has('banos')) {
             const banosValue = params.get('banos');
             if (banosValue && banosValue.trim() !== '') {
                 const num = parseInt(banosValue);
                 if (!isNaN(num) && num > 0) {
                     estado.banos = [`${num}${num >= 5 ? '+' : ''} baño${num > 1 ? 's' : ''}`];
-                    console.log(`📥 Baños desde Index: ${num}`);
+                    toggleCategoriaVisibilidad('banos', true); 
                 }
             }
         }
@@ -169,7 +173,7 @@ class FiltrosApp {
             const ciudadValue = params.get('ciudad');
             const barrioValue = params.get('barrio');
 
-            // 1. Guardar IDs en el estado
+            // Guardar IDs
             if (provinciaValue && provinciaValue.trim() !== '') {
                 const provinciaId = parseInt(provinciaValue);
                 if (!isNaN(provinciaId) && provinciaId > 0) {
@@ -191,16 +195,16 @@ class FiltrosApp {
                 }
             }
 
-            // 2. IMPORTANTE: Guardar el texto de ubicación si viene en parámetros
+            // Guardar texto
             const ubicacionTexto = params.get('ubicacionTexto');
             if (ubicacionTexto && ubicacionTexto.trim() !== '') {
-                // Guardar en el estado para que la UI lo use
                 estado.ubicacionTexto = ubicacionTexto;
-                console.log(`📍 Texto de ubicación recibido desde Index: ${ubicacionTexto}`);
             }
+
+            toggleCategoriaVisibilidad('ubicacion', true);
         }
 
-        // Precio (solo si tiene al menos un valor válido)
+        // Precio
         if (params.has('PrecioMin') || params.has('PrecioMax')) {
             let precioMin = null;
             let precioMax = null;
@@ -225,15 +229,15 @@ class FiltrosApp {
                 }
             }
 
-            // Solo actualizar si hay al menos un valor válido
             if (precioMin !== null || precioMax !== null) {
                 estado.precio.min = precioMin;
                 estado.precio.max = precioMax;
                 estado.precio.moneda = params.get('Moneda') || 'ARS';
+                toggleCategoriaVisibilidad('precio', true); 
             }
         }
 
-        // Superficie Total (solo si tiene valor válido)
+        // Superficie Total
         if (params.has('SuperficieTotalMin') || params.has('SuperficieTotalMax')) {
             let superficieMin = null;
             let superficieMax = null;
@@ -261,10 +265,11 @@ class FiltrosApp {
             if (superficieMin !== null || superficieMax !== null) {
                 estado.superficieTotal.min = superficieMin;
                 estado.superficieTotal.max = superficieMax;
+                toggleCategoriaVisibilidad('superficie-total', true); 
             }
         }
 
-        // Superficie Cubierta (solo si tiene valor válido)
+        // Superficie Cubierta
         if (params.has('SuperficieCubiertaMin') || params.has('SuperficieCubiertaMax')) {
             let superficieMin = null;
             let superficieMax = null;
@@ -292,26 +297,26 @@ class FiltrosApp {
             if (superficieMin !== null || superficieMax !== null) {
                 estado.superficieCubierta.min = superficieMin;
                 estado.superficieCubierta.max = superficieMax;
+                toggleCategoriaVisibilidad('superficie-cubierta', true); 
             }
         }
 
-        // Antigüedad (solo si tiene valor)
+        // Antigüedad
         if (params.has('Antiguedad')) {
             const antiguedad = params.get('Antiguedad');
             if (antiguedad && antiguedad.trim() !== '') {
                 estado.antiguedad = [antiguedad];
-
+                toggleCategoriaVisibilidad('antiguedad', true); 
             }
         }
 
-        // Características (solo si tiene valor)
+        // Características 
         if (params.has('Caracteristicas')) {
             const caracteristicas = params.get('Caracteristicas');
             if (caracteristicas && caracteristicas.trim() !== '') {
                 estado.caracteristicas = caracteristicas.split(',').map(c => c.trim()).filter(c => c);
             }
         }
-
     }
 
     _aplicarFiltrosConDebounce() {
@@ -340,7 +345,7 @@ class FiltrosApp {
             sincronizar: () => this.checkboxSync.sincronizarTodos(),
             limpiarTodos: () => this.limpiarTodosFiltros(),
             getEstado: () => this.estado.getEstado(),
-            // NUEVO: Método para debug de integración con Index
+
             integrarDesdeIndex: () => this._integrarFiltrosDesdeIndex(),
             convertirParametrosIndex: (params) => this._convertirParametrosIndex(new URLSearchParams(params))
         };
@@ -359,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // NUEVO: Debug helper para ver parámetros de Index
         const params = new URLSearchParams(window.location.search);
         if (params.toString()) {
-            console.log('🔍 Parámetros de URL disponibles:', Object.fromEntries(params));
 
             // Verificar si hay parámetros del formulario de Index
             const parametrosIndex = {};

@@ -1,4 +1,5 @@
 ﻿// modules/apiComunicacion.js
+import { toggleCategoriaVisibilidad } from './utils.js';
 class APIComunicacion {
     constructor(estadoManager) {
         this.estado = estadoManager;
@@ -19,36 +20,40 @@ class APIComunicacion {
         }
     }
 
-    // Cargar parámetros sin disparar eventos de aplicación
     _cargarSinEventos(params) {
-        const estado = this.estado.estado; // Acceso directo al estado interno
+        const estado = this.estado.estado;
 
         // Operación
         if (params.has('Operacion')) {
             estado.operacion = [params.get('Operacion')];
+            toggleCategoriaVisibilidad('operacion', true); 
         }
 
         // Tipo
         if (params.has('Tipo')) {
             estado.tipo = [params.get('Tipo')];
+            toggleCategoriaVisibilidad('tipo', true); 
         }
 
         // Dormitorios
         if (params.has('Dormitorios')) {
             const num = parseInt(params.get('Dormitorios'));
             estado.dormitorios = [`${num}${num >= 5 ? '+' : ''} dormitorio${num > 1 ? 's' : ''}`];
+            toggleCategoriaVisibilidad('dormitorios', true); 
         }
 
         // Ambientes
         if (params.has('Ambientes')) {
             const num = parseInt(params.get('Ambientes'));
             estado.ambientes = [`${num}${num >= 4 ? '+' : ''} ambiente${num > 1 ? 's' : ''}`];
+            toggleCategoriaVisibilidad('ambientes', true); 
         }
 
         // Baños
         if (params.has('Banos')) {
             const num = parseInt(params.get('Banos'));
             estado.banos = [`${num}${num >= 5 ? '+' : ''} baño${num > 1 ? 's' : ''}`];
+            toggleCategoriaVisibilidad('banos', true); 
         }
 
         // Precio
@@ -56,6 +61,7 @@ class APIComunicacion {
             estado.precio.min = params.has('PrecioMin') ? parseFloat(params.get('PrecioMin')) : null;
             estado.precio.max = params.has('PrecioMax') ? parseFloat(params.get('PrecioMax')) : null;
             estado.precio.moneda = params.get('Moneda') || 'ARS';
+            toggleCategoriaVisibilidad('precio', true); 
         }
 
         // Ubicación
@@ -63,38 +69,41 @@ class APIComunicacion {
             estado.ubicacion.provincia = params.has('Provincia') ? parseInt(params.get('Provincia')) : null;
             estado.ubicacion.ciudad = params.has('Ciudad') ? parseInt(params.get('Ciudad')) : null;
             estado.ubicacion.barrio = params.has('Barrio') ? parseInt(params.get('Barrio')) : null;
+            toggleCategoriaVisibilidad('ubicacion', true); 
         }
 
         // Superficie Total
         if (params.has('SuperficieTotalMin') || params.has('SuperficieTotalMax')) {
             estado.superficieTotal.min = params.has('SuperficieTotalMin') ? parseFloat(params.get('SuperficieTotalMin')) : null;
             estado.superficieTotal.max = params.has('SuperficieTotalMax') ? parseFloat(params.get('SuperficieTotalMax')) : null;
+            toggleCategoriaVisibilidad('superficie-total', true); 
         }
 
         // Superficie Cubierta
         if (params.has('SuperficieCubiertaMin') || params.has('SuperficieCubiertaMax')) {
             estado.superficieCubierta.min = params.has('SuperficieCubiertaMin') ? parseFloat(params.get('SuperficieCubiertaMin')) : null;
             estado.superficieCubierta.max = params.has('SuperficieCubiertaMax') ? parseFloat(params.get('SuperficieCubiertaMax')) : null;
+            toggleCategoriaVisibilidad('superficie-cubierta', true); 
         }
 
         // Antigüedad
         if (params.has('Antiguedad')) {
             estado.antiguedad = [params.get('Antiguedad')];
+            toggleCategoriaVisibilidad('antiguedad', true);
         }
 
         // Características
         if (params.has('Caracteristicas')) {
             const caracteristicas = params.get('Caracteristicas');
             estado.caracteristicas = caracteristicas.split(',').map(c => c.trim()).filter(c => c);
+            // Las características NO se ocultan (son multiples)
         }
-
-        console.log('✅ Estado cargado desde URL:', this.estado.getEstado());
-
-        // DESPUÉS de cargar silenciosamente, disparar UN SOLO evento para sincronizar UI
+        // Disparar evento para sincronizar UI
         document.dispatchEvent(new CustomEvent('estadoCambiado', {
             detail: { tipo: 'cargaInicial', silencioso: true }
         }));
     }
+
 
     // ========== APLICAR FILTROS (AJAX) ==========
     aplicarFiltros() {
