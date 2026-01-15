@@ -372,13 +372,13 @@ class UIHandlers {
         // Actualizar el estado según el tipo de ubicación
         switch (location.tipoId) {
             case 'provincia':
-                this.estado.actualizarUbicacion(location.id, null, null);
+                this.estado.actualizarUbicacion(location.id, null, null, location.displayText);
                 break;
             case 'ciudad':
-                this.estado.actualizarUbicacion(location.provinciaId, location.id, null);
+                this.estado.actualizarUbicacion(location.provinciaId, location.id, null, location.displayText);
                 break;
             case 'barrio':
-                this.estado.actualizarUbicacion(location.provinciaId, location.ciudadId, location.id);
+                this.estado.actualizarUbicacion(location.provinciaId, location.ciudadId, location.id, location.displayText);
                 break;
         }
 

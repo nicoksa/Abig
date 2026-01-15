@@ -164,33 +164,39 @@ class FiltrosApp {
         }
 
         // Ubicación
-        if (params.has('provincia')) {
+        if (params.has('provincia') || params.has('ciudad') || params.has('barrio')) {
             const provinciaValue = params.get('provincia');
+            const ciudadValue = params.get('ciudad');
+            const barrioValue = params.get('barrio');
+
+            // 1. Guardar IDs en el estado
             if (provinciaValue && provinciaValue.trim() !== '') {
                 const provinciaId = parseInt(provinciaValue);
                 if (!isNaN(provinciaId) && provinciaId > 0) {
                     estado.ubicacion.provincia = provinciaId;
                 }
             }
-        }
 
-        if (params.has('ciudad')) {
-            const ciudadValue = params.get('ciudad');
             if (ciudadValue && ciudadValue.trim() !== '') {
                 const ciudadId = parseInt(ciudadValue);
                 if (!isNaN(ciudadId) && ciudadId > 0) {
                     estado.ubicacion.ciudad = ciudadId;
                 }
             }
-        }
 
-        if (params.has('barrio')) {
-            const barrioValue = params.get('barrio');
             if (barrioValue && barrioValue.trim() !== '') {
                 const barrioId = parseInt(barrioValue);
                 if (!isNaN(barrioId) && barrioId > 0) {
                     estado.ubicacion.barrio = barrioId;
                 }
+            }
+
+            // 2. IMPORTANTE: Guardar el texto de ubicación si viene en parámetros
+            const ubicacionTexto = params.get('ubicacionTexto');
+            if (ubicacionTexto && ubicacionTexto.trim() !== '') {
+                // Guardar en el estado para que la UI lo use
+                estado.ubicacionTexto = ubicacionTexto;
+                console.log(`📍 Texto de ubicación recibido desde Index: ${ubicacionTexto}`);
             }
         }
 

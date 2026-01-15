@@ -69,7 +69,16 @@ class FiltrosAplicadosUI {
 
         // Ubicación
         if (estado.ubicacion.provincia || estado.ubicacion.ciudad || estado.ubicacion.barrio) {
-            const ubicTexto = document.getElementById('input-ubicacion')?.value || 'Ubicación seleccionada';
+
+            let ubicTexto = '';
+
+            if (estado.ubicacionTexto && estado.ubicacionTexto.trim() !== '') {
+                ubicTexto = estado.ubicacionTexto;
+            } else {
+                const ubicacionInput = document.getElementById('input-ubicacion');
+                ubicTexto = ubicacionInput?.value || 'Ubicación seleccionada';
+            }
+
             this._agregarEtiquetaFiltro('Ubicación', ubicTexto, 'ubicacion');
             totalFiltros++;
         }

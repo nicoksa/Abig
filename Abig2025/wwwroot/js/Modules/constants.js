@@ -43,6 +43,7 @@ export const ESTADO_INICIAL = {
     operacion: [],
     precio: { min: null, max: null, moneda: 'ARS' },
     ubicacion: { provincia: null, ciudad: null, barrio: null },
+    ubicacionTexto: '', 
     ambientes: [],
     dormitorios: [],
     banos: [],

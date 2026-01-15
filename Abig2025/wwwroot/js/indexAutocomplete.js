@@ -182,6 +182,23 @@ document.addEventListener('DOMContentLoaded', function() {
         if (hiddenCiudad) hiddenCiudad.value = location.ciudadId || '';
         if (hiddenBarrio) hiddenBarrio.value = location.tipoId === 'barrio' ? location.id : '';
         
+        //  Asegurar que el input visible tenga el texto correcto
+        inputUbicacion.value = location.displayText;
+
+        // Guardar el texto en un campo de datos para que el formulario lo envíe
+        const ubicacionTextoInput = document.createElement('input');
+        ubicacionTextoInput.type = 'hidden';
+        ubicacionTextoInput.name = 'ubicacionTexto';
+        ubicacionTextoInput.value = location.displayText;
+
+        const existingInput = document.querySelector('input[name="ubicacionTexto"]');
+        if (existingInput) {
+            existingInput.remove();
+        }
+
+        // Agregar al formulario
+        inputUbicacion.closest('form').appendChild(ubicacionTextoInput);
+
         // Ocultar sugerencias
         sugerenciasDiv.style.display = 'none';
         

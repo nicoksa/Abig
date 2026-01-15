@@ -29,8 +29,14 @@ class FiltrosEstado {
         this.notificar('estadoCambiado', { tipo: 'precio' });
     }
 
-    actualizarUbicacion(provincia, ciudad, barrio) {
+    actualizarUbicacion(provincia, ciudad, barrio, ubicacionTexto = '') {
         this.estado.ubicacion = { provincia, ciudad, barrio };
+
+        // Si se proporciona texto, guardarlo
+        if (ubicacionTexto) {
+            this.estado.ubicacionTexto = ubicacionTexto;
+        }
+
         this.notificar('estadoCambiado', { tipo: 'ubicacion' });
     }
 
@@ -119,6 +125,7 @@ class FiltrosEstado {
 
             case 'ubicacion':
                 this.estado.ubicacion = { provincia: null, ciudad: null, barrio: null };
+                this.estado.ubicacionTexto = ''; // Limpiar texto también
                 toggleCategoriaVisibilidad('ubicacion', false);
                 break;
 
