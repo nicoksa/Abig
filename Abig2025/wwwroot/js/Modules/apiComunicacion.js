@@ -3,7 +3,7 @@ import { toggleCategoriaVisibilidad } from './utils.js';
 class APIComunicacion {
     constructor(estadoManager) {
         this.estado = estadoManager;
-        this.cargaInicial = true; // NUEVA BANDERA
+        this.cargaInicial = true;
     }
 
     // ========== CARGAR FILTROS DESDE URL ==========
@@ -11,7 +11,7 @@ class APIComunicacion {
         const params = new URLSearchParams(window.location.search);
         if (params.toString()) {
             console.log('📥 Cargando filtros desde URL (carga inicial)');
-            // SILENCIOSAMENTE cargar el estado sin disparar eventos
+            //  cargar el estado sin disparar eventos
             this._cargarSinEventos(params);
             this.cargaInicial = false; // Marcar que ya pasó la carga inicial
         } else {
@@ -26,34 +26,34 @@ class APIComunicacion {
         // Operación
         if (params.has('Operacion')) {
             estado.operacion = [params.get('Operacion')];
-            toggleCategoriaVisibilidad('operacion', true); 
+            toggleCategoriaVisibilidad('operacion', true);
         }
 
         // Tipo
         if (params.has('Tipo')) {
             estado.tipo = [params.get('Tipo')];
-            toggleCategoriaVisibilidad('tipo', true); 
+            toggleCategoriaVisibilidad('tipo', true);
         }
 
         // Dormitorios
         if (params.has('Dormitorios')) {
             const num = parseInt(params.get('Dormitorios'));
             estado.dormitorios = [`${num}${num >= 5 ? '+' : ''} dormitorio${num > 1 ? 's' : ''}`];
-            toggleCategoriaVisibilidad('dormitorios', true); 
+            toggleCategoriaVisibilidad('dormitorios', true);
         }
 
         // Ambientes
         if (params.has('Ambientes')) {
             const num = parseInt(params.get('Ambientes'));
             estado.ambientes = [`${num}${num >= 4 ? '+' : ''} ambiente${num > 1 ? 's' : ''}`];
-            toggleCategoriaVisibilidad('ambientes', true); 
+            toggleCategoriaVisibilidad('ambientes', true);
         }
 
         // Baños
         if (params.has('Banos')) {
             const num = parseInt(params.get('Banos'));
             estado.banos = [`${num}${num >= 5 ? '+' : ''} baño${num > 1 ? 's' : ''}`];
-            toggleCategoriaVisibilidad('banos', true); 
+            toggleCategoriaVisibilidad('banos', true);
         }
 
         // Precio
@@ -61,7 +61,7 @@ class APIComunicacion {
             estado.precio.min = params.has('PrecioMin') ? parseFloat(params.get('PrecioMin')) : null;
             estado.precio.max = params.has('PrecioMax') ? parseFloat(params.get('PrecioMax')) : null;
             estado.precio.moneda = params.get('Moneda') || 'ARS';
-            toggleCategoriaVisibilidad('precio', true); 
+            toggleCategoriaVisibilidad('precio', true);
         }
 
         // Ubicación
@@ -69,21 +69,21 @@ class APIComunicacion {
             estado.ubicacion.provincia = params.has('Provincia') ? parseInt(params.get('Provincia')) : null;
             estado.ubicacion.ciudad = params.has('Ciudad') ? parseInt(params.get('Ciudad')) : null;
             estado.ubicacion.barrio = params.has('Barrio') ? parseInt(params.get('Barrio')) : null;
-            toggleCategoriaVisibilidad('ubicacion', true); 
+            toggleCategoriaVisibilidad('ubicacion', true);
         }
 
         // Superficie Total
         if (params.has('SuperficieTotalMin') || params.has('SuperficieTotalMax')) {
             estado.superficieTotal.min = params.has('SuperficieTotalMin') ? parseFloat(params.get('SuperficieTotalMin')) : null;
             estado.superficieTotal.max = params.has('SuperficieTotalMax') ? parseFloat(params.get('SuperficieTotalMax')) : null;
-            toggleCategoriaVisibilidad('superficie-total', true); 
+            toggleCategoriaVisibilidad('superficie-total', true);
         }
 
         // Superficie Cubierta
         if (params.has('SuperficieCubiertaMin') || params.has('SuperficieCubiertaMax')) {
             estado.superficieCubierta.min = params.has('SuperficieCubiertaMin') ? parseFloat(params.get('SuperficieCubiertaMin')) : null;
             estado.superficieCubierta.max = params.has('SuperficieCubiertaMax') ? parseFloat(params.get('SuperficieCubiertaMax')) : null;
-            toggleCategoriaVisibilidad('superficie-cubierta', true); 
+            toggleCategoriaVisibilidad('superficie-cubierta', true);
         }
 
         // Antigüedad
@@ -98,6 +98,10 @@ class APIComunicacion {
             estado.caracteristicas = caracteristicas.split(',').map(c => c.trim()).filter(c => c);
             // Las características NO se ocultan (son multiples)
         }
+
+        // ORDENAMIENTO (nuevo) - se maneja en el backend, no en el estado
+        // No necesitamos guardar el ordenamiento en el estado del cliente
+
         // Disparar evento para sincronizar UI
         document.dispatchEvent(new CustomEvent('estadoCambiado', {
             detail: { tipo: 'cargaInicial', silencioso: true }
@@ -142,6 +146,12 @@ class APIComunicacion {
         const params = new URLSearchParams();
         const estado = this.estado.getEstado();
 
+        // Obtener parámetros de la URL actual
+        const urlParams = new URLSearchParams(window.location.search);
+        const ordenActual = urlParams.get('OrdenarPor');
+        const paginaActual = urlParams.get('PaginaActual');
+
+        // ========== FILTROS ==========
         // Operación
         if (estado.operacion.length > 0) {
             params.append('Operacion', estado.operacion[0]);
@@ -227,6 +237,36 @@ class APIComunicacion {
             params.append('Caracteristicas', estado.caracteristicas.join(','));
         }
 
+        // ========== ORDENAMIENTO ==========
+        // Si hay ordenamiento en la URL, mantenerlo
+        if (ordenActual) {
+            params.append('OrdenarPor', ordenActual);
+        }
+
+        // ========== PAGINACIÓN ==========
+        // Si estamos aplicando filtros nuevos, volver a la página 1
+        // Pero si solo estamos cambiando de página (no cambiaron filtros), mantener la página actual
+        const cambioDeFiltros = Object.keys(estado).some(key => {
+            if (key === 'ubicacionTexto') return false; // Ignorar este campo
+            const value = estado[key];
+
+            if (Array.isArray(value)) {
+                return value.length > 0;
+            } else if (typeof value === 'object' && value !== null) {
+                return Object.values(value).some(v => v !== null && v !== '');
+            }
+            return value !== null && value !== '';
+        });
+
+        if (cambioDeFiltros) {
+            // Si cambian los filtros, ir a página 1
+            params.append('PaginaActual', '1');
+        } else if (paginaActual && paginaActual !== "1") {
+            // Si no cambian los filtros, mantener la página actual (si no es 1)
+            params.append('PaginaActual', paginaActual);
+        }
+        // Si no hay página o es página 1, no agregamos el parámetro (queda por defecto)
+
         return params.toString();
     }
 
@@ -235,11 +275,40 @@ class APIComunicacion {
         // Extraer solo la parte de resultados del HTML
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
+
+        // Buscar la sección de resultados Y la sección de ordenamiento Y la paginación
         const nuevosResultados = doc.querySelector('.resultados');
+        const nuevoOrdenamiento = doc.querySelector('.ordenamiento-container');
+        const nuevaPaginacion = doc.querySelector('.paginacion-container');
 
         if (nuevosResultados) {
+            const contenedorPadre = document.querySelector('.busqueda-contenedor');
             const resultadosActuales = document.querySelector('.resultados');
-            if (resultadosActuales) {
+
+            if (resultadosActuales && contenedorPadre) {
+                // Si hay sección de ordenamiento en la respuesta, actualizarla también
+                if (nuevoOrdenamiento) {
+                    const ordenamientoActual = contenedorPadre.querySelector('.ordenamiento-container');
+                    if (ordenamientoActual) {
+                        ordenamientoActual.replaceWith(nuevoOrdenamiento.cloneNode(true));
+                    } else {
+                        // Insertar antes de los resultados
+                        resultadosActuales.parentNode.insertBefore(nuevoOrdenamiento.cloneNode(true), resultadosActuales);
+                    }
+                }
+
+                // Si hay paginación en la respuesta, actualizarla también
+                if (nuevaPaginacion) {
+                    const paginacionActual = contenedorPadre.querySelector('.paginacion-container');
+                    if (paginacionActual) {
+                        paginacionActual.replaceWith(nuevaPaginacion.cloneNode(true));
+                    } else {
+                        // Insertar después de los resultados
+                        resultadosActuales.parentNode.insertBefore(nuevaPaginacion.cloneNode(true), resultadosActuales.nextSibling);
+                    }
+                }
+
+                // Actualizar resultados
                 resultadosActuales.innerHTML = nuevosResultados.innerHTML;
 
                 // Actualizar URL sin recargar la página
@@ -248,12 +317,33 @@ class APIComunicacion {
                 // Disparar evento para notificar que los resultados se actualizaron
                 document.dispatchEvent(new CustomEvent('resultadosActualizados'));
 
+                // Agregar listeners para la nueva paginación
+                this._agregarListenersPaginacion();
+
                 console.log('✅ Resultados actualizados vía AJAX');
             }
         } else {
             console.warn('⚠️ No se encontró la sección de resultados en la respuesta AJAX');
             this._fallbackRecarga(url);
         }
+    }
+
+    // ========== AGREGAR LISTENERS PARA PAGINACIÓN ==========
+    _agregarListenersPaginacion() {
+        // Agregar listeners para los botones de paginación que respetan AJAX
+        document.querySelectorAll('.pagina-btn:not(.disabled):not(.active)').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const url = btn.getAttribute('href');
+
+                if (url) {
+                    // Usar AJAX para cambiar de página
+                    window.history.pushState({}, '', url);
+                    this.cargarFiltrosDesdeURL();
+                    this.aplicarFiltros();
+                }
+            });
+        });
     }
 
     // ========== FALLBACK PARA RECARGA COMPLETA ==========

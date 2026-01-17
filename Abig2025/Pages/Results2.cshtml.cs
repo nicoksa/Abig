@@ -74,8 +74,24 @@ namespace Abig2025.Pages
         [BindProperty(SupportsGet = true)]
         public int? Barrio { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string? OrdenarPor { get; set; } = "recientes"; // Opciones: "recientes", "precio-asc", "precio-desc"
+
+        // Parámetros de paginación
+        [BindProperty(SupportsGet = true)]
+        public int PaginaActual { get; set; } = 1;
+
+        [BindProperty(SupportsGet = true)]
+        public int TamanoPagina { get; set; } = 6; // 12 propiedades por página
+
         // Información adicional para la vista
         public int TotalPropiedades { get; set; }
+        public int TotalPaginas { get; set; }
+        public bool HayPaginaAnterior => PaginaActual > 1;
+        public bool HayPaginaSiguiente => PaginaActual < TotalPaginas;
+        public int IndiceInicio => (PaginaActual - 1) * TamanoPagina + 1;
+        public int IndiceFin => Math.Min(PaginaActual * TamanoPagina, TotalPropiedades);
+
         public bool TieneFiltros => !string.IsNullOrEmpty(Operacion) ||
                                      !string.IsNullOrEmpty(Tipo) ||
                                      Dormitorios.HasValue ||
@@ -160,7 +176,7 @@ namespace Abig2025.Pages
                 }
             }
 
-            // === FILTRO: Baños ===
+            // === FILTRO: Ba?os ===
             if (Banos.HasValue)
             {
                 if (Banos >= 5)
@@ -246,16 +262,16 @@ namespace Abig2025.Pages
                     case "a estrenar":
                         query = query.Where(p => p.IsNew || p.Age == 0);
                         break;
-                    case "1 a 10 años":
+                    case "1 a 10 a?os":
                         query = query.Where(p => p.Age >= 1 && p.Age <= 10);
                         break;
-                    case "10 a 25 años":
+                    case "10 a 25 a?os":
                         query = query.Where(p => p.Age >= 10 && p.Age <= 25);
                         break;
-                    case "25 a 50 años":
+                    case "25 a 50 a?os":
                         query = query.Where(p => p.Age >= 25 && p.Age <= 50);
                         break;
-                    case "50 años o más":
+                    case "50 a?os o más":
                         query = query.Where(p => p.Age >= 50);
                         break;
                 }
@@ -283,10 +299,37 @@ namespace Abig2025.Pages
             // Obtener total antes de ordenar
             TotalPropiedades = await query.CountAsync();
 
-            // Ordenar por fecha de creación (más recientes primero)
-            Properties = await query
-                .OrderByDescending(p => p.CreatedAt)
+            // Calcular paginación
+            TotalPaginas = (int)Math.Ceiling((double)TotalPropiedades / TamanoPagina);
+
+            // Asegurar que la página actual sea válida
+            if (PaginaActual < 1) PaginaActual = 1;
+            if (PaginaActual > TotalPaginas && TotalPaginas > 0) PaginaActual = TotalPaginas;
+
+            // ===== ORDENAR RESULTADOS =====
+            switch (OrdenarPor?.ToLower())
+            {
+                case "precio-asc":
+                    query = query.OrderBy(p => p.Price);
+                    break;
+
+                case "precio-desc":
+                    query = query.OrderByDescending(p => p.Price);
+                    break;
+
+                case "recientes":
+                default:
+                    query = query.OrderByDescending(p => p.CreatedAt);
+                    break;
+            }
+
+            // Aplicar paginación
+            var propiedadesPaginadas = await query
+                .Skip((PaginaActual - 1) * TamanoPagina)
+                .Take(TamanoPagina)
                 .ToListAsync();
+
+            Properties = propiedadesPaginadas;
 
             return Page();
         }
