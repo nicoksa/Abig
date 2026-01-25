@@ -295,13 +295,23 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item @(ordenActual == "precio-asc" ? "active" : "")" href="@GetUrlConOrden("precio-asc")">
-                                        <i class="bi bi-sort-numeric-down me-2"></i> Menor precio
+                                    <a class="dropdown-item @(ordenActual == "precio-pesos-asc" ? "active" : "")" href="@GetUrlConOrden("precio-pesos-asc")">
+                                        <i class="bi bi-sort-numeric-down me-2"></i> Menor precio ($)
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item @(ordenActual == "precio-desc" ? "active" : "")" href="@GetUrlConOrden("precio-desc")">
-                                        <i class="bi bi-sort-numeric-up me-2"></i> Mayor precio
+                                    <a class="dropdown-item @(ordenActual == "precio-pesos-desc" ? "active" : "")" href="@GetUrlConOrden("precio-pesos-desc")">
+                                        <i class="bi bi-sort-numeric-up me-2"></i> Mayor precio ($)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(ordenActual == "precio-dolares-asc" ? "active" : "")" href="@GetUrlConOrden("precio-dolares-asc")">
+                                        <i class="bi bi-sort-numeric-down me-2"></i> Menor precio (USD)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item @(ordenActual == "precio-dolares-desc" ? "active" : "")" href="@GetUrlConOrden("precio-dolares-desc")">
+                                        <i class="bi bi-sort-numeric-up me-2"></i> Mayor precio (USD)
                                     </a>
                                 </li>
                             </ul>
@@ -675,10 +685,14 @@
     {
         switch (orden.ToLower())
         {
-            case "precio-asc":
-                return "Menor precio";
-            case "precio-desc":
-                return "Mayor precio";
+            case "precio-pesos-asc":
+                return "Menor precio ($)";
+            case "precio-pesos-desc":
+                return "Mayor precio ($)";
+            case "precio-dolares-asc":
+                return "Menor precio (USD)";
+            case "precio-dolares-desc":
+                return "Mayor precio (USD)";
             case "recientes":
             default:
                 return "Más recientes";
@@ -689,9 +703,11 @@
     {
         switch (orden.ToLower())
         {
-            case "precio-asc":
+            case "precio-pesos-asc":
+            case "precio-dolares-asc":
                 return "bi bi-sort-numeric-down";
-            case "precio-desc":
+            case "precio-pesos-desc":
+            case "precio-dolares-desc":
                 return "bi bi-sort-numeric-up";
             case "recientes":
             default:

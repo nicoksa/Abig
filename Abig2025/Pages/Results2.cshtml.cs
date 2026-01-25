@@ -309,12 +309,28 @@ namespace Abig2025.Pages
             // ===== ORDENAR RESULTADOS =====
             switch (OrdenarPor?.ToLower())
             {
-                case "precio-asc":
-                    query = query.OrderBy(p => p.Price);
+                case "precio-pesos-asc":
+                    query = query.OrderBy(p =>
+                        p.Currency == CurrencyType.ARS ? 0 : 1
+                    ).ThenBy(p => p.Price);
                     break;
 
-                case "precio-desc":
-                    query = query.OrderByDescending(p => p.Price);
+                case "precio-pesos-desc":
+                    query = query.OrderBy(p =>
+                        p.Currency == CurrencyType.ARS ? 0 : 1
+                    ).ThenByDescending(p => p.Price);
+                    break;
+
+                case "precio-dolares-asc":
+                    query = query.OrderBy(p =>
+                        p.Currency == CurrencyType.USD ? 0 : 1
+                    ).ThenBy(p => p.Price);
+                    break;
+
+                case "precio-dolares-desc":
+                    query = query.OrderBy(p =>
+                        p.Currency == CurrencyType.USD ? 0 : 1
+                    ).ThenByDescending(p => p.Price);
                     break;
 
                 case "recientes":
