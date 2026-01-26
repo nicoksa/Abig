@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Abig2025.Data;
 using Abig2025.Models.Properties;
 using Abig2025.Models.Properties.Enums;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace Abig2025.Pages
 {
+
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client,
+               VaryByQueryKeys = new[] { "*" })] 
     public class Results2Model : PageModel
     {
         private readonly AppDbContext _context;
@@ -109,8 +109,14 @@ namespace Abig2025.Pages
                                      !string.IsNullOrEmpty(Caracteristicas) ||
                                      Barrio.HasValue;
 
+
         public async Task<IActionResult> OnGetAsync()
         {
+            // Cache por 30 segundos para resultados sin filtros
+            if (!TieneFiltros && OrdenarPor == "recientes")
+            {
+                Response.Headers["Cache-Control"] = "public, max-age=30";
+            }
             // Query base con todas las relaciones necesarias
             var query = _context.Properties
                 .Include(p => p.Owner)

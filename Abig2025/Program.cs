@@ -48,7 +48,7 @@ builder.Services.AddScoped<IPropertyService, PropertyService>();
 
 builder.Services.AddScoped<ITempFileService, TempFileService>();
 builder.Services.AddHostedService<TempFileCleanupService>();
-
+builder.Services.AddResponseCaching();
 
 // Session 
 builder.Services.AddSession(options =>
@@ -122,7 +122,7 @@ using (var scope = app.Services.CreateScope())
     await LocationJsonLoader.LoadAsync(context, env);
 }
 
-
+app.UseResponseCaching();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

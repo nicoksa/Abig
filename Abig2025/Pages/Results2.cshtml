@@ -458,123 +458,128 @@
                     </a>
                 }
 
-                <!-- PAGINACIÓN -->
+                <!-- PAGINACIÓN - VERSIÓN SIMPLE BOOTSTRAP -->
+                <!-- PAGINACIÓN - ANTERIOR/SIGUIENTE + NÚMEROS -->
                 @if (Model.Properties != null && Model.Properties.Any() && Model.TotalPaginas > 1)
                 {
-                    <div class="paginacion-container">
-                        <!-- Información de paginación -->
-                        <div class="paginacion-info">
-                            <div class="info-texto">
-                                Mostrando <strong>@Model.IndiceInicio - @Model.IndiceFin</strong> de <strong>@Model.TotalPropiedades</strong> propiedades
+                    <div class="col-12 mt-5" style="grid-column: 1 / -1;">
+                        <!-- Información de resultados -->
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                            <div class="text-muted">
+                                <i class="bi bi-house me-1"></i>
+                                <span>Mostrando <strong>@Model.IndiceInicio - @Model.IndiceFin</strong> de <strong>@Model.TotalPropiedades</strong> propiedades</span>
                             </div>
-                            <div class="info-texto">
-                                Página <strong>@Model.PaginaActual</strong> de <strong>@Model.TotalPaginas</strong>
+                            <div class="text-muted">
+                                <i class="bi bi-file-text me-1"></i>
+                                <span>Página <strong>@Model.PaginaActual</strong> de <strong>@Model.TotalPaginas</strong></span>
                             </div>
                         </div>
-                        
-                        <!-- Controles de paginación (Desktop) -->
-                        <div class="paginacion-controls">
-                            @if (Model.HayPaginaAnterior)
-                            {
-                                <a href="@GetUrlConPaginacion(Model.PaginaActual - 1)" 
-                                   class="pagina-btn pagina-btn-prev" 
-                                   title="Página anterior">
-                                    <span class="icon">‹</span> Anterior
-                                </a>
-                            }
-                            else
-                            {
-                                <span class="pagina-btn pagina-btn-prev disabled">
-                                    <span class="icon">‹</span> Anterior
-                                </span>
-                            }
-                            
+
+                        <!-- Paginación Bootstrap con números -->
+                        <div class="d-flex justify-content-center align-items-center flex-wrap gap-3">
+                            <!-- Botón Anterior -->
+                            <div>
+                                @if (Model.HayPaginaAnterior)
+                                {
+                                    <a href="@GetUrlConPaginacion(Model.PaginaActual - 1)"
+                                       class="btn btn-outline-primary d-flex align-items-center">
+                                        <i class="bi bi-chevron-left me-1"></i>
+                                        <span>Anterior</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-secondary d-flex align-items-center" disabled>
+                                        <i class="bi bi-chevron-left me-1"></i>
+                                        <span>Anterior</span>
+                                    </button>
+                                }
+                            </div>
+
                             <!-- Números de página -->
-                            @{
-                                int inicio = Math.Max(1, Model.PaginaActual - 2);
-                                int fin = Math.Min(Model.TotalPaginas, Model.PaginaActual + 2);
-                                
-                                if (inicio > 1)
-                                {
-                                    <a href="@GetUrlConPaginacion(1)" class="pagina-btn">1</a>
-                                    if (inicio > 2)
+                            <div class="d-flex gap-1 flex-wrap justify-content-center">
+                                @{
+                                    // Mostrar máximo 5 números
+                                    int inicio = Math.Max(1, Model.PaginaActual - 2);
+                                    int fin = Math.Min(Model.TotalPaginas, Model.PaginaActual + 2);
+
+                                    // Ajustar para mostrar siempre 5 números si es posible
+                                    if (fin - inicio < 4 && Model.TotalPaginas > 5)
                                     {
-                                        <span class="puntos-suspensivos">...</span>
+                                        if (Model.PaginaActual <= 3)
+                                        {
+                                            fin = Math.Min(5, Model.TotalPaginas);
+                                        }
+                                        else if (Model.PaginaActual >= Model.TotalPaginas - 2)
+                                        {
+                                            inicio = Math.Max(1, Model.TotalPaginas - 4);
+                                        }
+                                    }
+
+                                    // Mostrar primera página si no está visible
+                                    if (inicio > 1)
+                                    {
+                                        <a href="@GetUrlConPaginacion(1)" class="btn btn-outline-secondary btn-sm">
+                                            1
+                                        </a>
+                                        @if (inicio > 2)
+                                        {
+                                            <span class="px-2 d-flex align-items-center text-muted">...</span>
+                                        }
+                                    }
+
+                                    // Números principales
+                                    for (int i = inicio; i <= fin; i++)
+                                    {
+                                        if (i == Model.PaginaActual)
+                                        {
+                                            <button class="btn btn-primary btn-sm" disabled>
+                                                @i
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <a href="@GetUrlConPaginacion(i)" class="btn btn-outline-secondary btn-sm">
+                                                @i
+                                            </a>
+                                        }
+                                    }
+
+                                    // Mostrar última página si no está visible
+                                    if (fin < Model.TotalPaginas)
+                                    {
+                                        @if (fin < Model.TotalPaginas - 1)
+                                        {
+                                            <span class="px-2 d-flex align-items-center text-muted">...</span>
+                                        }
+                                        <a href="@GetUrlConPaginacion(Model.TotalPaginas)" class="btn btn-outline-secondary btn-sm">
+                                            @Model.TotalPaginas
+                                        </a>
                                     }
                                 }
-                                
-                                for (int i = inicio; i <= fin; i++)
+                            </div>
+
+                            <!-- Botón Siguiente -->
+                            <div>
+                                @if (Model.HayPaginaSiguiente)
                                 {
-                                    if (i == Model.PaginaActual)
-                                    {
-                                        <span class="pagina-btn active">@i</span>
-                                    }
-                                    else
-                                    {
-                                        <a href="@GetUrlConPaginacion(i)" class="pagina-btn">@i</a>
-                                    }
+                                    <a href="@GetUrlConPaginacion(Model.PaginaActual + 1)"
+                                       class="btn btn-outline-primary d-flex align-items-center">
+                                        <span>Siguiente</span>
+                                        <i class="bi bi-chevron-right ms-1"></i>
+                                    </a>
                                 }
-                                
-                                if (fin < Model.TotalPaginas)
+                                else
                                 {
-                                    if (fin < Model.TotalPaginas - 1)
-                                    {
-                                        <span class="puntos-suspensivos">...</span>
-                                    }
-                                    <a href="@GetUrlConPaginacion(Model.TotalPaginas)" class="pagina-btn">@Model.TotalPaginas</a>
+                                    <button class="btn btn-outline-secondary d-flex align-items-center" disabled>
+                                        <span>Siguiente</span>
+                                        <i class="bi bi-chevron-right ms-1"></i>
+                                    </button>
                                 }
-                            }
-                            
-                            @if (Model.HayPaginaSiguiente)
-                            {
-                                <a href="@GetUrlConPaginacion(Model.PaginaActual + 1)" 
-                                   class="pagina-btn pagina-btn-next" 
-                                   title="Página siguiente">
-                                    Siguiente <span class="icon">›</span>
-                                </a>
-                            }
-                            else
-                            {
-                                <span class="pagina-btn pagina-btn-next disabled">
-                                    Siguiente <span class="icon">›</span>
-                                </span>
-                            }
+                            </div>
                         </div>
-                        
-                        <!-- Controles de paginación (Mobile) -->
-                        <div class="paginacion-movil">
-                            @if (Model.HayPaginaAnterior)
-                            {
-                                <a href="@GetUrlConPaginacion(Model.PaginaActual - 1)" 
-                                   class="btn btn-outline-primary btn-sm">
-                                    ‹ Anterior
-                                </a>
-                            }
-                            else
-                            {
-                                <button class="btn btn-outline-primary btn-sm" disabled>
-                                    ‹ Anterior
-                                </button>
-                            }
-                            
-                            <span class="text-muted small">
-                                @Model.PaginaActual / @Model.TotalPaginas
-                            </span>
-                            
-                            @if (Model.HayPaginaSiguiente)
-                            {
-                                <a href="@GetUrlConPaginacion(Model.PaginaActual + 1)" 
-                                   class="btn btn-outline-primary btn-sm">
-                                    Siguiente ›
-                                </a>
-                            }
-                            else
-                            {
-                                <button class="btn btn-outline-primary btn-sm" disabled>
-                                    Siguiente ›
-                                </button>
-                            }
-                        </div>
+
+                    
                     </div>
                 }
             }
@@ -605,46 +610,44 @@
 
     @section Scripts {
         <script>
-            // Manejar cambios en el dropdown de ordenamiento
             document.addEventListener('DOMContentLoaded', function() {
-                // Detectar clicks en los enlaces del dropdown
-                document.querySelectorAll('#dropdownOrdenar + .dropdown-menu .dropdown-item').forEach(item => {
-                    item.addEventListener('click', function(e) {
+                // Manejar clicks en los botones de paginación
+                document.querySelectorAll('.pagination .page-link, .btn-outline-primary[href*="PaginaActual"]').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        // Solo procesar si no está deshabilitado
+                        if (this.classList.contains('disabled') || this.hasAttribute('disabled')) {
+                            e.preventDefault();
+                            return;
+                        }
+
+                        const href = this.getAttribute('href');
+                        if (!href) return;
+
                         e.preventDefault();
 
-                        const url = this.getAttribute('href');
-                        console.log('🔄 Cambiando orden a:', url);
-
-                        // Actualizar el texto del botón dropdown
-                        const dropdownButton = document.getElementById('dropdownOrdenar');
-                        dropdownButton.innerHTML = this.innerHTML;
-
-                        // Usar el sistema AJAX existente
                         if (window.AppFiltros && window.AppFiltros.apiComunicacion) {
-                            // Forzar recarga con la nueva URL
-                            window.history.pushState({}, '', url);
+                            // Usar AJAX
+                            window.history.pushState({}, '', href);
                             window.AppFiltros.apiComunicacion.cargarFiltrosDesdeURL();
                             window.AppFiltros.apiComunicacion.aplicarFiltros();
                         } else {
-                            // Fallback: recarga normal
-                            window.location.href = url;
+                            // Recarga normal
+                            window.location.href = href;
                         }
                     });
                 });
 
-                // Agregar listeners para la paginación que respeten AJAX
-                document.querySelectorAll('.pagina-btn:not(.disabled):not(.active)').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
+                // Manejar el dropdown de ordenamiento
+                document.querySelectorAll('#dropdownOrdenar + .dropdown-menu .dropdown-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
                         e.preventDefault();
                         const url = this.getAttribute('href');
-                        
+
                         if (window.AppFiltros && window.AppFiltros.apiComunicacion) {
-                            // Usar AJAX para cambiar de página
                             window.history.pushState({}, '', url);
                             window.AppFiltros.apiComunicacion.cargarFiltrosDesdeURL();
                             window.AppFiltros.apiComunicacion.aplicarFiltros();
                         } else {
-                            // Fallback: recarga normal
                             window.location.href = url;
                         }
                     });
