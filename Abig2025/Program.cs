@@ -41,12 +41,15 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IExternalAuthService, ExternalAuthService>();
-builder.Services.AddScoped<IDraftService, DraftService>();
+
 builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IImageConversionService, ImageConversionService>();
 
 builder.Services.AddScoped<ITempFileService, TempFileService>();
+builder.Services.AddScoped<IDraftService, DraftService>();
+
 builder.Services.AddHostedService<TempFileCleanupService>();
 builder.Services.AddResponseCaching();
 

@@ -4,6 +4,7 @@ using Abig2025.Helpers;
 using Abig2025.Models.DTO;
 using Abig2025.Models.Properties;
 using Microsoft.EntityFrameworkCore;
+using Abig2025.Services.Interfaces;
 
 namespace Abig2025.Services
 {

@@ -2,8 +2,8 @@
 using Abig2025.Models.ViewModels;
 using Abig2025.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
+using Abig2025.Services.Interfaces;
 
 namespace Abig2025.Pages.Post
 {
