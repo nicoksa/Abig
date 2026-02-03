@@ -9,7 +9,6 @@ using Abig2025.Models.Properties;
 using Abig2025.Models.Properties.Enums;
 
 namespace Abig2025.Pages.Profile
-
 {
     [Authorize]
     public class MyPropertiesModel : PageModel
@@ -31,10 +30,20 @@ namespace Abig2025.Pages.Profile
         public int PausedCount { get; set; }
         public string UserFullName { get; set; } = string.Empty;
 
-        public async Task<IActionResult> OnGetAsync(string? filter = null)
+        // Nuevas propiedades para paginación
+        public int PaginaActual { get; set; } = 1;
+        public int TotalPaginas { get; set; }
+        public int TamanoPagina { get; set; } = 6; // 6 propiedades por página
+        public bool HayPaginaAnterior => PaginaActual > 1;
+        public bool HayPaginaSiguiente => PaginaActual < TotalPaginas;
+
+        public async Task<IActionResult> OnGetAsync(string? filter = null, int pagina = 1)
         {
             try
             {
+                // Establecer página actual
+                PaginaActual = pagina < 1 ? 1 : pagina;
+
                 // Obtener ID del usuario
                 var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
@@ -51,7 +60,23 @@ namespace Abig2025.Pages.Profile
                     UserFullName = $"{user.FirstName} {user.LastName}";
                 }
 
-                // Consulta base
+                // Calcular estadísticas (sin paginación)
+                TotalProperties = await _context.Properties
+                    .CountAsync(p => p.OwnerId == userId && p.IsActive);
+
+                PublishedCount = await _context.Properties
+                    .CountAsync(p => p.OwnerId == userId && p.IsActive &&
+                                     p.Status != null && p.Status.State == PropertyState.Publicado);
+
+                DraftCount = await _context.Properties
+                    .CountAsync(p => p.OwnerId == userId && p.IsActive &&
+                                     (p.Status == null || p.Status.State == PropertyState.Borrador));
+
+                PausedCount = await _context.Properties
+                    .CountAsync(p => p.OwnerId == userId && p.IsActive &&
+                                     p.Status != null && p.Status.State == PropertyState.Pausado);
+
+                // Consulta base para propiedades (con paginación)
                 var query = _context.Properties
                     .Include(p => p.Location)
                     .Include(p => p.Status)
@@ -59,10 +84,19 @@ namespace Abig2025.Pages.Profile
                     .Where(p => p.OwnerId == userId && p.IsActive)
                     .OrderByDescending(p => p.CreatedAt);
 
+                // Calcular total de páginas
+                var totalItems = await query.CountAsync();
+                TotalPaginas = (int)Math.Ceiling((double)totalItems / TamanoPagina);
 
+                // Ajustar página si es necesario
+                if (PaginaActual > TotalPaginas && TotalPaginas > 0)
+                    PaginaActual = TotalPaginas;
 
-                // Obtener propiedades
-                Properties = await query.ToListAsync();
+                // Aplicar paginación
+                Properties = await query
+                    .Skip((PaginaActual - 1) * TamanoPagina)
+                    .Take(TamanoPagina)
+                    .ToListAsync();
 
                 // Obtener estados para cada propiedad
                 foreach (var property in Properties)
@@ -79,22 +113,6 @@ namespace Abig2025.Pages.Profile
 
                     PropertyStatus[property.PropertyId] = statusText;
                 }
-
-                // Calcular estadísticas
-                TotalProperties = await _context.Properties
-                    .CountAsync(p => p.OwnerId == userId && p.IsActive);
-
-                PublishedCount = await _context.Properties
-                    .CountAsync(p => p.OwnerId == userId && p.IsActive &&
-                                     p.Status != null && p.Status.State == PropertyState.Publicado);
-
-                DraftCount = await _context.Properties
-                    .CountAsync(p => p.OwnerId == userId && p.IsActive &&
-                                     (p.Status == null || p.Status.State == PropertyState.Borrador));
-
-                PausedCount = await _context.Properties
-                    .CountAsync(p => p.OwnerId == userId && p.IsActive &&
-                                     p.Status != null && p.Status.State == PropertyState.Pausado);
 
                 return Page();
             }

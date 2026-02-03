@@ -270,7 +270,7 @@
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 
-                                <a href="/Properties/Edit/@property.PropertyId" 
+                                <a href="/Pages/Properties/EditProperty/@property.PropertyId" 
                                    class="btn btn-sm btn-outline-warning flex-fill"
                                    title="Editar">
                                     <i class="bi bi-pencil"></i>
@@ -313,6 +313,120 @@
                 </div>
             }
         </div>
+        
+        <!-- PAGINACIÓN -->
+        @if (Model.TotalPaginas > 1)
+        {
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <nav aria-label="Paginación de propiedades">
+                            <ul class="pagination">
+                                <!-- Botón Anterior -->
+                                @if (Model.HayPaginaAnterior)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" asp-page="/Profile/MyProperties" 
+                                           asp-route-pagina="@(Model.PaginaActual - 1)">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </span>
+                                    </li>
+                                }
+
+                                <!-- Números de página -->
+                                @{
+                                    // Mostrar máximo 5 números de página
+                                    int inicio = Math.Max(1, Model.PaginaActual - 2);
+                                    int fin = Math.Min(Model.TotalPaginas, Model.PaginaActual + 2);
+
+                                    // Mostrar primera página si no está visible
+                                    if (inicio > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" asp-page="/Profile/MyProperties" asp-route-pagina="1">1</a>
+                                        </li>
+                                        @if (inicio > 2)
+                                        {
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        }
+                                    }
+
+                                    // Números principales
+                                    for (int i = inicio; i <= fin; i++)
+                                    {
+                                        if (i == Model.PaginaActual)
+                                        {
+                                            <li class="page-item active">
+                                                <span class="page-link">@i</span>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" asp-page="/Profile/MyProperties" asp-route-pagina="@i">@i</a>
+                                            </li>
+                                        }
+                                    }
+
+                                    // Mostrar última página si no está visible
+                                    if (fin < Model.TotalPaginas)
+                                    {
+                                        @if (fin < Model.TotalPaginas - 1)
+                                        {
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        }
+                                        <li class="page-item">
+                                            <a class="page-link" asp-page="/Profile/MyProperties" asp-route-pagina="@Model.TotalPaginas">
+                                                @Model.TotalPaginas
+                                            </a>
+                                        </li>
+                                    }
+                                }
+
+                                <!-- Botón Siguiente -->
+                                @if (Model.HayPaginaSiguiente)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" asp-page="/Profile/MyProperties" 
+                                           asp-route-pagina="@(Model.PaginaActual + 1)">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                    
+                    <!-- Información de página -->
+                    <div class="text-center mt-2 text-muted">
+                        <small>
+                            Página @Model.PaginaActual de @Model.TotalPaginas 
+                            | Mostrando @Model.Properties.Count de @Model.TotalProperties propiedades
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
     }
     else
     {
@@ -389,5 +503,31 @@
     
     .bg-danger.bg-opacity-10 {
         background-color: rgba(220, 53, 69, 0.1) !important;
+    }
+    
+    /* Estilos para paginación */
+    .pagination .page-link {
+        color: #2a5caa;
+        border: 1px solid #dee2e6;
+        margin: 0 2px;
+        border-radius: 6px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #2a5caa;
+        border-color: #2a5caa;
+        color: white;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #fff;
+        border-color: #dee2e6;
     }
 </style>
